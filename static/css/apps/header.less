@@ -5,6 +5,7 @@
 @header-bg: #000;
 @header-bg-alt: #333;
 @header-color: #fff;
+@header-color-alt: #ccc;
 
 header {
     .transform(translateZ(0));
@@ -74,5 +75,29 @@ header {
         outline: none;
         padding: 15px;
         width: 100%;
+    }
+}
+
+/* --------------------------------------------------
+    header menu
+---------------------------------------------------*/
+
+.header-menu {
+    height: 50px;
+    padding: 0 15px;
+
+    position: absolute;
+    right: 0;
+
+    > a {
+        .inline-block();
+        color: @header-color-alt;
+        height: 50px;
+        line-height: 50px;
+        padding: 0 10px;
+
+        &.active, &:hover {
+            color: @header-color;
+        }
     }
 }
