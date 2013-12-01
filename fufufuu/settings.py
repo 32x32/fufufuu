@@ -72,6 +72,7 @@ TEMPLATE_ENV = Environment(
     extensions=[
         'jinja2.ext.i18n',
         'jinja2.ext.with_',
+        'fufufuu.core.jinja2htmlcompress.HTMLCompress',
     ],
 )
 
