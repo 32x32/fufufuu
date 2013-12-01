@@ -3,7 +3,7 @@ from django.http.response import HttpResponse
 from django.template.context import get_standard_processors
 from django.utils.decorators import method_decorator
 from django.views.generic.base import View
-from fufufuu.settings import TEMPLATE_ENV
+from fufufuu.core.templates import TEMPLATE_ENV
 
 
 class TemplateView(View):

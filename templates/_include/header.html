@@ -1,0 +1,13 @@
+<header>
+    <span class="icon icon-menu max-md left"></span>
+    <a href="" class="icon icon-search max-xs right"></a>
+    <div class="header-menu right min-xs">
+        {% if user.is_authenticated() %}
+            <a class="min-sm">{{ user.email }}</a>
+            <a href="#" onclick="document.getElementById('account-logout-form').submit()"><span class="icon icon-logout"></span></a>
+        {% else %}
+            
+        {% endif %}
+    </div>
+    <a href="{{ url('manga.list') }}" class="header-heading">Fufufuu</a>
+</header>

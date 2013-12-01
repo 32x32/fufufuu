@@ -1,6 +1,4 @@
 import os
-from django.utils.translation import ugettext, ungettext
-from jinja2 import Environment, FileSystemLoader
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -53,7 +51,20 @@ LANGUAGE_CODE = 'en-us'
 USE_I18N = True
 USE_L10N = True
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+STATIC_ROOT = ''
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
 
 #-------------------------------------------------------------------------------
 # template settings
@@ -73,17 +84,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.csrf',
     'django.contrib.messages.context_processors.messages'
 )
-TEMPLATE_ENV = Environment(
-    loader=FileSystemLoader(TEMPLATE_DIRS),
-    auto_reload=DEBUG,
-    extensions=[
-        'jinja2.ext.i18n',
-        'jinja2.ext.with_',
-        'fufufuu.core.jinja2htmlcompress.HTMLCompress',
-    ],
-)
-
-TEMPLATE_ENV.install_gettext_callables(ugettext, ungettext)
 
 #-------------------------------------------------------------------------------
 # localsettings.py

@@ -1,0 +1,60 @@
+/* --------------------------------------------------
+    header styles
+---------------------------------------------------*/
+
+@header-bg: #000;
+@header-bg-alt: #333;
+@header-color: #fff;
+
+header {
+    .transform(translateZ(0));
+    background-color: @header-bg;
+    height: 50px;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    .icon {
+        .inline-block();
+
+        color: @header-color;
+        font-size: 20px;
+        height: 50px;
+        line-height: 50px;
+        width: 50px;
+        text-align: center;
+    }
+    .icon-menu {
+        font-size: 24px;
+    }
+}
+
+/* --------------------------------------------------
+    header heading
+---------------------------------------------------*/
+
+.header-heading {
+    color: @header-color;
+    display: block;
+    font-size: 18px;
+    line-height: 50px;
+    padding: 0 15px;
+}
+
+@media screen and (min-width: @screen-md) {
+    .header-heading {
+        background-color: @header-bg-alt;
+        border-right: 1px solid #444;
+        width: @nav-width;
+    }
+}
+
+@media screen and (min-width: @screen-xs) and (max-width: @screen-md) {
+    .header-heading { display: none; }
+}
+
+@media screen and (max-width: @screen-xs1) {
+    .header-heading { text-align: center; }
+}
