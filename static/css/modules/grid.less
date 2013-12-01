@@ -1,0 +1,64 @@
+/* --------------------------------------------------
+    grid styles
+---------------------------------------------------*/
+
+.container {
+    padding: 15px;
+}
+
+@media screen and (max-width: @screen-xs1) {
+    .min-xs { display: none !important; }
+}
+@media screen and (min-width: @screen-xs) {
+    .max-xs { display: none !important; }
+}
+
+@media screen and (max-width: @screen-sm1) {
+    .min-sm { display: none !important; }
+}
+@media screen and (min-width: @screen-sm) {
+    .max-sm { display: none !important; }
+}
+
+@media screen and (max-width: @screen-md1) {
+    .min-md { display: none !important; }
+}
+@media screen and (min-width: @screen-md) {
+    .max-md { display: none !important; }
+}
+
+/* --------------------------------------------------
+    half styles
+---------------------------------------------------*/
+
+.half-wrapper {
+    margin: 0 -8px;
+}
+
+.half {
+    .inline-block();
+    padding: 0 8px;
+    overflow: hidden;
+    width: 100%;
+}
+
+@media screen and (max-width: @screen-md1) {
+    .half-md:first-of-type { padding-bottom: 15px; }
+}
+@media screen and (min-width: @screen-md) {
+    .half-md { width: 50%; }
+}
+
+@media screen and (max-width: @screen-sm1) {
+    .half-sm:first-of-type { padding-bottom: 15px; }
+}
+@media screen and (min-width: @screen-sm) {
+    .half-sm { width: 50%; }
+}
+
+@media screen and (max-width: @screen-xs1) {
+    .half-xs:first-of-type { padding-bottom: 15px; }
+}
+@media screen and (min-width: @screen-xs) {
+    .half-xs { width: 50%; }
+}

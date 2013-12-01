@@ -1,0 +1,97 @@
+/* --------------------------------------------------
+    mixins
+---------------------------------------------------*/
+
+.border-radius(@radius) {
+    -webkit-border-radius: @radius;
+       -moz-border-radius: @radius;
+            border-radius: @radius;
+}
+.border-top-left-radius(@radius) {
+    -webkit-border-top-left-radius: @radius;
+       -moz-border-top-left-radius: @radius;
+            border-top-left-radius: @radius;
+}
+.border-top-right-radius(@radius) {
+    -webkit-border-top-right-radius: @radius;
+       -moz-border-top-right-radius: @radius;
+            border-top-right-radius: @radius;
+}
+.border-bottom-right-radius(@radius) {
+    -webkit-border-bottom-right-radius: @radius;
+       -moz-border-bottom-right-radius: @radius;
+            border-bottom-right-radius: @radius;
+}
+.border-bottom-left-radius(@radius) {
+    -webkit-border-bottom-left-radius: @radius;
+       -moz-border-bottom-left-radius: @radius;
+            border-bottom-left-radius: @radius;
+}
+
+.box-shadow(@effect) {
+    -webkit-box-shadow: @effect;
+       -moz-box-shadow: @effect;
+            box-shadow: @effect;
+}
+
+.box-sizing {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+.column-count (@count) {
+    -webkit-column-count: @count;
+       -moz-column-count: @count;
+            column-count: @count;
+}
+
+.column-gap (@gap) {
+    -webkit-column-gap: @gap;
+       -moz-column-gap: @gap;
+            column-gap: @gap;
+}
+
+.column-width (@width) {
+    -webkit-column-width: @width;
+       -moz-column-width: @width;
+            column-width: @width;
+}
+
+.inline-block {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.transform(@effect) {
+    -webkit-transform: @effect;
+       -moz-transform: @effect;
+        -ms-transform: @effect;
+            transform: @effect;
+}
+.transform-origin(@pos) {
+    -webkit-transform-origin: @pos;
+       -moz-transform-origin: @pos;
+        -ms-transform-origin: @pos;
+            transform-origin: @pos;
+}
+
+.transition(@effect) {
+    -webkit-transform: translateZ(0);
+    -webkit-transition: @effect;
+       -moz-transition: @effect;
+        -ms-transition: @effect;
+         -o-transition: @effect;
+            transition: @effect;
+}
+
+.transparent(@transparency) {
+    opacity: @transparency/100;
+    filter:alpha(opacity=@transparency);
+}
+
+.unselectable {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+            user-select: none;
+}
