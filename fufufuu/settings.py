@@ -6,10 +6,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 SECRET_KEY = 'jr!s(3kt-i)tk8qkn$phyt3itptg08vh8gzu=cs#z6otufv#y2'
 
-DEBUG = True
-TEMPLATE_DEBUG = True
+DEBUG = False
+DEBUG_TOOLBAR = False
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = []
+INTERNAL_IPS = ['127.0.0.1',]
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -18,6 +20,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'south',
+
+    'fufufuu.core',
+    'fufufuu.manga',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -35,7 +42,7 @@ WSGI_APPLICATION = 'fufufuu.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'fufufuu.sqlite3'),
     }
 }
 
@@ -78,3 +85,26 @@ TEMPLATE_ENV = Environment(
 
 TEMPLATE_ENV.install_gettext_callables(ugettext, ungettext)
 
+#-------------------------------------------------------------------------------
+# localsettings.py
+#-------------------------------------------------------------------------------
+
+try:
+    from fufufuu.localsettings import *
+except ImportError:
+    pass
+
+#-------------------------------------------------------------------------------
+# see if we need to import debug toolbar
+#-------------------------------------------------------------------------------
+
+if DEBUG_TOOLBAR:
+    INSTALLED_APPS += (
+        'debug_toolbar',
+    )
+    MIDDLEWARE_CLASSES += (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )
+    DEBUG_TOOLBAR_CONFIG = {
+        'INTERCEPT_REDIRECTS': False,
+    }
