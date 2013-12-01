@@ -3,12 +3,15 @@
 ---------------------------------------------------*/
 
 @nav-bg: #e5e5e5;
-@nav-border-right: 1px solid #d4d4d4;
+@nav-border: 1px solid #d4d4d4;
+@nav-border-alt: 1px solid #f6f6f6;
+@nav-color: #000;
+@nav-color-hover: #999;
 
 nav {
     background-color: @nav-bg;
-    border-right: @nav-border-right;
-    padding: 0;
+    border-right: @nav-border;
+    padding: 6px 0;
     width: @nav-width;
 
     position: fixed;
@@ -30,4 +33,35 @@ nav {
             .transform(translate3d(0, 0, 0));
         }
     }
+}
+
+/* --------------------------------------------------
+    nav menu items
+---------------------------------------------------*/
+
+nav > a {
+    color: @nav-color;
+    display: block;
+    padding: 6px 15px;
+
+    &.active, &:hover, &:focus {
+        color: @nav-color;
+        &:after { content: '\e875'; font-family: 'entypo'; float: right; }
+    }
+    &:hover, &:focus {
+        &:after { color: @nav-color-hover; }
+    }
+    &.active:after {
+        color: @nav-color;
+    }
+
+    > .icon { margin-right: 5px; }
+}
+
+.nav-sep {
+    border-top: @nav-border;
+    border-left: none;
+    border-bottom: @nav-border-alt;
+    border-right: none;
+    margin: 6px 0;
 }
