@@ -6,8 +6,11 @@
             <a class="min-sm">{{ user.email }}</a>
             <a href="#" onclick="document.getElementById('account-logout-form').submit()"><span class="icon icon-logout"></span></a>
         {% else %}
-            
+
         {% endif %}
     </div>
     <a href="{{ url('manga.list') }}" class="header-heading">Fufufuu</a>
+    <form action="" method="get" id="header-search-form">
+        <input type="text" placeholder="{% trans %}Search for Manga, Doujinshi and Tags{% endtrans %}">
+    </form>
 </header>
