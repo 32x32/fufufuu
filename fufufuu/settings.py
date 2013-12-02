@@ -66,6 +66,8 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
+TEST_RUNNER = 'fufufuu.core.tests.FufufuuTestSuiteRunner'
+
 #-------------------------------------------------------------------------------
 # template settings
 #-------------------------------------------------------------------------------
