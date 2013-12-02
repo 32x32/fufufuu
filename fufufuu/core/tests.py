@@ -41,3 +41,5 @@ class BaseTestCase(TestCase):
         self.user = User.objects.get(username='testuser')
         self.user.set_password('password')
         self.user.save()
+
+        self.client.login(username='testuser', password='password')
