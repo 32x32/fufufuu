@@ -24,6 +24,7 @@ INSTALLED_APPS = (
     'fufufuu.account',
     'fufufuu.core',
     'fufufuu.manga',
+    'fufufuu.tag',
 )
 
 MIDDLEWARE_CLASSES = (
