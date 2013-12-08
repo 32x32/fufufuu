@@ -14,13 +14,13 @@ class Migration(SchemaMigration):
             ('password', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('last_login', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
             ('username', self.gf('django.db.models.fields.CharField')(max_length=30, unique=True)),
-            ('email', self.gf('django.db.models.fields.EmailField')(blank=True, max_length=254)),
+            ('email', self.gf('django.db.models.fields.EmailField')(max_length=254, blank=True)),
             ('markdown', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('html', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('avatar', self.gf('django.db.models.fields.files.FileField')(blank=True, max_length=100, null=True)),
+            ('avatar', self.gf('django.db.models.fields.files.FileField')(null=True, blank=True, max_length=100)),
             ('is_staff', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now=True)),
         ))
         db.send_create_signal('account', ['User'])
@@ -34,9 +34,9 @@ class Migration(SchemaMigration):
     models = {
         'account.user': {
             'Meta': {'db_table': "'user'", 'object_name': 'User'},
-            'avatar': ('django.db.models.fields.files.FileField', [], {'blank': 'True', 'max_length': '100', 'null': 'True'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
-            'email': ('django.db.models.fields.EmailField', [], {'blank': 'True', 'max_length': '254'}),
+            'avatar': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'blank': 'True', 'max_length': '100'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '254', 'blank': 'True'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),

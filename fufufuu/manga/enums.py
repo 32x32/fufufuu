@@ -3,13 +3,13 @@ from django.utils.translation import ugettext as _
 
 class MangaCategory:
 
-    NON_H       = 'NON-H'
-    ECCHI       = 'ECCHI'
-    VANILLA     = 'VANILLA'
-    ALTERNATIVE = 'ALTERNATIVE'
-    YAOI        = 'YAOI'
-    YURI        = 'YURI'
-    OTHER       = 'OTHER'
+    NON_H           = 'NON-H'
+    ECCHI           = 'ECCHI'
+    VANILLA         = 'VANILLA'
+    ALTERNATIVE     = 'ALTERNATIVE'
+    YAOI            = 'YAOI'
+    YURI            = 'YURI'
+    OTHER           = 'OTHER'
 
     choices = (
         (NON_H,         _('Non-H')),
@@ -26,18 +26,16 @@ class MangaCategory:
 
 class MangaStatus:
 
-    DRAFT       = 'DRAFT'
-    PUBLISHED   = 'PUBLISHED'
-    HOLD        = 'HOLD'
-    REMOVED     = 'REMOVED'
-    DELETED     = 'DELETED'
+    DRAFT           = 'DRAFT'
+    PUBLISHED       = 'PUBLISHED'
+    PENDING         = 'PENDING'
+    DELETED         = 'DELETED'
 
     choices = (
-        (DRAFT,     _('Draft')),
-        (PUBLISHED, _('Published')),
-        (HOLD,      _('On Hold')),
-        (REMOVED,   _('Removed')),
-        (DELETED,   _('Deleted')),
+        (DRAFT,         _('Draft')),
+        (PUBLISHED,     _('Published')),
+        (PENDING,       _('Pending')),
+        (DELETED,       _('Deleted')),
     )
 
     choices_dict = dict([(k,v) for (k,v) in choices])

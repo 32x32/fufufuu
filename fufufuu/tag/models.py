@@ -49,7 +49,7 @@ class TagDataHistory(models.Model):
     cover = models.FileField(upload_to=tag_cover_upload_to, null=True)
 
     created_by = models.ForeignKey(User)
-    created_on = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField()
 
     class Meta:
         db_table = 'tag_data_history'

@@ -1,4 +1,5 @@
 import argparse, datetime, os, random, sys
+from django.utils import timezone
 
 PROJECT_PATH = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
 sys.path.append(PROJECT_PATH)
@@ -94,6 +95,7 @@ class DataCreator:
                     markdown='History {}'.format(i),
                     html='History {}'.format(i),
                     created_by=self.user,
+                    created_on=timezone.now(),
                 ))
                 i += 1
         TagDataHistory.objects.bulk_create(tdh_list)
