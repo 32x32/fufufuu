@@ -23,8 +23,8 @@ class Manga(BaseAuditableModel):
     markdown            = models.TextField(blank=True)
     html                = models.TextField(blank=True)
     cover               = models.FileField(upload_to=manga_cover_upload_to, null=True)
-    category            = models.CharField(max_length=20, choices=MangaCategory.choices, default=MangaCategory.OTHER, db_index=True)
     status              = models.CharField(max_length=20, choices=MangaStatus.choices, default=MangaStatus.DRAFT, db_index=True)
+    category            = models.CharField(max_length=20, choices=MangaCategory.choices, default=MangaCategory.OTHER, db_index=True)
     language            = models.CharField(max_length=20, choices=Language.choices, default=Language.ENGLISH)
     uncensored          = models.BooleanField(default=False)
 
@@ -56,6 +56,8 @@ class Manga(BaseAuditableModel):
 
 
 class MangaHistory(models.Model):
+
+    manga               = models.ForeignKey(Manga)
 
     title               = models.CharField(max_length=100, default='Untitled')
     slug                = models.SlugField(max_length=100)
@@ -131,7 +133,7 @@ class MangaFavorite(models.Model):
 
 class MangaHistoryTag(models.Model):
 
-    manga_history = models.ForeignKey(MangaHistory)
+    mangahistory = models.ForeignKey(MangaHistory)
     tag = models.ForeignKey(Tag)
 
     class Meta:

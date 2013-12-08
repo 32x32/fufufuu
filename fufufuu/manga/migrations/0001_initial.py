@@ -7,27 +7,32 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        ('account', '0001_initial'),
+        ('tag', '0001_initial'),
+    )
+
     def forwards(self, orm):
         # Adding model 'Manga'
         db.create_table('manga', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
-            ('updated_on', self.gf('django.db.models.fields.DateTimeField')(db_index=True, auto_now=True, blank=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='+', null=True, on_delete=models.SET_NULL, to=orm['account.User'])),
-            ('updated_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='+', null=True, on_delete=models.SET_NULL, to=orm['account.User'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=100, default='Untitled')),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('updated_on', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, db_index=True, blank=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', null=True, on_delete=models.SET_NULL, to=orm['account.User'], blank=True)),
+            ('updated_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', null=True, on_delete=models.SET_NULL, to=orm['account.User'], blank=True)),
+            ('title', self.gf('django.db.models.fields.CharField')(default='Untitled', max_length=100)),
             ('slug', self.gf('django.db.models.fields.SlugField')(max_length=100)),
             ('markdown', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('html', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('cover', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True)),
-            ('category', self.gf('django.db.models.fields.CharField')(max_length=20, db_index=True, default='OTHER')),
-            ('status', self.gf('django.db.models.fields.CharField')(max_length=20, db_index=True, default='DRAFT')),
-            ('language', self.gf('django.db.models.fields.CharField')(max_length=20, default='en')),
+            ('cover', self.gf('django.db.models.fields.files.FileField')(null=True, max_length=100)),
+            ('status', self.gf('django.db.models.fields.CharField')(db_index=True, default='DRAFT', max_length=20)),
+            ('category', self.gf('django.db.models.fields.CharField')(db_index=True, default='OTHER', max_length=20)),
+            ('language', self.gf('django.db.models.fields.CharField')(default='en', max_length=20)),
             ('uncensored', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('tank', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='+', null=True, to=orm['tag.Tag'])),
-            ('collection', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='+', null=True, to=orm['tag.Tag'])),
-            ('tank_chapter', self.gf('django.db.models.fields.CharField')(max_length=20, blank=True, null=True)),
-            ('collection_part', self.gf('django.db.models.fields.CharField')(max_length=20, blank=True, null=True)),
+            ('tank', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', null=True, to=orm['tag.Tag'], blank=True)),
+            ('collection', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', null=True, to=orm['tag.Tag'], blank=True)),
+            ('tank_chapter', self.gf('django.db.models.fields.CharField')(null=True, blank=True, max_length=20)),
+            ('collection_part', self.gf('django.db.models.fields.CharField')(null=True, blank=True, max_length=20)),
             ('published_on', self.gf('django.db.models.fields.DateTimeField')(db_index=True, null=True)),
         ))
         db.send_create_signal('manga', ['Manga'])
@@ -53,19 +58,20 @@ class Migration(SchemaMigration):
         # Adding model 'MangaHistory'
         db.create_table('manga_history', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=100, default='Untitled')),
+            ('manga', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['manga.Manga'])),
+            ('title', self.gf('django.db.models.fields.CharField')(default='Untitled', max_length=100)),
             ('slug', self.gf('django.db.models.fields.SlugField')(max_length=100)),
             ('markdown', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('html', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('cover', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True)),
-            ('category', self.gf('django.db.models.fields.CharField')(max_length=20, db_index=True, default='VANILLA')),
-            ('status', self.gf('django.db.models.fields.CharField')(max_length=20, db_index=True, default='DRAFT')),
-            ('language', self.gf('django.db.models.fields.CharField')(max_length=20, default='en')),
+            ('cover', self.gf('django.db.models.fields.files.FileField')(null=True, max_length=100)),
+            ('category', self.gf('django.db.models.fields.CharField')(db_index=True, default='VANILLA', max_length=20)),
+            ('status', self.gf('django.db.models.fields.CharField')(db_index=True, default='DRAFT', max_length=20)),
+            ('language', self.gf('django.db.models.fields.CharField')(default='en', max_length=20)),
             ('uncensored', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('tank', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='+', null=True, to=orm['tag.Tag'])),
-            ('collection', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='+', null=True, to=orm['tag.Tag'])),
-            ('tank_chapter', self.gf('django.db.models.fields.CharField')(max_length=20, blank=True, null=True)),
-            ('collection_part', self.gf('django.db.models.fields.CharField')(max_length=20, blank=True, null=True)),
+            ('tank', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', null=True, to=orm['tag.Tag'], blank=True)),
+            ('collection', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', null=True, to=orm['tag.Tag'], blank=True)),
+            ('tank_chapter', self.gf('django.db.models.fields.CharField')(null=True, blank=True, max_length=20)),
+            ('collection_part', self.gf('django.db.models.fields.CharField')(null=True, blank=True, max_length=20)),
             ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['account.User'])),
             ('created_on', self.gf('django.db.models.fields.DateTimeField')()),
         ))
@@ -87,7 +93,7 @@ class Migration(SchemaMigration):
             ('double', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('page', self.gf('django.db.models.fields.PositiveIntegerField')()),
             ('image', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100, null=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(null=True, max_length=100)),
         ))
         db.send_create_signal('manga', ['MangaPage'])
 
@@ -97,7 +103,7 @@ class Migration(SchemaMigration):
             ('manga', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['manga.Manga'])),
             ('file', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
             ('downloads', self.gf('django.db.models.fields.PositiveIntegerField')(default=0)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
         db.send_create_signal('manga', ['MangaArchive'])
 
@@ -127,10 +133,10 @@ class Migration(SchemaMigration):
 
     models = {
         'account.user': {
-            'Meta': {'object_name': 'User', 'db_table': "'user'"},
-            'avatar': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'blank': 'True', 'null': 'True'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '254', 'blank': 'True'}),
+            'Meta': {'db_table': "'user'", 'object_name': 'User'},
+            'avatar': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'blank': 'True', 'max_length': '100'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'email': ('django.db.models.fields.EmailField', [], {'blank': 'True', 'max_length': '254'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
@@ -142,89 +148,90 @@ class Migration(SchemaMigration):
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         'manga.manga': {
-            'Meta': {'object_name': 'Manga', 'db_table': "'manga'"},
-            'category': ('django.db.models.fields.CharField', [], {'max_length': '20', 'db_index': 'True', 'default': "'OTHER'"}),
-            'collection': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'+'", 'null': 'True', 'to': "orm['tag.Tag']"}),
-            'collection_part': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True', 'null': 'True'}),
-            'cover': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True'}),
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'+'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['account.User']"}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
-            'favorite_users': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'manga_favorites'", 'blank': 'True', 'symmetrical': 'False', 'to': "orm['account.User']"}),
+            'Meta': {'db_table': "'manga'", 'object_name': 'Manga'},
+            'category': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'default': "'OTHER'", 'max_length': '20'}),
+            'collection': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'null': 'True', 'to': "orm['tag.Tag']", 'blank': 'True'}),
+            'collection_part': ('django.db.models.fields.CharField', [], {'null': 'True', 'blank': 'True', 'max_length': '20'}),
+            'cover': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'max_length': '100'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['account.User']", 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'favorite_users': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'manga_favorites'", 'to': "orm['account.User']", 'symmetrical': 'False'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'language': ('django.db.models.fields.CharField', [], {'max_length': '20', 'default': "'en'"}),
+            'language': ('django.db.models.fields.CharField', [], {'default': "'en'", 'max_length': '20'}),
             'markdown': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'published_on': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True', 'null': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '100'}),
-            'status': ('django.db.models.fields.CharField', [], {'max_length': '20', 'db_index': 'True', 'default': "'DRAFT'"}),
-            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'blank': 'True', 'to': "orm['tag.Tag']"}),
-            'tank': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'+'", 'null': 'True', 'to': "orm['tag.Tag']"}),
-            'tank_chapter': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True', 'null': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '100', 'default': "'Untitled'"}),
+            'status': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'default': "'DRAFT'", 'max_length': '20'}),
+            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'to': "orm['tag.Tag']", 'symmetrical': 'False'}),
+            'tank': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'null': 'True', 'to': "orm['tag.Tag']", 'blank': 'True'}),
+            'tank_chapter': ('django.db.models.fields.CharField', [], {'null': 'True', 'blank': 'True', 'max_length': '20'}),
+            'title': ('django.db.models.fields.CharField', [], {'default': "'Untitled'", 'max_length': '100'}),
             'uncensored': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'+'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['account.User']"}),
-            'updated_on': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True', 'auto_now': 'True', 'blank': 'True'})
+            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['account.User']", 'blank': 'True'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_index': 'True', 'blank': 'True'})
         },
         'manga.mangaarchive': {
-            'Meta': {'object_name': 'MangaArchive', 'db_table': "'manga_archive'"},
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'Meta': {'db_table': "'manga_archive'", 'object_name': 'MangaArchive'},
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'downloads': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'manga': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['manga.Manga']"})
         },
         'manga.mangafavorite': {
-            'Meta': {'object_name': 'MangaFavorite', 'managed': 'False', 'db_table': "'manga_favorite_users'"},
+            'Meta': {'managed': 'False', 'db_table': "'manga_favorite_users'", 'object_name': 'MangaFavorite'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'manga': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['manga.Manga']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['account.User']"})
         },
         'manga.mangahistory': {
-            'Meta': {'object_name': 'MangaHistory', 'db_table': "'manga_history'"},
-            'category': ('django.db.models.fields.CharField', [], {'max_length': '20', 'db_index': 'True', 'default': "'VANILLA'"}),
-            'collection': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'+'", 'null': 'True', 'to': "orm['tag.Tag']"}),
-            'collection_part': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True', 'null': 'True'}),
-            'cover': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True'}),
+            'Meta': {'db_table': "'manga_history'", 'object_name': 'MangaHistory'},
+            'category': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'default': "'VANILLA'", 'max_length': '20'}),
+            'collection': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'null': 'True', 'to': "orm['tag.Tag']", 'blank': 'True'}),
+            'collection_part': ('django.db.models.fields.CharField', [], {'null': 'True', 'blank': 'True', 'max_length': '20'}),
+            'cover': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'max_length': '100'}),
             'created_by': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['account.User']"}),
             'created_on': ('django.db.models.fields.DateTimeField', [], {}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'language': ('django.db.models.fields.CharField', [], {'max_length': '20', 'default': "'en'"}),
+            'language': ('django.db.models.fields.CharField', [], {'default': "'en'", 'max_length': '20'}),
+            'manga': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['manga.Manga']"}),
             'markdown': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '100'}),
-            'status': ('django.db.models.fields.CharField', [], {'max_length': '20', 'db_index': 'True', 'default': "'DRAFT'"}),
-            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'blank': 'True', 'to': "orm['tag.Tag']"}),
-            'tank': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'+'", 'null': 'True', 'to': "orm['tag.Tag']"}),
-            'tank_chapter': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True', 'null': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '100', 'default': "'Untitled'"}),
+            'status': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'default': "'DRAFT'", 'max_length': '20'}),
+            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'to': "orm['tag.Tag']", 'symmetrical': 'False'}),
+            'tank': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'null': 'True', 'to': "orm['tag.Tag']", 'blank': 'True'}),
+            'tank_chapter': ('django.db.models.fields.CharField', [], {'null': 'True', 'blank': 'True', 'max_length': '20'}),
+            'title': ('django.db.models.fields.CharField', [], {'default': "'Untitled'", 'max_length': '100'}),
             'uncensored': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         'manga.mangahistorytag': {
-            'Meta': {'object_name': 'MangaHistoryTag', 'managed': 'False', 'db_table': "'manga_history_tags'"},
+            'Meta': {'managed': 'False', 'db_table': "'manga_history_tags'", 'object_name': 'MangaHistoryTag'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'manga_history': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['manga.MangaHistory']"}),
             'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tag.Tag']"})
         },
         'manga.mangapage': {
-            'Meta': {'object_name': 'MangaPage', 'ordering': "('page',)", 'db_table': "'manga_page'"},
+            'Meta': {'object_name': 'MangaPage', 'db_table': "'manga_page'", 'ordering': "('page',)"},
             'double': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'image': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'manga': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['manga.Manga']"}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'null': 'True', 'max_length': '100'}),
             'page': ('django.db.models.fields.PositiveIntegerField', [], {})
         },
         'manga.mangatag': {
-            'Meta': {'object_name': 'MangaTag', 'managed': 'False', 'db_table': "'manga_tags'"},
+            'Meta': {'managed': 'False', 'db_table': "'manga_tags'", 'object_name': 'MangaTag'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'manga': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['manga.Manga']"}),
             'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tag.Tag']"})
         },
         'tag.tag': {
-            'Meta': {'object_name': 'Tag', 'db_table': "'tag'"},
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'Meta': {'db_table': "'tag'", 'object_name': 'Tag'},
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'tag_type': ('django.db.models.fields.CharField', [], {'max_length': '20', 'db_index': 'True'})
+            'tag_type': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '20'})
         }
     }
 
