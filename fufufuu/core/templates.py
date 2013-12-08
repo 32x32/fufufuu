@@ -38,16 +38,17 @@ class Spaceless(Extension):
 
 #-------------------------------------------------------------------------------
 
-
-TEMPLATE_ENV = Environment(
-    loader=FileSystemLoader(TEMPLATE_DIRS),
-    auto_reload=DEBUG,
-    extensions=[
+TEMPLATE_SETTINGS = {
+    'loader': FileSystemLoader(TEMPLATE_DIRS),
+    'auto_reload': DEBUG,
+    'extensions': [
         'jinja2.ext.i18n',
         'jinja2.ext.with_',
         'fufufuu.core.templates.Spaceless',
     ],
-)
+}
+
+TEMPLATE_ENV = Environment(**TEMPLATE_SETTINGS)
 TEMPLATE_ENV.install_gettext_callables(ugettext, ungettext)
 TEMPLATE_ENV.globals.update(**{
     'url': reverse,
