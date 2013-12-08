@@ -1,5 +1,13 @@
+{% set url_account_login = url('account.login') %}
+{% set url_account_register = url('account.register') %}
 {% set url_manga_list = url('manga.list') %}
 <nav>
+    {% if request.user.is_authenticated() %}
+    {% else %}
+        <a href="{{ url_account_login }}" class="max-xs{% if request.path == url_account_login %} active{% endif %}"><span class="icon icon-key"></span>{% trans %}Login{% endtrans %}</a>
+        <a href="{{ url_account_register }}" class="max-xs{% if request.path == url_account_register %} active{% endif %}"><span class="icon icon-user-add"></span>{% trans %}Create Account{% endtrans %}</a>
+    {% endif %}
+    <hr class="nav-sep max-xs">
     <a href="{{ url_manga_list }}"{% if request.path == url_manga_list %} class="active"{% endif %}><span class="icon icon-clock"></span>{% trans %}Latest{% endtrans %}</a>
     <a href="#"><span class="icon icon-heart"></span>{% trans %}Favorites{% endtrans %}</a>
     <hr class="nav-sep">

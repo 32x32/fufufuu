@@ -6,8 +6,8 @@
             <a href="#" class="min-sm"><span class="icon icon-cog"></span>{{ user.username }}</a>
             <a href="#" onclick="document.getElementById('account-logout-form').submit()"><span class="icon icon-logout"></span></a>
         {% else %}
-            <a href="#">{% trans %}Login{% endtrans %}</a>
-            <a href="#">{% trans %}Create Account{% endtrans %}</a>
+            <a href="{{ url('account.login') }}">{% trans %}Login{% endtrans %}</a>
+            <a href="{{ url('account.register') }}">{% trans %}Create Account{% endtrans %}</a>
         {% endif %}
     </div>
     <a href="{{ url('manga.list') }}" class="header-heading">Fufufuu</a>
