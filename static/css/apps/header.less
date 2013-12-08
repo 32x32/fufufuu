@@ -61,12 +61,13 @@ header {
 
 #header-search-form {
     .inline-block();
-    width: calc(~"100% - 192px");
     > input {
         background-color: @header-bg;
         border: none;
         color: @header-color;
+        font-size: 16px;
         height: 50px;
+        margin: 0;
         outline: none;
         padding: 15px 15px 15px 0;
         width: calc(~"100% - 50px");
@@ -77,9 +78,16 @@ header {
     color: #999;
     border: none;
     background: transparent;
-    font-size: 15px;
-    width: 40px;
-    margin-left: 10px
+    font-size: 18px;
+    margin-bottom: 0;
+    width: 50px;
+}
+
+@media screen and (min-width: @screen-md) {
+    #header-search-form { width: calc(~"100% - 192px"); }
+}
+@media screen and (max-width: @screen-md1) {
+    #header-search-form { width: calc(~"100% - 50px"); }
 }
 
 /* --------------------------------------------------
@@ -87,6 +95,7 @@ header {
 ---------------------------------------------------*/
 
 .header-menu {
+    background-color: @header-bg;
     height: 50px;
     padding: 0 15px;
 

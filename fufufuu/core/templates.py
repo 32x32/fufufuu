@@ -21,6 +21,7 @@ class Spaceless(Extension):
         """
         Parses the statements and calls back to strip spaces.
         """
+
         lineno = parser.stream.__next__().lineno
         body = parser.parse_statements(['name:endspaceless'], drop_needle=True)
         return nodes.CallBlock( self.call_method('_render_spaceless'), [], [], body).set_lineno(lineno)
@@ -31,6 +32,7 @@ class Spaceless(Extension):
         from django. Stolen from `django.util.html` Returns the given HTML
         with spaces between tags removed.
         """
+
         if not caller:
             return ''
         return re.sub(r'>\s+<', '><', str(caller().strip()))
