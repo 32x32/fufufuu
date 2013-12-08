@@ -12,6 +12,8 @@ class TemplateView(View):
     available to use.
     """
 
+    template_name = None
+
     def render_to_response(self, context):
         template = TEMPLATE_ENV.get_template(self.template_name)
 

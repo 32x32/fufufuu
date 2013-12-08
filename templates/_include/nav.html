@@ -1,21 +1,30 @@
 {% set url_account_login = url('account.login') %}
 {% set url_account_register = url('account.register') %}
 {% set url_manga_list = url('manga.list') %}
+{% set url_tag_list_authors = url('tag.list', args=['authors']) %}
+{% set url_tag_list_circles = url('tag.list', args=['circles']) %}
+{% set url_tag_list_collections = url('tag.list', args=['collections']) %}
+{% set url_tag_list_content = url('tag.list', args=['content']) %}
+{% set url_tag_list_events = url('tag.list', args=['events']) %}
+{% set url_tag_list_magazines = url('tag.list', args=['magazines']) %}
+{% set url_tag_list_parodies = url('tag.list', args=['parodies']) %}
+{% set url_tag_list_scanlators = url('tag.list', args=['scanlators']) %}
+{% set url_tag_list_tanks = url('tag.list', args=['tanks']) %}
 <nav>
     <a href="{{ url_manga_list }}"{% if request.path == url_manga_list %} class="active"{% endif %}><span class="icon icon-clock"></span>{% trans %}Latest{% endtrans %}</a>
     <a href="#"><span class="icon icon-heart"></span>{% trans %}Favorites{% endtrans %}</a>
     <hr class="nav-sep">
-    <a href="#"><span class="icon icon-docs"></span>{% trans %}Tanks{% endtrans %}</a>
-    <a href="#"><span class="icon icon-docs"></span>{% trans %}Collections{% endtrans %}</a>
+    <a href="{{ url_tag_list_tanks }}"{% if request.path == url_tag_list_tanks %} class="active"{% endif %}><span class="icon icon-docs"></span>{% trans %}Tanks{% endtrans %}</a>
+    <a href="{{ url_tag_list_collections }}"{% if request.path == url_tag_list_collections %} class="active"{% endif %}><span class="icon icon-docs"></span>{% trans %}Collections{% endtrans %}</a>
     <a href="#"><span class="icon icon-docs"></span>{% trans %}Originals{% endtrans %}</a>
     <hr class="nav-sep">
-    <a href="#"><span class="icon icon-tag"></span>{% trans %}Scanlators{% endtrans %}</a>
-    <a href="#"><span class="icon icon-tag"></span>{% trans %}Parodies{% endtrans %}</a>
-    <a href="#"><span class="icon icon-tag"></span>{% trans %}Content{% endtrans %}</a>
-    <a href="#"><span class="icon icon-tag"></span>{% trans %}Circles{% endtrans %}</a>
-    <a href="#"><span class="icon icon-tag"></span>{% trans %}Authors{% endtrans %}</a>
-    <a href="#"><span class="icon icon-tag"></span>{% trans %}Magazines{% endtrans %}</a>
-    <a href="#"><span class="icon icon-tag"></span>{% trans %}Events{% endtrans %}</a>
+    <a href="{{ url_tag_list_authors }}"{% if request.path == url_tag_list_authors %} class="active"{% endif %}><span class="icon icon-tag"></span>{% trans %}Authors{% endtrans %}</a>
+    <a href="{{ url_tag_list_circles }}"{% if request.path == url_tag_list_circles %} class="active"{% endif %}><span class="icon icon-tag"></span>{% trans %}Circles{% endtrans %}</a>
+    <a href="{{ url_tag_list_content }}"{% if request.path == url_tag_list_content %} class="active"{% endif %}><span class="icon icon-tag"></span>{% trans %}Content{% endtrans %}</a>
+    <a href="{{ url_tag_list_events }}"{% if request.path == url_tag_list_events %} class="active"{% endif %}><span class="icon icon-tag"></span>{% trans %}Events{% endtrans %}</a>
+    <a href="{{ url_tag_list_magazines }}"{% if request.path == url_tag_list_magazines %} class="active"{% endif %}><span class="icon icon-tag"></span>{% trans %}Magazines{% endtrans %}</a>
+    <a href="{{ url_tag_list_parodies }}"{% if request.path == url_tag_list_parodies %} class="active"{% endif %}><span class="icon icon-tag"></span>{% trans %}Parodies{% endtrans %}</a>
+    <a href="{{ url_tag_list_scanlators }}"{% if request.path == url_tag_list_scanlators %} class="active"{% endif %}><span class="icon icon-tag"></span>{% trans %}Scanlators{% endtrans %}</a>
     <hr class="nav-sep max-xs">
     {% if user.is_authenticated() %}
         <a href="#" class="max-xs"><span class="icon icon-cog"></span>{{ user.username }}</a>

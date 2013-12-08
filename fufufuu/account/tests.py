@@ -17,13 +17,13 @@ class AccountLoginViewTests(BaseTestCase):
         self.client.logout()
         response = self.client.get(reverse('account.login'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.template_name, 'account/account-login.html')
+        self.assertTemplateUsed(response, 'account/account-login.html')
 
     def test_account_login_view_post_invalid(self):
         self.client.logout()
         response = self.client.post(reverse('account.login'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.template_name, 'account/account-login.html')
+        self.assertTemplateUsed(response, 'account/account-login.html')
 
     def test_account_login_view_post(self):
         self.client.logout()
@@ -49,7 +49,7 @@ class AccountRegisterViewTests(BaseTestCase):
         self.client.logout()
         response = self.client.get(reverse('account.register'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.template_name, 'account/account-register.html')
+        self.assertTemplateUsed(response, 'account/account-register.html')
 
     def test_account_register_view_post_invalid(self):
         self.client.logout()
@@ -59,7 +59,7 @@ class AccountRegisterViewTests(BaseTestCase):
             'password2': '5678',
         })
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.template_name, 'account/account-register.html')
+        self.assertTemplateUsed(response, 'account/account-register.html')
 
     def test_account_register_view_post(self):
         self.client.logout()

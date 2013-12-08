@@ -38,3 +38,15 @@ class TagType:
         SCANLATOR:      _('Scanlators'),
         TANK:           _('Tanks'),
     }
+
+    plural_reverse_map = {
+        'authors':      AUTHOR,
+        'circles':      CIRCLE,
+        'collections':  COLLECTION,
+        'content':      CONTENT,
+        'events':       EVENT,
+        'magazines':    MAGAZINE,
+        'parodies':     PARODY,
+        'scanlators':   SCANLATOR,
+        'tanks':        TANK,
+    }

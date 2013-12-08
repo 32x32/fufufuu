@@ -43,3 +43,6 @@ class BaseTestCase(TestCase):
         self.user.save()
 
         self.client.login(username='testuser', password='password')
+
+    def assertTemplateUsed(self, response, template_name):
+        self.assertEqual(response.template_name, template_name)

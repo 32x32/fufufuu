@@ -80,7 +80,7 @@ class DataCreator:
             tag_data_list = []
             for tag_type, _ in TagType.choices:
                 for i, tag in enumerate(Tag.objects.filter(tag_type=tag_type), start=1):
-                    name = '{} {} - {}'.format(tag_type, i, language)
+                    name = '{} {} - {}'.format(TagType.choices_dict[tag_type], i, language)
                     tag_data_list.append(TagData(
                         tag=tag,
                         language=language,

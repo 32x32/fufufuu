@@ -1,0 +1,10 @@
+<ul class="tl">
+    {% for tag in tag_list %}
+        <li class="tli">
+            <a href="#">
+                <span class="badge right">{{ tag.manga_count }}</span>
+                <span>{{ tag.name }}</span>
+            </a>
+        </li>
+    {% endfor %}
+</ul>
