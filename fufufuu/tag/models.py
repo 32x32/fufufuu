@@ -1,4 +1,5 @@
 from django.db import models
+from fufufuu.account.models import User
 from fufufuu.core.languages import Language
 from fufufuu.core.models import BaseAuditableModel
 from fufufuu.core.uploads import tag_cover_upload_to
@@ -34,7 +35,7 @@ class TagData(BaseAuditableModel):
         super().save(*args, **kwargs)
 
 
-class TagDataHistory(BaseAuditableModel):
+class TagDataHistory(models.Model):
 
     tag_data = models.ForeignKey(TagData)
 
@@ -43,6 +44,9 @@ class TagDataHistory(BaseAuditableModel):
     markdown = models.TextField(blank=True)
     html = models.TextField(blank=True)
     cover = models.FileField(upload_to=tag_cover_upload_to, null=True)
+
+    created_by = models.ForeignKey(User)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'tag_data_history'
