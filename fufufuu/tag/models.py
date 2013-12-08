@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 from fufufuu.account.models import User
 from fufufuu.core.languages import Language
 from fufufuu.core.models import BaseAuditableModel
@@ -10,6 +12,7 @@ from fufufuu.tag.enums import TagType
 class Tag(models.Model):
 
     tag_type = models.CharField(max_length=20, choices=TagType.choices, db_index=True)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'tag'
@@ -65,3 +68,24 @@ class TagAlias(BaseAuditableModel):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)[:100] or '-'
         super().save(*args, **kwargs)
+
+
+#-------------------------------------------------------------------------------
+# signals
+#-------------------------------------------------------------------------------
+
+
+@receiver(post_delete, sender=TagData)
+def tag_data_post_delete(instance, **kwargs):
+    for field in ['cover']:
+        field = getattr(instance, field)
+        if field: field.storage.delete(field.path)
+
+
+@receiver(post_delete, sender=TagDataHistory)
+def tag_data_history_post_delete(instance, **kwargs):
+    for field in ['cover']:
+        field = getattr(instance, field)
+        if field: field.storage.delete(field.path)
+
+

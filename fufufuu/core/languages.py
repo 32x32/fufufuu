@@ -1,6 +1,7 @@
 class Language:
 
-    ENGLISH = 'en'
+    ENGLISH     = 'en'
+    JAPANESE    = 'ja'
 
     choices = (
         ('af', 'Afrikaans'),

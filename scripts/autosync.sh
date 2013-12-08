@@ -6,3 +6,4 @@ rm -fr media/*
 rm -fr logs/*
 python manage.py syncdb --noinput
 python manage.py migrate
+python fufufuu/datacreator.py
