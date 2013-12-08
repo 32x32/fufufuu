@@ -73,9 +73,17 @@ header {
         color: @header-color;
         height: 50px;
         outline: none;
-        padding: 15px;
-        width: 100%;
+        padding: 15px 15px 15px 0;
+        width: calc(~"100% - 50px");
     }
+}
+
+#header-search-form > .icon-search {
+    color: #999;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    width: 50px;
 }
 
 /* --------------------------------------------------

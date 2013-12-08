@@ -14,6 +14,7 @@
     </div>
     <a href="{{ url('manga.list') }}" class="header-heading">Fufufuu</a>
     <form action="" method="get" id="header-search-form" class="min-xs">
-        <input type="text" placeholder="{% trans %}Search for Manga, Doujinshi and Tags{% endtrans %}">
+        <label class="icon icon-search left" for="id_header_search"></label>
+        <input type="text" placeholder="{% trans %}Search for Manga, Doujinshi and Tags{% endtrans %}" id="id_header_search">
     </form>
 </header>
