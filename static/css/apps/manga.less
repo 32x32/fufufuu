@@ -1,0 +1,33 @@
+/* --------------------------------------------------
+    manga styles
+---------------------------------------------------*/
+
+.ml {
+    padding: 5px;
+}
+
+.mli {
+    .inline-block();
+    padding: 5px;
+    width: 210px;
+}
+
+@media screen and (max-width: 479px) {
+    .mli { width: 100/2%; }
+}
+@media screen and (min-width: 480px) and (max-width: 767px) {
+    .mli { width: 100/3%; }
+}
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+    .mli { width: 100/4%; }
+}
+@media screen and (min-width: 1200px) and (max-width: 1559px) {
+    .mli { width: 100/5%; }
+}
+@media screen and (min-width: 1560px) and (max-width: 1799px) {
+    .mli { width: 100/6%; }
+}
+@media screen and (min-width: 1800px) {
+    .mli { width: 100/8%; }
+}
+

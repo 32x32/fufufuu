@@ -12,8 +12,14 @@ from fufufuu.tag.models import Tag
 
 class MangaManager(models.Manager):
 
-    def get_query_set(self):
-        return super().get_query_set().exclude(status=MangaStatus.DELETED)
+    def get_queryset(self):
+        return super().get_queryset().exclude(status=MangaStatus.DELETED)
+
+
+class MangaPublishedManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(status=MangaStatus.PUBLISHED).order_by('-published_on')
 
 
 class Manga(BaseAuditableModel):
@@ -38,6 +44,7 @@ class Manga(BaseAuditableModel):
     published_on        = models.DateTimeField(null=True, db_index=True)
 
     objects             = MangaManager()
+    published           = MangaPublishedManager()
     all                 = models.Manager()
 
     class Meta:
