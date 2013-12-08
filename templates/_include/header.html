@@ -1,3 +1,5 @@
+{% set url_account_login = url('account.login') %}
+{% set url_account_register = url('account.register') %}
 <header>
     <span class="icon icon-menu max-md left" id="header-menu-icon"></span>
     <a href="" class="icon icon-search max-xs right"></a>
@@ -6,8 +8,8 @@
             <a href="#" class="min-sm"><span class="icon icon-cog"></span>{{ user.username }}</a>
             <a href="#" onclick="document.getElementById('account-logout-form').submit()"><span class="icon icon-logout"></span></a>
         {% else %}
-            <a href="{{ url('account.login') }}">{% trans %}Login{% endtrans %}</a>
-            <a href="{{ url('account.register') }}">{% trans %}Create Account{% endtrans %}</a>
+            <a href="{{ url_account_login }}"{% if request.path == url_account_login %} class="active"{% endif %}>{% trans %}Login{% endtrans %}</a>
+            <a href="{{ url_account_register }}"{% if request.path == url_account_register %} class="active"{% endif %}>{% trans %}Create Account{% endtrans %}</a>
         {% endif %}
     </div>
     <a href="{{ url('manga.list') }}" class="header-heading">Fufufuu</a>
