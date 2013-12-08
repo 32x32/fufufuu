@@ -17,6 +17,6 @@ def manga_page_upload_to(instance, filename):
     return os.sep.join(['manga', filename])
 
 
-def tag_image_upload_to(instance, filename):
+def tag_cover_upload_to(instance, filename):
     return os.sep.join(['tag', filename])
 

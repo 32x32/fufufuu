@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     jinja2htmlcompress
     ~~~~~~~~~~~~~~~~~~
@@ -41,12 +40,8 @@ def _make_dict_from_listing(listing):
 
 class HTMLCompress(Extension):
     isolated_elements = set(['script', 'style', 'noscript', 'textarea'])
-    void_elements = set(['br', 'img', 'area', 'hr', 'param', 'input',
-                         'embed', 'col'])
-    block_elements = set(['div', 'p', 'form', 'ul', 'ol', 'li', 'table', 'tr',
-                          'tbody', 'thead', 'tfoot', 'tr', 'td', 'th', 'dl',
-                          'dt', 'dd', 'blockquote', 'h1', 'h2', 'h3', 'h4',
-                          'h5', 'h6', 'pre'])
+    void_elements = set(['br', 'img', 'area', 'hr', 'param', 'input', 'embed', 'col'])
+    block_elements = set(['div', 'p', 'form', 'ul', 'ol', 'li', 'table', 'tr', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'th', 'dl', 'dt', 'dd', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre'])
     breaking_rules = _make_dict_from_listing([
         (['p'], set(['#block'])),
         (['li'], set(['li'])),
@@ -82,7 +77,7 @@ class HTMLCompress(Extension):
             return
         for idx, other_tag in enumerate(reversed(ctx.stack)):
             if other_tag == tag:
-                for num in xrange(idx + 1):
+                for num in range(idx + 1):
                     ctx.stack.pop()
             elif not self.breaking_rules.get(other_tag):
                 break

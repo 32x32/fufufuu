@@ -36,5 +36,5 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
 
-    def __unicode__(self):
-        return '{}: {}'.format(self.id, self.username)
+    class Meta:
+        db_table = 'user'
