@@ -1,5 +1,32 @@
 {% extends 'base.html' %}
+{% import '_macros/forms.html' as forms %}
 
 {% block content %}
-
+    <div class="abs-center-wrapper">
+        <div class="abs-center-table">
+            <div class="abs-center-cell">
+                <div class="container">
+                    <form action="" method="post" class="account-form panel">
+                        <h4 class="panel-heading">{% trans %}Login to Fufufuu{% endtrans %}</h4>
+                        <div class="panel-body">
+                            {{ forms.csrf_token(csrf_token) }}
+                            {% if request.GET.next %}
+                                <input type="hidden" name="next" value="{{ request.GET.next }}">
+                            {% endif %}
+                            {{ forms.non_field_errors(form) }}
+                            {{ forms.field(form.username) }}
+                            {{ forms.field(form.password) }}
+                            <div class="form-field form-buttons">
+                                <button type="submit" class="btn btn-primary">{% trans %}Login{% endtrans %}</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="account-form panel max-xs">
+                        <h4 class="panel-heading">{% trans %}Don't have an Account?{% endtrans %}</h4>
+                        <div class="panel-body"><a href="{{ url('account.register') }}">{% trans %}Create an Account{% endtrans %}</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -2,10 +2,30 @@
     label styles
 ---------------------------------------------------*/
 
+label {
+    display: none;
+    font-weight: @font-weight-bold;
+    margin-bottom: 3px;
+}
 
 /* --------------------------------------------------
     input styles
 ---------------------------------------------------*/
+
+input[type="text"], input[type="email"], input[type="password"], textarea {
+    .border-radius(@border-radius);
+    -webkit-appearance: none;
+
+    background: none;
+    background-color: @input-bg;
+    border: 1px solid @input-border;
+    display: block;
+    line-height: @font-size-base * 1.2;
+    margin-bottom: 5px;
+    outline: none;
+    padding: 10px 10px;
+    width: 100%;
+}
 
 
 /* --------------------------------------------------
@@ -17,8 +37,28 @@
     form field
 ---------------------------------------------------*/
 
+.form-field {
+    margin-bottom: 10px;
+}
+.form-buttons {
+    margin-top: 20px;
+}
+
+.help-block, .error-block {
+    color: @help-text-color;
+    display: block;
+    font-size: @font-size-small;
+}
 
 /* --------------------------------------------------
     form errors
 ---------------------------------------------------*/
 
+.form-field.error {
+    > label, > .error-block {
+        color: @input-border-error;
+    }
+    > input[type="text"], input[type="email"], input[type="password"] {
+        border-color: @input-border-error;
+    }
+}
