@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <ul class="ml">
+        {% for tag in tag_list %}
+            <li class="mli">
+                <div class="mli-core">
+                    <a href="#">
+                        {% if tag.cover %}
+                            <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ STATIC_URL }}images/placeholder/placeholder-200x300.png" data-src-retina="{{ STATIC_URL }}images/placeholder/placeholder-400x600.png">
+                        {% else %}
+                            <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ STATIC_URL }}images/no-image.png">
+                        {% endif %}
+                    </a>
+                    <a href="#" class="block mli-title">{{ tag.name }}</a>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
