@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^admin/',             include(admin.site.urls)),
     url(r'^i18n/',              include('django.conf.urls.i18n')),
     url(r'^tag/',               include('fufufuu.tag.urls')),
+    url(r'^upload/',            include('fufufuu.upload.urls')),
 
 )
 

@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Inconsolata:400">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/app{{ RESOURCE_VERSION }}.css">
-    <title>Fufufuu</title>
+    <title>Fufufuu - {% block title %}{% endblock %}</title>
 </head>
 <body>
     {% include '_include/header.html' %}

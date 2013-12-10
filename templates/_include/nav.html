@@ -10,6 +10,7 @@
 {% set url_tag_list_parody = url('tag.list.parody') %}
 {% set url_tag_list_scanlator = url('tag.list.scanlator') %}
 {% set url_tag_list_tank = url('tag.list.tank') %}
+{% set url_upload_list = url('upload.list') %}
 <nav>
     <a href="{{ url_manga_list }}"{% if request.path == url_manga_list %} class="active"{% endif %}><span class="icon icon-clock"></span>{% trans %}Latest{% endtrans %}</a>
     <a href="#"><span class="icon icon-heart"></span>{% trans %}Favorites{% endtrans %}</a>
@@ -28,6 +29,7 @@
     <hr class="nav-sep max-xs">
     {% if user.is_authenticated() %}
         <a href="#" class="max-xs"><span class="icon icon-cog"></span>{{ user.username }}</a>
+        <a href="{{ url_upload_list }}" class="max-xs{% if request.path == url_upload_list %} active{% endif %}"><span class="icon icon-up-circled"></span>{% trans %}Upload{% endtrans %}</a>
         <a href="#" class="max-xs" onclick="document.getElementById('account-logout-form').submit()"><span class="icon icon-logout"></span>{% trans %}Logout{% endtrans %}</a>
     {% else %}
         <a href="{{ url_account_login }}" class="max-xs{% if request.path == url_account_login %} active{% endif %}"><span class="icon icon-key"></span>{% trans %}Login{% endtrans %}</a>
