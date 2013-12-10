@@ -7,6 +7,7 @@ from fufufuu.core.models import BaseAuditableModel
 from fufufuu.core.uploads import manga_cover_upload_to, manga_archive_upload_to, manga_page_upload_to
 from fufufuu.core.utils import slugify
 from fufufuu.manga.enums import MangaCategory, MangaStatus
+from fufufuu.manga.mixins import MangaMixin
 from fufufuu.tag.models import Tag
 
 
@@ -22,7 +23,7 @@ class MangaPublishedManager(models.Manager):
         return super().get_queryset().filter(status=MangaStatus.PUBLISHED).order_by('-published_on')
 
 
-class Manga(BaseAuditableModel):
+class Manga(BaseAuditableModel, MangaMixin):
 
     title               = models.CharField(max_length=100, default='Untitled')
     slug                = models.SlugField(max_length=100)
@@ -62,7 +63,7 @@ class Manga(BaseAuditableModel):
             self.save()
 
 
-class MangaHistory(models.Model):
+class MangaHistory(models.Model, MangaMixin):
 
     manga               = models.ForeignKey(Manga)
 

@@ -40,6 +40,7 @@ class Spaceless(Extension):
 
 #-------------------------------------------------------------------------------
 
+
 TEMPLATE_SETTINGS = {
     'loader': FileSystemLoader(TEMPLATE_DIRS),
     'auto_reload': DEBUG,

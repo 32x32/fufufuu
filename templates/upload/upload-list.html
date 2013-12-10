@@ -3,4 +3,32 @@
 {% block title %}{% trans %}Uploads{% endtrans %}{% endblock %}
 
 {% block content %}
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th width="100" class="min-xs">{% trans %}Status{% endtrans %}</th>
+                    <th width="100" class="min-xs">{% trans %}Category{% endtrans %}</th>
+                    <th>{% trans %}Title{% endtrans %}</th>
+                    <th width="50" class="min-xs"><span class="icon icon-heart"></span></th>
+                    <th width="50" class="min-xs"><span class="icon icon-comment"></span></th>
+                    <th width="50" class="min-xs"><span class="icon icon-down-circled"></span></th>
+                    <th width="200" class="min-sm">{% trans %}Date{% endtrans %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for manga in manga_list %}
+                    <tr>
+                        <td>{{ manga.status_display }}</td>
+                        <td>{{ manga.category_display }}</td>
+                        <td><a href="#">{{ manga.title }}</a></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{ manga.created_on }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
