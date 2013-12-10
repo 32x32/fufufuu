@@ -34,50 +34,46 @@ class TagModelTests(BaseTestCase):
 class TagListViewTests(BaseTestCase):
 
     def test_tag_list_view_get_authors(self):
-        response = self.client.get(reverse('tag.list', args=['authors']))
+        response = self.client.get(reverse('tag.list.author'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tag/tag-list.html')
 
     def test_tag_list_view_get_circles(self):
-        response = self.client.get(reverse('tag.list', args=['circles']))
+        response = self.client.get(reverse('tag.list.circle'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tag/tag-list.html')
 
     def test_tag_list_view_get_collections(self):
-        response = self.client.get(reverse('tag.list', args=['collections']))
+        response = self.client.get(reverse('tag.list.collection'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'tag/tag-list-collection.html')
+        self.assertTemplateUsed(response, 'tag/tag-list-grid.html')
 
     def test_tag_list_view_get_content(self):
-        response = self.client.get(reverse('tag.list', args=['content']))
+        response = self.client.get(reverse('tag.list.content'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tag/tag-list.html')
 
     def test_tag_list_view_get_events(self):
-        response = self.client.get(reverse('tag.list', args=['events']))
+        response = self.client.get(reverse('tag.list.event'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tag/tag-list.html')
 
     def test_tag_list_view_get_magazines(self):
-        response = self.client.get(reverse('tag.list', args=['magazines']))
+        response = self.client.get(reverse('tag.list.magazine'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tag/tag-list.html')
 
     def test_tag_list_view_get_parodies(self):
-        response = self.client.get(reverse('tag.list', args=['parodies']))
+        response = self.client.get(reverse('tag.list.parody'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tag/tag-list.html')
 
     def test_tag_list_view_get_scanlators(self):
-        response = self.client.get(reverse('tag.list', args=['scanlators']))
+        response = self.client.get(reverse('tag.list.scanlator'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tag/tag-list.html')
 
     def test_tag_list_view_get_tanks(self):
-        response = self.client.get(reverse('tag.list', args=['tanks']))
+        response = self.client.get(reverse('tag.list.tank'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'tag/tag-list-tank.html')
-
-    def test_tag_list_view_get_unknown_type(self):
-        response = self.client.get(reverse('tag.list', args=['unknown']))
-        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, 'tag/tag-list-grid.html')

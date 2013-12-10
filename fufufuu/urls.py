@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from fufufuu.manga.views import MangaListView
+from fufufuu.settings import DEBUG, MEDIA_ROOT
 
 admin.autodiscover()
 
@@ -15,3 +16,8 @@ urlpatterns = patterns('',
     url(r'^tag/',               include('fufufuu.tag.urls')),
 
 )
+
+if DEBUG:
+    urlpatterns += patterns('',
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
+    )
