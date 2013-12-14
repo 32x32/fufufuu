@@ -13,19 +13,19 @@
                     <th width="50" class="min-xs"><span class="icon icon-heart"></span></th>
                     <th width="50" class="min-xs"><span class="icon icon-comment"></span></th>
                     <th width="50" class="min-xs"><span class="icon icon-down-circled"></span></th>
-                    <th width="200" class="min-sm">{% trans %}Date{% endtrans %}</th>
+                    <th width="200" class="min-md">{% trans %}Date{% endtrans %}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for manga in manga_list %}
                     <tr>
-                        <td>{{ manga.status_display }}</td>
-                        <td>{{ manga.category_display }}</td>
+                        <td class="min-xs">{{ manga.status_display }}</td>
+                        <td class="min-xs">{{ manga.category_display }}</td>
                         <td><a href="#">{{ manga.title }}</a></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>{{ manga.created_on }}</td>
+                        <td class="min-xs"></td>
+                        <td class="min-xs"></td>
+                        <td class="min-xs"></td>
+                        <td class="min-md"></td>
                     </tr>
                 {% endfor %}
             </tbody>

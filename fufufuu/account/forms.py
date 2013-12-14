@@ -2,12 +2,13 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.utils.translation import ugettext as _
 from fufufuu.account.models import User
+from fufufuu.core.forms import BlankLabelSuffix
 
 
 USERNAME_REGEX = r'^([a-zA-Z0-9]+_?)+[a-zA-Z0-9]$'
 
 
-class AccountRegisterForm(forms.ModelForm):
+class AccountRegisterForm(BlankLabelSuffix, forms.ModelForm):
 
     username = forms.RegexField(
         label=_('Username'),
@@ -15,7 +16,7 @@ class AccountRegisterForm(forms.ModelForm):
         min_length=4,
         max_length=20,
         widget=forms.TextInput(attrs={
-            'placeholder': _('Username'),
+            # 'placeholder': _('Username'),
             'minlength': 4,
             'maxlength': 20,
         }),
@@ -25,14 +26,14 @@ class AccountRegisterForm(forms.ModelForm):
     password1 = forms.CharField(
         label=_('Password'),
         widget=forms.PasswordInput(attrs={
-            'placeholder': _('Password'),
+            # 'placeholder': _('Password'),
         })
     )
 
     password2 = forms.CharField(
         label=_('Confirm Password'),
         widget=forms.PasswordInput(attrs={
-            'placeholder': _('Confirm Password'),
+            # 'placeholder': _('Confirm Password'),
         })
     )
 
@@ -70,19 +71,19 @@ class AccountRegisterForm(forms.ModelForm):
         return self.user_cache
 
 
-class AccountLoginForm(forms.Form):
+class AccountLoginForm(BlankLabelSuffix, forms.Form):
 
     username = forms.CharField(
         label=_('Username'),
         widget=forms.TextInput(attrs={
-            'placeholder': _('Username'),
+            # 'placeholder': _('Username'),
         })
     )
 
     password = forms.CharField(
         label=_('Password'),
         widget=forms.PasswordInput(attrs={
-            'placeholder': _('Password'),
+            # 'placeholder': _('Password'),
         })
     )
 
