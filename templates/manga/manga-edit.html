@@ -7,7 +7,7 @@
     <form class="half-wrapper">
         {{ forms.csrf_token(csrf_token) }}
         {{ forms.non_field_errors(form) }}
-        <div class="half half-md">
+        <div class="half half-sm">
             {{ forms.field(form.title) }}
             {{ forms.field(form.markdown) }}
 {#            {{ forms.field(form.cover) }}#}
@@ -26,6 +26,6 @@
                 </tr>
             </table>
         </div>
-        <div class="half half-md"></div>
+        <div class="half half-sm"></div>
     </form>
 {% endblock %}

@@ -13,7 +13,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         max_length=100,
         widget=forms.TextInput(attrs={
             'required': 'required',
-            'maxlength': 100,
+            'maxlength': '100',
         })
     )
 
@@ -21,7 +21,8 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         label=_('Description'),
         max_length=5000,
         widget=forms.Textarea(attrs={
-            'maxlength': 5000,
+            'maxlength': '5000',
+            'rows': '6'
         })
     )
 
