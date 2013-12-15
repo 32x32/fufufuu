@@ -39,10 +39,22 @@ class MangaEditViewTests(BaseTestCase):
     def test_manga_edit_view_get(self):
         pass
 
+    def test_manga_edit_view_post_invalid(self):
+        pass
+
+    def test_manga_edit_view_post(self):
+        pass
+
 
 class MangaEditImagesViewTests(BaseTestCase):
 
     def test_manga_edit_images_view_get(self):
+        pass
+
+    def test_manga_edit_images_view_post_invalid(self):
+        pass
+
+    def test_manga_edit_images_view_post(self):
         pass
 
 

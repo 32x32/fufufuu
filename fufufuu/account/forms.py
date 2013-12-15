@@ -2,13 +2,13 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.utils.translation import ugettext as _
 from fufufuu.account.models import User
-from fufufuu.core.forms import BlankLabelSuffix
+from fufufuu.core.forms import BlankLabelSuffixMixin
 
 
 USERNAME_REGEX = r'^([a-zA-Z0-9]+_?)+[a-zA-Z0-9]$'
 
 
-class AccountRegisterForm(BlankLabelSuffix, forms.ModelForm):
+class AccountRegisterForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     username = forms.RegexField(
         label=_('Username'),
@@ -16,7 +16,7 @@ class AccountRegisterForm(BlankLabelSuffix, forms.ModelForm):
         min_length=4,
         max_length=20,
         widget=forms.TextInput(attrs={
-            # 'placeholder': _('Username'),
+            'required': 'required',
             'minlength': 4,
             'maxlength': 20,
         }),
@@ -26,15 +26,15 @@ class AccountRegisterForm(BlankLabelSuffix, forms.ModelForm):
     password1 = forms.CharField(
         label=_('Password'),
         widget=forms.PasswordInput(attrs={
-            # 'placeholder': _('Password'),
-        })
+            'required': 'required',
+        }),
     )
 
     password2 = forms.CharField(
         label=_('Confirm Password'),
         widget=forms.PasswordInput(attrs={
-            # 'placeholder': _('Confirm Password'),
-        })
+            'required': 'required',
+        }),
     )
 
     error_messages = {
@@ -71,20 +71,20 @@ class AccountRegisterForm(BlankLabelSuffix, forms.ModelForm):
         return self.user_cache
 
 
-class AccountLoginForm(BlankLabelSuffix, forms.Form):
+class AccountLoginForm(BlankLabelSuffixMixin, forms.Form):
 
     username = forms.CharField(
         label=_('Username'),
         widget=forms.TextInput(attrs={
-            # 'placeholder': _('Username'),
-        })
+            'required': 'required',
+        }),
     )
 
     password = forms.CharField(
         label=_('Password'),
         widget=forms.PasswordInput(attrs={
-            # 'placeholder': _('Password'),
-        })
+            'required': 'required',
+        }),
     )
 
     error_messages = {

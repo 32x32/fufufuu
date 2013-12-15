@@ -1,6 +1,31 @@
 {% extends 'manga/manga-base.html' %}
+{% import '_macros/forms.html' as forms %}
 
 {% block title %}{% trans title=manga.title %}Edit: {{ title }}{% endtrans %}{% endblock %}
 
 {% block inner %}
+    <form class="half-wrapper">
+        {{ forms.csrf_token(csrf_token) }}
+        {{ forms.non_field_errors(form) }}
+        <div class="half half-md">
+            {{ forms.field(form.title) }}
+            {{ forms.field(form.markdown) }}
+{#            {{ forms.field(form.cover) }}#}
+            <table class="table-full-border">
+                <tr>
+                    <td width="120">{{ form.category.label_tag() }}</td>
+                    <td>{{ form.category }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.language.label_tag() }}</td>
+                    <td>{{ form.language }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.uncensored.label_tag() }}</td>
+                    <td>{{ form.uncensored }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="half half-md"></div>
+    </form>
 {% endblock %}

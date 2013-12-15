@@ -1,4 +1,4 @@
-class BlankLabelSuffix(object):
+class BlankLabelSuffixMixin(object):
 
     def __init__(self, *args, **kwargs):
         if 'label_suffix' not in kwargs:

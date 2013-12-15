@@ -2,26 +2,31 @@
     tab styles
 ---------------------------------------------------*/
 
+@tab-bg-hover:      #eee;
+@tab-border:        1px solid #ccc;
+@tab-color-active:  #000;
+
 .tab-list {
-    border-bottom: 1px solid #ccc;
+    border-bottom: @tab-border;
     list-style-type: none;
+    margin-bottom: 10px;
 
     > li {
         .border-radius(@border-radius @border-radius 0 0);
         .inline-block();
 
         border: 1px solid transparent;
-        border-bottom: 1px solid #ccc;
+        border-bottom: @tab-border;
         margin: 0 1px -1px;
 
         &:hover {
-            background-color: #eee;
+            background-color: @tab-bg-hover;
         }
         &.active {
             background-color: @color-bg;
-            border: 1px solid #ccc;
+            border: @tab-border;
             border-bottom: 1px solid @color-bg;
-            > a { color: #000; }
+            > a { color: @tab-color-active; }
         }
 
         > a {

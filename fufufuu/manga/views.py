@@ -1,8 +1,9 @@
 from django.http.response import Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.manga.enums import MangaStatus
+from fufufuu.manga.forms import MangaEditForm
 from fufufuu.manga.models import Manga
 
 
@@ -72,6 +73,19 @@ class MangaEditView(MangaEditMixin, ProtectedTemplateView):
         manga = self.get_manga(id)
         return self.render_to_response({
             'manga': manga,
+            'form': MangaEditForm(instance=manga),
+        })
+
+    def post(self, request, id, slug):
+        manga = self.get_manga(id)
+        form = MangaEditForm(instance=manga, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('manga', id=id, slug=slug)
+
+        return self.render_to_response({
+            'manga': manga,
+            'form': form,
         })
 
 
