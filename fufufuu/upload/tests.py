@@ -10,6 +10,13 @@ class UploadListViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'upload/upload-list.html')
 
+    def test_upload_list_view_post_limit(self):
+        for i in range(self.user.upload_limit):
+            Manga().save(updated_by=self.user)
+
+        response = self.client.post(reverse('upload.list'))
+        self.assertRedirects(response, reverse('upload.list'))
+
     def test_upload_list_view_post(self):
         response = self.client.post(reverse('upload.list'))
         manga = Manga.objects.latest('created_on')

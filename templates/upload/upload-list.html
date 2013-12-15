@@ -18,7 +18,7 @@
                     <th width="50" class="min-xs"><span class="icon icon-heart"></span></th>
                     <th width="50" class="min-xs"><span class="icon icon-comment"></span></th>
                     <th width="50" class="min-xs"><span class="icon icon-down-circled"></span></th>
-                    <th width="200" class="min-md">{% trans %}Date{% endtrans %}</th>
+                    <th width="200" class="min-md">{% trans %}Date Created{% endtrans %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,7 +30,7 @@
                         <td class="min-xs"></td>
                         <td class="min-xs"></td>
                         <td class="min-xs"></td>
-                        <td class="min-md"></td>
+                        <td class="min-md">{{ manga.created_on|naturaltime }}</td>
                     </tr>
                 {% else %}
                     <tr>

@@ -1,4 +1,5 @@
 import re
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext, ungettext
 from jinja2 import nodes
@@ -54,5 +55,8 @@ TEMPLATE_SETTINGS = {
 TEMPLATE_ENV = Environment(**TEMPLATE_SETTINGS)
 TEMPLATE_ENV.install_gettext_callables(ugettext, ungettext)
 TEMPLATE_ENV.globals.update(**{
-    'url': reverse,
+    'url':          reverse,
+})
+TEMPLATE_ENV.filters.update(**{
+    'naturaltime':  naturaltime,
 })
