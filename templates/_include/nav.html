@@ -29,7 +29,7 @@
     <hr class="nav-sep max-xs">
     {% if user.is_authenticated() %}
         <a href="#" class="max-xs"><span class="icon icon-cog"></span>{{ user.username }}</a>
-        <a href="{{ url_upload_list }}" class="max-xs{% if request.path == url_upload_list %} active{% endif %}"><span class="icon icon-up-circled"></span>{% trans %}Upload{% endtrans %}</a>
+        <a href="{{ url_upload_list }}" class="max-xs{% if request.path == url_upload_list %} active{% endif %}"><span class="icon icon-up-circled"></span>{% trans %}Uploads{% endtrans %}</a>
         <a href="#" class="max-xs" onclick="document.getElementById('account-logout-form').submit()"><span class="icon icon-logout"></span>{% trans %}Logout{% endtrans %}</a>
     {% else %}
         <a href="{{ url_account_login }}" class="max-xs{% if request.path == url_account_login %} active{% endif %}"><span class="icon icon-key"></span>{% trans %}Login{% endtrans %}</a>

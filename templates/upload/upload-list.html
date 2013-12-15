@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
+{% import '_macros/forms.html' as forms %}
 
 {% block title %}{% trans %}Uploads{% endtrans %}{% endblock %}
 
 {% block content %}
     <div class="container">
-        <a href="#" class="btn btn-primary space-bottom"><span class="icon icon-up-circled space-right"></span>{% trans %}New Upload{% endtrans %}</a>
+        <form action="" method="post">
+            {{ forms.csrf_token(csrf_token) }}
+            <button type="submit" class="btn btn-primary space-bottom"><span class="icon icon-up-circled space-right"></span>{% trans %}New Upload{% endtrans %}</button>
+        </form>
         <table>
             <thead>
                 <tr>
@@ -22,7 +26,7 @@
                     <tr>
                         <td class="min-xs"><span class="manga-status manga-status-{{ manga.status.lower() }} space-right">{{ manga.status_display }}</span></td>
                         <td class="min-xs"><span class="manga-category manga-category-{{ manga.category.lower() }} space-right">{{ manga.category_display }}</span></td>
-                        <td><a href="#">{{ manga.title }}</a></td>
+                        <td><a href="{{ url('manga.edit', args=[manga.id, manga.slug]) }}">{{ manga.title }}</a></td>
                         <td class="min-xs"></td>
                         <td class="min-xs"></td>
                         <td class="min-xs"></td>

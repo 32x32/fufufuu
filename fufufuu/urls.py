@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^account/',           include('fufufuu.account.urls')),
     url(r'^admin/',             include(admin.site.urls)),
     url(r'^i18n/',              include('django.conf.urls.i18n')),
+    url(r'^m/',                 include('fufufuu.manga.urls')),
     url(r'^tag/',               include('fufufuu.tag.urls')),
     url(r'^upload/',            include('fufufuu.upload.urls')),
 

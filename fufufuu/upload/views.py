@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import ProtectedTemplateView
 from fufufuu.manga.models import Manga
@@ -14,3 +15,8 @@ class UploadListView(ProtectedTemplateView):
         return self.render_to_response({
             'manga_list': manga_list,
         })
+
+    def post(self, request):
+        manga = Manga()
+        manga.save(updated_by=request.user)
+        return redirect('manga.edit', id=manga.id, slug=manga.slug)

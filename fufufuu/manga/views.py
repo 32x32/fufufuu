@@ -1,5 +1,5 @@
 from fufufuu.core.utils import paginate
-from fufufuu.core.views import TemplateView
+from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.manga.models import Manga
 
 
@@ -14,3 +14,35 @@ class MangaListView(TemplateView):
         return self.render_to_response({
             'manga_list': manga_list,
         })
+
+
+class MangaView(TemplateView):
+
+    template_name = 'manga/manga.html'
+
+    def get(self, request, id, slug):
+        return self.render_to_response({})
+
+
+class MangaEditView(ProtectedTemplateView):
+
+    template_name = 'manga/manga-edit.html'
+
+    def get(self, request, id, slug):
+        return self.render_to_response({})
+
+
+class MangaEditImagesView(ProtectedTemplateView):
+
+    template_name = 'manga/manga-edit-images.html'
+
+    def get(self, request, id, slug):
+        return self.render_to_response({})
+
+
+class MangaHistoryView(TemplateView):
+
+    template_name = 'manga/manga-history.html'
+
+    def get(self, request, id, slug):
+        return self.render_to_response({})

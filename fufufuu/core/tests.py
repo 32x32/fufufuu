@@ -4,6 +4,7 @@ from django.test.runner import DiscoverRunner
 from django.test.testcases import TestCase
 from fufufuu.account.models import User
 from fufufuu.datacreator import DataCreator
+from fufufuu.manga.models import Manga
 
 
 def fast_set_password(self, raw_password):
@@ -41,6 +42,8 @@ class BaseTestCase(TestCase):
         self.user = User.objects.get(username='testuser')
         self.user.set_password('password')
         self.user.save()
+
+        self.manga = Manga.published.latest('published_on')
 
         self.client.login(username='testuser', password='password')
 
