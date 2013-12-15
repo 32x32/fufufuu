@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from fufufuu.core.tests import BaseTestCase
+from fufufuu.manga.enums import MangaStatus
 
 
 class MangaListViewTests(BaseTestCase):
@@ -17,6 +18,20 @@ class MangaViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'manga/manga.html')
 
+    def test_manga_view_get_draft(self):
+        self.manga.status = MangaStatus.DRAFT
+        self.manga.save(updated_by=self.user)
+        response = self.client.get(reverse('manga', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 404)
+
+
+class MangaHistoryViewTests(BaseTestCase):
+
+    def test_manga_history_view_get(self):
+        response = self.client.get(reverse('manga.history', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-history.html')
+
 
 class MangaEditViewTests(BaseTestCase):
 
@@ -28,14 +43,6 @@ class MangaEditImagesViewTests(BaseTestCase):
 
     def test_manga_edit_images_view_get(self):
         pass
-
-
-class MangaHistoryViewTests(BaseTestCase):
-
-    def test_manga_history_view_get(self):
-        response = self.client.get(reverse('manga.history', args=[self.manga.id, self.manga.slug]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'manga/manga-history.html')
 
 
 class MangaModelTests(BaseTestCase):
@@ -58,4 +65,8 @@ class MangaModelTests(BaseTestCase):
     def test_manga_archive_delete(self):
         pass
 
+    def test_manga_objects_manager(self):
+        pass
 
+    def test_manga_published_manager(self):
+        pass

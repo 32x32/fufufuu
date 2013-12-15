@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% set url_manga = url('manga', args=[manga.id, manga.slug]) %}
+    {% set url_manga_history = url('manga.history', args=[manga.id, manga.slug]) %}
+    {% set url_manga_edit = url('manga.edit', args=[manga.id, manga.slug]) %}
+    {% set url_manga_edit_images = url('manga.edit.images', args=[manga.id, manga.slug]) %}
+    <div class="container">
+        <ul class="tab-list">
+            <li{% if request.path == url_manga %} class="active"{% endif %}><a href="{{ url_manga }}">{% trans %}Read{% endtrans %}</a></li>
+            <li><a href="#">{% trans %}Comments{% endtrans %}</a></li>
+            <li{% if request.path == url_manga_history %} class="active"{% endif %}><a href="{{ url_manga_history }}">{% trans %}History{% endtrans %}</a></li>
+            <li class="right{% if request.path == url_manga_edit_images %} active{% endif %}"><a href="{{ url_manga_edit_images }}">{% trans %}Edit Images{% endtrans %}</a></li>
+            <li class="right{% if request.path == url_manga_edit %} active{% endif %}"><a href="{{ url_manga_edit }}">{% trans %}Edit{% endtrans %}</a></li>
+        </ul>
+        {% block inner %}{% endblock %}
+    </div>
+{% endblock %}

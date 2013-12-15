@@ -1,6 +1,8 @@
+from django.http.response import Http404
 from django.shortcuts import get_object_or_404
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
+from fufufuu.manga.enums import MangaStatus
 from fufufuu.manga.models import Manga
 
 
@@ -39,11 +41,27 @@ class MangaHistoryView(TemplateView):
         })
 
 
+#-------------------------------------------------------------------------------
+
+
 class MangaEditMixin:
 
     def get_manga(self, id):
-        pass
+        """
+        draft mode      --> editable only by created user
+        published mode  --> editable everyone
+        pending mode    --> editable only by moderators
+        deleted mode    --> raise 404
+        """
 
+        manga = get_object_or_404(Manga.objects, id=id)
+        if manga.status == MangaStatus.DRAFT:
+            if manga.created_by != self.request.user: raise Http404
+        elif manga.status == MangaStatus.PUBLISHED:
+            pass
+        elif manga.status == MangaStatus.PENDING:
+            pass
+        return manga
 
 
 class MangaEditView(MangaEditMixin, ProtectedTemplateView):

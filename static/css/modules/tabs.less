@@ -1,0 +1,32 @@
+/* --------------------------------------------------
+    tab styles
+---------------------------------------------------*/
+
+.tab-list {
+    border-bottom: 1px solid #ccc;
+    list-style-type: none;
+
+    > li {
+        .border-radius(@border-radius @border-radius 0 0);
+        .inline-block();
+
+        border: 1px solid transparent;
+        border-bottom: 1px solid #ccc;
+        margin: 0 1px -1px;
+
+        &:hover {
+            background-color: #eee;
+        }
+        &.active {
+            background-color: @color-bg;
+            border: 1px solid #ccc;
+            border-bottom: 1px solid @color-bg;
+            > a { color: #000; }
+        }
+
+        > a {
+            display: block;
+            padding: 10px 15px;
+        }
+    }
+}
