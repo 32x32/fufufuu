@@ -2,32 +2,35 @@
     tab styles
 ---------------------------------------------------*/
 
-@tab-bg-hover:      #eee;
-@tab-border:        1px solid #ccc;
+@tab-bg:            #e5e5e5;
+@tab-border:        1px solid #d4d4d4;
 @tab-color-active:  #000;
 
 .tab-list {
+    background-color: @tab-bg;
     border-bottom: @tab-border;
     list-style-type: none;
-    margin-bottom: 10px;
 
     > li {
-        .border-radius(@border-radius @border-radius 0 0);
         .inline-block();
 
-        border: 1px solid transparent;
+        border-top: none;
+        border-right: 1px solid transparent;
         border-bottom: @tab-border;
-        margin: 0 0px -1px;
+        border-left: 1px solid transparent;
 
-        &:hover {
-            background-color: @tab-bg-hover;
-        }
+        margin: 0 0 -1px;
+
         &.active {
             background-color: @color-bg;
-            border: @tab-border;
+            border-left: @tab-border;
+            border-right: @tab-border;
             border-bottom: 1px solid @color-bg;
             > a { color: @tab-color-active; }
         }
+
+        &:first-of-type { border-left: none; }
+        &:last-of-type  { border-right: none; }
 
         > a {
             display: block;

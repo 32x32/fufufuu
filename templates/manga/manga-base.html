@@ -5,34 +5,29 @@
     {% set url_manga_history = url('manga.history', args=[manga.id, manga.slug]) %}
     {% set url_manga_edit = url('manga.edit', args=[manga.id, manga.slug]) %}
     {% set url_manga_edit_images = url('manga.edit.images', args=[manga.id, manga.slug]) %}
+    <ul class="tab-list">
+        <li{% if request.path == url_manga %} class="active"{% endif %}>
+            <a href="{{ url_manga }}">
+                <span>{% trans %}Read{% endtrans %}</span>
+            </a>
+        </li>
+        <li{% if request.path == url_manga_history %} class="active"{% endif %}>
+            <a href="{{ url_manga_history }}">
+                <span>{% trans %}History{% endtrans %}</span>
+            </a>
+        </li>
+        <li class="right{% if request.path == url_manga_edit_images %} active{% endif %}">
+            <a href="{{ url_manga_edit_images }}">
+                <span>{% trans %}Edit Images{% endtrans %}</span>
+            </a>
+        </li>
+        <li class="right{% if request.path == url_manga_edit %} active{% endif %}">
+            <a href="{{ url_manga_edit }}">
+                <span>{% trans %}Edit{% endtrans %}</span>
+            </a>
+        </li>
+    </ul>
     <div class="container">
-        <ul class="tab-list">
-            <li{% if request.path == url_manga %} class="active"{% endif %}>
-                <a href="{{ url_manga }}">
-                    <span>{% trans %}Read{% endtrans %}</span>
-                </a>
-            </li>
-{#            <li>#}
-{#                <a href="#">#}
-{#                    <span>{% trans %}Comments{% endtrans %}</span>#}
-{#                </a>#}
-{#            </li>#}
-            <li{% if request.path == url_manga_history %} class="active"{% endif %}>
-                <a href="{{ url_manga_history }}">
-                    <span>{% trans %}History{% endtrans %}</span>
-                </a>
-            </li>
-            <li class="right{% if request.path == url_manga_edit_images %} active{% endif %}">
-                <a href="{{ url_manga_edit_images }}">
-                    <span>{% trans %}Edit Images{% endtrans %}</span>
-                </a>
-            </li>
-            <li class="right{% if request.path == url_manga_edit %} active{% endif %}">
-                <a href="{{ url_manga_edit }}">
-                    <span>{% trans %}Edit{% endtrans %}</span>
-                </a>
-            </li>
-        </ul>
         {% block inner %}{% endblock %}
     </div>
 {% endblock %}
