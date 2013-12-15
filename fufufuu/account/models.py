@@ -22,6 +22,10 @@ class User(AbstractBaseUser):
     is_staff            = models.BooleanField(default=False)
     is_active           = models.BooleanField(default=True)
 
+    # 24 hour limits
+    upload_limit        = models.IntegerField(default=5)
+    comment_limit       = models.IntegerField(default=100)
+
     created_on          = models.DateTimeField(auto_now_add=True)
     updated_on          = models.DateTimeField(auto_now=True)
 

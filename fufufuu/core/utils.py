@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, Page
+from django.utils import timezone
 from django.utils.text import slugify as django_slugify
 from unidecode import unidecode
 
@@ -36,6 +37,10 @@ def paginate(object_list, page_size, page_num):
     page.page_range = paginator.page_range[start:end]
 
     return page
+
+
+def yesterday():
+    return timezone.now() - timezone.timedelta(days=1)
 
 
 def count_abbr(n):

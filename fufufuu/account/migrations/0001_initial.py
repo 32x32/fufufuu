@@ -13,15 +13,17 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('password', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('last_login', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('username', self.gf('django.db.models.fields.CharField')(max_length=30, unique=True)),
-            ('email', self.gf('django.db.models.fields.EmailField')(max_length=254, blank=True)),
+            ('username', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30)),
+            ('email', self.gf('django.db.models.fields.EmailField')(blank=True, max_length=254)),
             ('markdown', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('html', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('avatar', self.gf('django.db.models.fields.files.FileField')(null=True, blank=True, max_length=100)),
+            ('avatar', self.gf('django.db.models.fields.files.FileField')(blank=True, max_length=100, null=True)),
             ('is_staff', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('updated_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now=True)),
+            ('upload_limit', self.gf('django.db.models.fields.IntegerField')(default=5)),
+            ('comment_limit', self.gf('django.db.models.fields.IntegerField')(default=100)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
+            ('updated_on', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
         ))
         db.send_create_signal('account', ['User'])
 
@@ -33,10 +35,11 @@ class Migration(SchemaMigration):
 
     models = {
         'account.user': {
-            'Meta': {'db_table': "'user'", 'object_name': 'User'},
-            'avatar': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'blank': 'True', 'max_length': '100'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '254', 'blank': 'True'}),
+            'Meta': {'object_name': 'User', 'db_table': "'user'"},
+            'avatar': ('django.db.models.fields.files.FileField', [], {'blank': 'True', 'max_length': '100', 'null': 'True'}),
+            'comment_limit': ('django.db.models.fields.IntegerField', [], {'default': '100'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'email': ('django.db.models.fields.EmailField', [], {'blank': 'True', 'max_length': '254'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
@@ -44,8 +47,9 @@ class Migration(SchemaMigration):
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'markdown': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'updated_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'upload_limit': ('django.db.models.fields.IntegerField', [], {'default': '5'}),
+            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         }
     }
 
