@@ -4,6 +4,7 @@
 
 {% block content %}
     <div class="container">
+        <a href="#" class="btn btn-primary space-bottom"><span class="icon icon-up-circled space-right"></span>{% trans %}New Upload{% endtrans %}</a>
         <table>
             <thead>
                 <tr>
@@ -26,6 +27,10 @@
                         <td class="min-xs"></td>
                         <td class="min-xs"></td>
                         <td class="min-md"></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="100%">{% trans %}You have not uploaded anything yet.{% endtrans %}</td>
                     </tr>
                 {% endfor %}
             </tbody>

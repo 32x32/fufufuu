@@ -53,11 +53,16 @@ input[type="text"], input[type="email"], input[type="password"], textarea {
     form errors
 ---------------------------------------------------*/
 
+.non-field-error {
+    color: @input-color-error;
+    margin-bottom: 10px;
+}
+
 .form-field.error {
     > label, > .error-block {
-        color: @input-border-error;
+        color: @input-color-error;
     }
     > input[type="text"], input[type="email"], input[type="password"] {
-        border-color: @input-border-error;
+        border-color: @input-color-error;
     }
 }
