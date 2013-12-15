@@ -6,6 +6,9 @@
     $('#header-menu-icon').click(function() {
       return $navbar.toggleClass('active');
     });
+    $('.message .icon-cancel').click(function() {
+      return $(this).parent().slideUp(200);
+    });
     if ($('.lazy-image').length) {
       VERTICAL_BUFFER = 500;
       isElementInViewport = function(el) {

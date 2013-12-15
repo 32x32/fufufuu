@@ -1,0 +1,53 @@
+/* --------------------------------------------------
+    messages colors
+---------------------------------------------------*/
+
+@message-bg-info:           lighten(@color-accent1, 40%);
+@message-border-info:       @color-accent1;
+
+@message-bg-success:        lighten(@color-accent2, 35%);
+@message-border-success:    @color-accent2;
+
+@message-bg-warning:        lighten(@color-accent3, 30%);
+@message-border-warning:    @color-accent3;
+
+@message-bg-error:          lighten(@color-accent4, 35%);
+@message-border-error:      @color-accent4;
+
+/* --------------------------------------------------
+    messages styles
+---------------------------------------------------*/
+
+#message-list {
+    list-style-type: none;
+}
+
+.message {
+    border-left: 5px solid transparent;
+    padding: 15px;
+
+    > .icon-cancel {
+        .inline-block();
+        color: #999;
+        cursor: pointer;
+        margin: -5px;
+        padding: 5px;
+    }
+}
+.message-info {
+    background-color: @message-bg-info;
+    border-color: @message-border-info;
+}
+.message-success {
+    background-color: @message-bg-success;
+    border-color: @message-border-success;
+}
+.message-warning {
+    background-color: @message-bg-warning;
+    border-color: @message-border-warning;
+}
+.message-error {
+    background-color: @message-bg-error;
+    border-color: @message-border-error;
+}
+
