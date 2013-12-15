@@ -7,7 +7,7 @@
         <table>
             <thead>
                 <tr>
-                    <th width="100" class="min-xs">{% trans %}Status{% endtrans %}</th>
+                    <th width="80" class="min-xs">{% trans %}Status{% endtrans %}</th>
                     <th width="100" class="min-xs">{% trans %}Category{% endtrans %}</th>
                     <th>{% trans %}Title{% endtrans %}</th>
                     <th width="50" class="min-xs"><span class="icon icon-heart"></span></th>
@@ -19,8 +19,8 @@
             <tbody>
                 {% for manga in manga_list %}
                     <tr>
-                        <td class="min-xs">{{ manga.status_display }}</td>
-                        <td class="min-xs">{{ manga.category_display }}</td>
+                        <td class="min-xs"><span class="manga-status manga-status-{{ manga.status.lower() }} space-right">{{ manga.status_display }}</span></td>
+                        <td class="min-xs"><span class="manga-category manga-category-{{ manga.category.lower() }} space-right">{{ manga.category_display }}</span></td>
                         <td><a href="#">{{ manga.title }}</a></td>
                         <td class="min-xs"></td>
                         <td class="min-xs"></td>
