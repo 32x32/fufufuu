@@ -1,6 +1,7 @@
 from django.core.urlresolvers import reverse
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.manga.enums import MangaStatus
+from fufufuu.manga.models import Manga
 
 
 class MangaListViewTests(BaseTestCase):
@@ -65,8 +66,25 @@ class MangaModelTests(BaseTestCase):
     def test_manga_archive_delete(self):
         pass
 
+    def assert_manga_exists(self, manager, status, exists):
+        self.manga.status = status
+        self.manga.save(updated_by=self.user)
+        self.assertEqual(manager.filter(id=self.manga.id).exists(), exists)
+
     def test_manga_objects_manager(self):
-        pass
+        self.assert_manga_exists(Manga.objects, MangaStatus.DRAFT, True)
+        self.assert_manga_exists(Manga.objects, MangaStatus.PUBLISHED, True)
+        self.assert_manga_exists(Manga.objects, MangaStatus.PENDING, True)
+        self.assert_manga_exists(Manga.objects, MangaStatus.DELETED, False)
 
     def test_manga_published_manager(self):
-        pass
+        self.assert_manga_exists(Manga.published, MangaStatus.DRAFT, False)
+        self.assert_manga_exists(Manga.published, MangaStatus.PUBLISHED, True)
+        self.assert_manga_exists(Manga.published, MangaStatus.PENDING, False)
+        self.assert_manga_exists(Manga.published, MangaStatus.DELETED, False)
+
+    def test_manga_all_manager(self):
+        self.assert_manga_exists(Manga.all, MangaStatus.DRAFT, True)
+        self.assert_manga_exists(Manga.all, MangaStatus.PUBLISHED, True)
+        self.assert_manga_exists(Manga.all, MangaStatus.PENDING, True)
+        self.assert_manga_exists(Manga.all, MangaStatus.DELETED, True)
