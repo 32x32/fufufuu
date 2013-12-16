@@ -3,7 +3,6 @@
 {% block header %}
     <header>
         <span class="icon icon-menu max-md left" id="header-menu-icon"></span>
-        <a href="{{ url('manga.list') }}" class="header-heading">Fufufuu</a>
         <h1 class="inline-block manga-title">{{ manga.title }}</h1>
     </header>
 {% endblock %}
@@ -14,8 +13,13 @@
     {% set url_manga_edit = url('manga.edit', args=[manga.id, manga.slug]) %}
     {% set url_manga_edit_images = url('manga.edit.images', args=[manga.id, manga.slug]) %}
     <nav>
+        <a href="{{ url('manga.list') }}">
+            <span class="icon icon-left"></span>
+            <span>{% trans %}Back to Fufufuu{% endtrans %}</span>
+        </a>
+        <hr class="nav-sep">
         <a href="{{ url_manga }}"{% if request.path == url_manga %} class="active"{% endif %}>
-            <span class="icon icon-book-open"></span>
+            <span class="icon icon-docs"></span>
             <span>{% trans %}Read{% endtrans %}</span>
         </a>
         <a href="#">
@@ -34,10 +38,6 @@
             <span class="icon icon-heart-empty"></span>
             <span>{% trans %}Add to Favorites{% endtrans %}</span>
         </a>
-        <a href="{{ url_manga_history }}"{% if request.path == url_manga_history %} class="active"{% endif %}>
-            <span class="icon icon-back-in-time"></span>
-            <span>{% trans %}History{% endtrans %}</span>
-        </a>
         <hr class="nav-sep">
         <a href="{{ url_manga_edit }}"{% if request.path == url_manga_edit %} class="active"{% endif %}>
             <span class="icon icon-pencil"></span>
@@ -46,6 +46,10 @@
         <a href="{{ url_manga_edit_images }}"{% if request.path == url_manga_edit_images %} class="active"{% endif %}>
             <span class="icon icon-pencil"></span>
             <span>{% trans %}Edit Images{% endtrans %}</span>
+        </a>
+        <a href="{{ url_manga_history }}"{% if request.path == url_manga_history %} class="active"{% endif %}>
+            <span class="icon icon-back-in-time"></span>
+            <span>{% trans %}History{% endtrans %}</span>
         </a>
     </nav>
 {% endblock %}

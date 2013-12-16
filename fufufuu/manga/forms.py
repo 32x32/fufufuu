@@ -20,6 +20,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     markdown = forms.CharField(
         label=_('Description'),
+        required=False,
         max_length=5000,
         widget=forms.Textarea(attrs={
             'maxlength': '5000',

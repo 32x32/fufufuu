@@ -35,12 +35,12 @@
 ---------------------------------------------------*/
 
 .half-wrapper {
-    margin: 0 -5px;
+    margin: 0 -7px;
 }
 
 .half {
     .inline-block();
-    padding: 0 5px;
+    padding: 0 7px;
     overflow: hidden;
     width: 100%;
 }
@@ -64,4 +64,21 @@
 }
 @media screen and (min-width: @screen-xs) {
     .half-xs { width: 50%; }
+}
+
+/* --------------------------------------------------
+    well styles
+---------------------------------------------------*/
+
+@well-bg:       #eee;
+@well-border:   1px solid #ddd;
+
+.well {
+    padding: 15px;
+    background-color: @well-bg;
+    border: @well-border;
+}
+
+@media screen and (max-width: @screen-xs1) {
+    .well { padding: 10px; }
 }

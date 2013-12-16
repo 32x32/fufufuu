@@ -4,10 +4,10 @@
 {% block title %}{% trans title=manga.title %}Edit: {{ title }}{% endtrans %}{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <form class="half-wrapper">
-            {{ forms.csrf_token(csrf_token) }}
-            {{ forms.non_field_errors(form) }}
+    <form action="" method="post" class="container">
+        {{ forms.csrf_token(csrf_token) }}
+        {{ forms.non_field_errors(form) }}
+        <div class="half-wrapper">
             <div class="half half-sm">
                 {{ forms.field(form.title) }}
                 {{ forms.field(form.markdown) }}
@@ -68,7 +68,15 @@
                     </tr>
                 </table>
             </div>
-            <div class="half half-sm"></div>
-        </form>
-    </div>
+            <div class="half half-sm">
+                <div class="well">
+                    <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+                    {% if manga.status == 'DRAFT' %}
+                        <button type="submit" class="btn btn-warning">{% trans %}Save and Publish{% endtrans %}</button>
+                        <button type="submit" class="btn btn-error">{% trans %}Delete{% endtrans %}</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </form>
 {% endblock %}

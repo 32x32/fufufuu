@@ -5,7 +5,7 @@
 
 {% block content %}
     <div class="container">
-        <form action="" method="post">
+        <form action="" method="post" target="_blank">
             {{ forms.csrf_token(csrf_token) }}
             <button type="submit" class="btn btn-primary space-bottom"><span class="icon icon-up-circled space-right"></span>{% trans %}New Upload{% endtrans %}</button>
         </form>
@@ -26,7 +26,7 @@
                     <tr>
                         <td class="min-xs"><span class="manga-status manga-status-{{ manga.status.lower() }} space-right">{{ manga.status_display }}</span></td>
                         <td class="min-xs"><span class="manga-category manga-category-{{ manga.category.lower() }} space-right">{{ manga.category_display }}</span></td>
-                        <td><a href="{{ url('manga.edit', args=[manga.id, manga.slug]) }}">{{ manga.title }}</a></td>
+                        <td><a href="{{ url('manga.edit', args=[manga.id, manga.slug]) }}" target="_blank">{{ manga.title }}</a></td>
                         <td class="min-xs"></td>
                         <td class="min-xs"></td>
                         <td class="min-xs"></td>
