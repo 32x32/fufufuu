@@ -11,18 +11,59 @@
             <div class="half half-sm">
                 {{ forms.field(form.title) }}
                 {{ forms.field(form.markdown) }}
-    {#            {{ forms.field(form.cover) }}#}
-                <table class="table-full-border">
+                <table class="table-full-border space-top-15 space-bottom-15">
+                    <tr>
+                        <td width="120"><label>{% trans %}Current{% endtrans %}</label></td>
+                        <td>
+                            <img src="{{ STATIC_URL }}images/no-image.png" class="manga-cover">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120">{{ form.cover.label_tag() }}</td>
+                        <td>{{ form.cover }}</td>
+                    </tr>
+                </table>
+                <table class="table-full-border space-bottom-15 manga-edit-inputs">
+                    <tr>
+                        <td width="120">{{ form.authors.label_tag() }}</td>
+                        <td>{{ form.authors }}</td>
+                    </tr>
+                    <tr>
+                        <td width="120">{{ form.circles.label_tag() }}</td>
+                        <td>{{ form.circles }}</td>
+                    </tr>
+                    <tr>
+                        <td width="120">{{ form.content.label_tag() }}</td>
+                        <td>{{ form.content }}</td>
+                    </tr>
+                    <tr>
+                        <td width="120">{{ form.events.label_tag() }}</td>
+                        <td>{{ form.events }}</td>
+                    </tr>
+                    <tr>
+                        <td width="120">{{ form.magazines.label_tag() }}</td>
+                        <td>{{ form.magazines }}</td>
+                    </tr>
+                    <tr>
+                        <td width="120">{{ form.parodies.label_tag() }}</td>
+                        <td>{{ form.parodies }}</td>
+                    </tr>
+                    <tr>
+                        <td width="120">{{ form.scanlators.label_tag() }}</td>
+                        <td>{{ form.scanlators }}</td>
+                    </tr>
+                </table>
+                <table class="table-full-border space-bottom-15 manga-edit-inputs">
                     <tr>
                         <td width="120">{{ form.category.label_tag() }}</td>
                         <td>{{ form.category }}</td>
                     </tr>
                     <tr>
-                        <td>{{ form.language.label_tag() }}</td>
+                        <td width="120">{{ form.language.label_tag() }}</td>
                         <td>{{ form.language }}</td>
                     </tr>
                     <tr>
-                        <td>{{ form.uncensored.label_tag() }}</td>
+                        <td width="120">{{ form.uncensored.label_tag() }}</td>
                         <td>{{ form.uncensored }}</td>
                     </tr>
                 </table>

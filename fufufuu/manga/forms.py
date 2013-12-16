@@ -11,6 +11,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     title = forms.CharField(
         label=_('Title'),
         max_length=100,
+        help_text=_('Please do not include [Circle], (Author) or other tag-related information in the title. Use the tags section below for this information.'),
         widget=forms.TextInput(attrs={
             'required': 'required',
             'maxlength': '100',
@@ -30,19 +31,38 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         label=_('Cover'),
     )
 
-    category = forms.ChoiceField(
-        label=_('Category'),
-        choices=MangaCategory.choices,
+    authors = forms.CharField(
+        required=False,
+        label=_('Authors'),
+    )
+    circles = forms.CharField(
+        required=False,
+        label=_('Circles'),
+    )
+    content = forms.CharField(
+        required=False,
+        label=_('Content'),
+    )
+    events = forms.CharField(
+        required=False,
+        label=_('Events'),
+    )
+    magazines = forms.CharField(
+        required=False,
+        label=_('Magazines'),
+    )
+    parodies = forms.CharField(
+        required=False,
+        label=_('Parodies'),
+    )
+    scanlators = forms.CharField(
+        required=False,
+        label=_('Scanlators'),
     )
 
-    language = forms.ChoiceField(
-        label=_('Language'),
-        choices=Language.choices,
-    )
-
-    uncensored = forms.BooleanField(
-        label=_('Uncensored'),
-    )
+    category = forms.ChoiceField(label=_('Category'), choices=MangaCategory.choices)
+    language = forms.ChoiceField(label=_('Language'), choices=Language.choices)
+    uncensored = forms.BooleanField(label=_('Uncensored'))
 
     class Meta:
         model = Manga
