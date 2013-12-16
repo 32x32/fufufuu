@@ -25,22 +25,6 @@
                 </table>
                 <table class="table-full-border space-bottom-15 manga-edit-inputs">
                     <tr>
-                        <td width="120">{{ form.tank.label_tag() }}</td>
-                        <td>{{ form.tank }}</td>
-                        <td width="80">{{ form.tank_chapter.label_tag() }}</td>
-                        <td width="100">{{ form.tank_chapter }}</td>
-                    </tr>
-                </table>
-                <table class="table-full-border space-bottom-15 manga-edit-inputs">
-                    <tr>
-                        <td width="120">{{ form.collection.label_tag() }}</td>
-                        <td>{{ form.collection }}</td>
-                        <td width="80">{{ form.collection_part.label_tag() }}</td>
-                        <td width="100">{{ form.collection_part }}</td>
-                    </tr>
-                </table>
-                <table class="table-full-border space-bottom-15 manga-edit-inputs">
-                    <tr>
                         <td width="120">{{ form.authors.label_tag() }}</td>
                         <td>{{ form.authors }}</td>
                     </tr>
@@ -71,6 +55,22 @@
                 </table>
                 <table class="table-full-border space-bottom-15 manga-edit-inputs">
                     <tr>
+                        <td width="120">{{ form.tank.label_tag() }}</td>
+                        <td>{{ form.tank }}</td>
+                        <td width="80">{{ form.tank_chapter.label_tag() }}</td>
+                        <td width="100">{{ form.tank_chapter }}</td>
+                    </tr>
+                </table>
+                <table class="table-full-border space-bottom-15 manga-edit-inputs">
+                    <tr>
+                        <td width="120">{{ form.collection.label_tag() }}</td>
+                        <td>{{ form.collection }}</td>
+                        <td width="80">{{ form.collection_part.label_tag() }}</td>
+                        <td width="100">{{ form.collection_part }}</td>
+                    </tr>
+                </table>
+                <table class="table-full-border space-bottom-15 manga-edit-inputs">
+                    <tr>
                         <td width="120">{{ form.category.label_tag() }}</td>
                         <td>{{ form.category }}</td>
                     </tr>
@@ -85,6 +85,7 @@
                 </table>
             </div>
             <div class="half half-md">
+                <label>{% trans %}Admin{% endtrans %}</label>
                 <div class="well">
                     <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
                     {% if manga.status == 'DRAFT' %}

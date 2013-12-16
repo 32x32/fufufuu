@@ -1,5 +1,7 @@
+from django.contrib import messages
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404, redirect
+from django.utils.translation import ugettext as _
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.manga.enums import MangaStatus
@@ -73,16 +75,18 @@ class MangaEditView(MangaEditMixin, ProtectedTemplateView):
         manga = self.get_manga(id)
         return self.render_to_response({
             'manga': manga,
-            'form': MangaEditForm(instance=manga),
+            'form': MangaEditForm(request=request, instance=manga),
         })
 
     def post(self, request, id, slug):
         manga = self.get_manga(id)
-        form = MangaEditForm(instance=manga, data=request.POST)
+        form = MangaEditForm(request=request, instance=manga, data=request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('manga', id=id, slug=slug)
+            manga = form.save()
+            messages.success(request, _('{} has been updated').format(manga.title))
+            return redirect('manga.edit', id=id, slug=slug)
 
+        messages.error(request, _('{} has not been updated. Please fix the errors on the page and try again.').format(manga.title))
         return self.render_to_response({
             'manga': manga,
             'form': form,

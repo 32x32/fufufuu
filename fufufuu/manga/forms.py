@@ -29,6 +29,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     )
 
     cover = forms.FileField(
+        required=False,
         label=_('Cover'),
     )
 
@@ -87,10 +88,28 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         label=_('Scanlators'),
     )
 
-    category = forms.ChoiceField(label=_('Category'), choices=MangaCategory.choices)
-    language = forms.ChoiceField(label=_('Language'), choices=Language.choices)
-    uncensored = forms.BooleanField(label=_('Uncensored'))
+    category = forms.ChoiceField(
+        label=_('Category'),
+        choices=MangaCategory.choices
+    )
+    language = forms.ChoiceField(
+        label=_('Language'),
+        choices=Language.choices
+    )
+    uncensored = forms.BooleanField(
+        required=False,
+        label=_('Uncensored'),
+    )
 
     class Meta:
         model = Manga
         fields = ('title', 'markdown', 'cover', 'category', 'language', 'uncensored')
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+    def save(self):
+        manga = super().save(commit=False)
+        manga.save(updated_by=self.request.user)
+        return manga
