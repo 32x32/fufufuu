@@ -32,6 +32,32 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         label=_('Cover'),
     )
 
+    tank = forms.CharField(
+        required=False,
+        label=_('Tank'),
+    )
+    tank_chapter = forms.CharField(
+        required=False,
+        label=_('Chapter'),
+        max_length=5,
+        widget=forms.TextInput(attrs={
+            'maxlength': '5',
+        })
+    )
+
+    collection = forms.CharField(
+        required=False,
+        label=_('Collection'),
+    )
+    collection_part = forms.CharField(
+        required=False,
+        label=_('Part'),
+        max_length=5,
+        widget=forms.TextInput(attrs={
+            'maxlength': '5',
+        })
+    )
+
     authors = forms.CharField(
         required=False,
         label=_('Authors'),
