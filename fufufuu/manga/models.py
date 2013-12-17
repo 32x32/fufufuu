@@ -60,7 +60,7 @@ class Manga(BaseAuditableModel, MangaMixin):
             super().delete(*args, **kwargs)
         else:
             self.status = MangaStatus.DELETED
-            self.save()
+            self.save(*args, **kwargs)
 
 
 class MangaHistory(models.Model, MangaMixin):
@@ -162,7 +162,7 @@ def manga_post_delete(instance, **kwargs):
 
 
 @receiver(post_delete, sender=MangaPage)
-def manga_image_post_delete(instance, **kwargs):
+def manga_page_post_delete(instance, **kwargs):
     for field in ['image']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)

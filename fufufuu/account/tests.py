@@ -30,9 +30,9 @@ class AccountLoginViewTests(BaseTestCase):
         response = self.client.post(reverse('account.login'), {
             'username': 'testuser',
             'password': 'password',
-            'next': reverse('manga.list'),
+            'next': reverse('tag.list.author'),
         })
-        self.assertRedirects(response, reverse('manga.list'))
+        self.assertRedirects(response, reverse('tag.list.author'))
 
 
 class AccountRegisterViewTests(BaseTestCase):
@@ -67,8 +67,9 @@ class AccountRegisterViewTests(BaseTestCase):
             'username': 'newuser',
             'password1': 'password',
             'password2': 'password',
+            'next': reverse('tag.list.author'),
         })
-        self.assertRedirects(response, reverse('manga.list'))
+        self.assertRedirects(response, reverse('tag.list.author'))
 
         user = User.objects.get(username='newuser')
         self.assertTrue(user.check_password('password'))

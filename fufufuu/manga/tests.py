@@ -1,7 +1,10 @@
+import os
+from io import BytesIO
+from django.core.files.base import File
 from django.core.urlresolvers import reverse
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.manga.enums import MangaStatus
-from fufufuu.manga.models import Manga
+from fufufuu.manga.models import Manga, MangaPage, MangaArchive
 
 
 class MangaListViewTests(BaseTestCase):
@@ -61,22 +64,48 @@ class MangaEditImagesViewTests(BaseTestCase):
 class MangaModelTests(BaseTestCase):
 
     def test_manga_save_slugify(self):
-        pass
+        manga = Manga(title='Some Brand New Title')
+        manga.save(updated_by=self.user)
+        self.assertEqual(manga.slug, 'some-brand-new-title')
 
     def test_manga_delete_draft(self):
-        pass
+        manga = Manga(status=MangaStatus.DRAFT)
+        manga.save(updated_by=self.user)
+        manga.delete()
+        self.assertFalse(Manga.all.filter(id=manga.id).exists())
 
     def test_manga_delete_force_delete(self):
-        pass
+        self.assertEqual(self.manga.status, MangaStatus.PUBLISHED)
+        self.manga.delete(force_delete=True)
+        self.assertFalse(Manga.all.filter(id=self.manga.id).exists())
 
     def test_manga_delete(self):
-        pass
+        self.assertEqual(self.manga.status, MangaStatus.PUBLISHED)
+        self.manga.delete(updated_by=self.user)
+        manga = Manga.all.get(id=self.manga.id)
+        self.assertEqual(manga.status, MangaStatus.DELETED)
 
-    def test_manga_image_delete(self):
-        pass
+    def test_manga_page_delete(self):
+        mp = MangaPage(manga=self.manga, page=1)
+        mp.image.save('sample-file.jpg', File(BytesIO()), save=False)
+        mp.save()
+
+        path = mp.image.path
+        self.assertTrue(os.path.exists(path))
+
+        mp.delete()
+        self.assertFalse(os.path.exists(path))
 
     def test_manga_archive_delete(self):
-        pass
+        ma = MangaArchive(manga=self.manga)
+        ma.file.save('sample-file.zip', File(BytesIO()), save=False)
+        ma.save()
+
+        path = ma.file.path
+        self.assertTrue(os.path.exists(path))
+
+        ma.delete()
+        self.assertFalse(os.path.exists(path))
 
     def assert_manga_exists(self, manager, status, exists):
         self.manga.status = status
