@@ -1,0 +1,31 @@
+/* --------------------------------------------------
+    manga-nav styles
+---------------------------------------------------*/
+
+@manga-nav-height: 35px;
+
+#m-nav {
+    background-color: @nav-bg;
+    border-bottom: @nav-border;
+    height: @manga-nav-height + 1px;
+
+    > div > a {
+        .inline-block();
+
+        color: #000;
+        padding: 0 10px;
+
+        > .icon { margin-right: 3px; }
+        > span {
+            .inline-block();
+            font-size: 13px;
+            line-height: @manga-nav-height;
+        }
+//        &:hover {
+//            background-color: #ccc;
+//        }
+        &.active {
+            background-color: #d4d4d4;
+        }
+    }
+}

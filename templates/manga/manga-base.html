@@ -1,55 +1,10 @@
 {% extends 'base.html' %}
 
-{% block header %}
-    <header>
-        <span class="icon icon-menu max-md left" id="header-menu-icon"></span>
-        <h1 class="inline-block manga-title">{{ manga.title }}</h1>
-    </header>
-{% endblock %}
-
-{% block nav %}
-    {% set url_manga = url('manga', args=[manga.id, manga.slug]) %}
-    {% set url_manga_history = url('manga.history', args=[manga.id, manga.slug]) %}
-    {% set url_manga_edit = url('manga.edit', args=[manga.id, manga.slug]) %}
-    {% set url_manga_edit_images = url('manga.edit.images', args=[manga.id, manga.slug]) %}
-    <nav>
-        <a href="{{ url('manga.list') }}">
-            <span class="icon icon-left"></span>
-            <span>{% trans %}Back to Fufufuu{% endtrans %}</span>
-        </a>
-        <hr class="nav-sep">
-        <a href="{{ url_manga }}"{% if request.path == url_manga %} class="active"{% endif %}>
-            <span class="icon icon-docs"></span>
-            <span>{% trans %}Read{% endtrans %}</span>
-        </a>
-        <a href="#">
-            <span class="icon icon-sweden"></span>
-            <span>{% trans %}Thumbnails{% endtrans %}</span>
-        </a>
-        <a href="#">
-            <span class="icon icon-comment"></span>
-            <span>{% trans %}Comments{% endtrans %}</span>
-        </a>
-        <a href="#">
-            <span class="icon icon-down-circled"></span>
-            <span>{% trans %}Download{% endtrans %}</span>
-        </a>
-        <a href="#">
-            <span class="icon icon-heart-empty"></span>
-            <span>{% trans %}Add to Favorites{% endtrans %}</span>
-        </a>
-        <hr class="nav-sep">
-        <a href="{{ url_manga_edit }}"{% if request.path == url_manga_edit %} class="active"{% endif %}>
-            <span class="icon icon-pencil"></span>
-            <span>{% trans %}Edit{% endtrans %}</span>
-        </a>
-        <a href="{{ url_manga_edit_images }}"{% if request.path == url_manga_edit_images %} class="active"{% endif %}>
-            <span class="icon icon-pencil"></span>
-            <span>{% trans %}Edit Images{% endtrans %}</span>
-        </a>
-        <a href="{{ url_manga_history }}"{% if request.path == url_manga_history %} class="active"{% endif %}>
-            <span class="icon icon-back-in-time"></span>
-            <span>{% trans %}History{% endtrans %}</span>
-        </a>
-    </nav>
+{% block body %}
+    {% include 'manga/manga-header.html' %}
+    {% include 'manga/manga-nav.html' %}
+    {% include '_include/messages.html' %}
+    <div id="template-{{ TEMPLATE_NAME }}" class="manga-content">
+        {% block content %}{% endblock %}
+    </div>
 {% endblock %}
