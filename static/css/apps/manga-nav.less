@@ -2,7 +2,7 @@
     manga-nav styles
 ---------------------------------------------------*/
 
-@manga-nav-height: 35px;
+@manga-nav-height: 36px;
 
 #m-nav {
     background-color: @nav-bg;
@@ -21,11 +21,31 @@
             font-size: 13px;
             line-height: @manga-nav-height;
         }
-//        &:hover {
-//            background-color: #ccc;
-//        }
         &.active {
-            background-color: #d4d4d4;
+            background-color: @color-accent1;
+            color: #fff;
+        }
+    }
+}
+
+@media screen and (min-width: @screen-xs) {
+    #m-nav > div > a.active { height: @manga-nav-height + 1px; }
+}
+
+@media screen and (max-width: @screen-md1) {
+    #m-nav > .m-nav-main > a:last-of-type { float: right; }
+}
+
+@media screen and (max-width: @screen-xs1) {
+    #m-nav { height: 50px; }
+    #m-nav > .m-nav-main > a {
+        height: 50px;
+        width: 50px;
+        > span {
+            display: block;
+            font-size: 18px;
+            line-height: 50px;
+            text-align: center;
         }
     }
 }

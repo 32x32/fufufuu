@@ -16,3 +16,20 @@
     line-height: 50px;
     padding: 0 15px;
 }
+
+.m-header-heading {
+    .inline-block();
+
+    background-color: @header-bg-alt;
+    border-right: 1px solid #666;
+    color: #fff;
+    font-size: 20px;
+    font-weight: @font-weight-bold;
+    line-height: 50px;
+    text-align: center;
+    width: 50px;
+}
+
+@media screen and (max-width: @screen-xs1) {
+    .m-header-heading { border-right: none; }
+}

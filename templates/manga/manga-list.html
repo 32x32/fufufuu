@@ -8,7 +8,7 @@
             {% set url_manga = url('manga', args=[manga.id, manga.slug]) %}
             <li class="mli">
                 <div class="mli-core">
-                    <a href="{{ url_manga }}">
+                    <a href="{{ url_manga }}" target="_blank">
                         {% if manga.cover %}
                             <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ STATIC_URL }}images/placeholder/placeholder-200x300.png" data-src-retina="{{ STATIC_URL }}images/placeholder/placeholder-400x600.png">
                         {% else %}
