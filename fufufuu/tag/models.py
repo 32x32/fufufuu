@@ -20,8 +20,8 @@ class Tag(models.Model):
 
 class TagBase(models.Model):
 
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, db_index=True)
+    name = models.CharField(max_length=100, db_index=True)
+    slug = models.SlugField(max_length=100)
     markdown = models.TextField(blank=True)
     html = models.TextField(blank=True)
     cover = models.FileField(upload_to=tag_cover_upload_to, null=True)
@@ -72,5 +72,3 @@ def tag_data_history_post_delete(instance, **kwargs):
     for field in ['cover']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)
-
-

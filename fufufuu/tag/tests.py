@@ -2,8 +2,11 @@ import os
 from io import BytesIO
 from django.core.files.base import File
 from django.core.urlresolvers import reverse
+from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
+from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import TagData, TagDataHistory
+from fufufuu.tag.utils import get_or_create_tag_data
 
 
 class TagModelTests(BaseTestCase):
@@ -77,3 +80,19 @@ class TagListViewTests(BaseTestCase):
         response = self.client.get(reverse('tag.list.tank'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tag/tag-list-grid.html')
+
+
+class TagUtilTests(BaseTestCase):
+
+    def test_get_or_create_tag_data_get(self):
+        tag_data = TagData.objects.all()[0]
+        tag_type = tag_data.tag.tag_type
+        self.assertEqual(tag_data, get_or_create_tag_data(tag_type, tag_data.language, tag_data.name, self.user))
+
+    def test_get_or_create_tag_data_create(self):
+        tag_data = get_or_create_tag_data(TagType.AUTHOR, Language.JAPANESE, 'Brand New Tag 1', self.user)
+        self.assertEqual(tag_data.tag.tag_type, TagType.AUTHOR)
+        self.assertEqual(tag_data.language, Language.JAPANESE)
+        self.assertEqual(tag_data.name, 'Brand New Tag 1')
+        self.assertEqual(tag_data.updated_by, self.user)
+        self.assertEqual(tag_data.created_by, self.user)

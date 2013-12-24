@@ -5,7 +5,7 @@ from fufufuu.core.languages import Language
 from fufufuu.manga.enums import MangaCategory
 from fufufuu.manga.models import Manga
 from fufufuu.tag.enums import TagType
-from fufufuu.tag.models import TagData, Tag
+from fufufuu.tag.utils import get_or_create_tag_data
 
 
 class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
@@ -64,7 +64,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     language = forms.ChoiceField(label=_('Language'), choices=Language.choices)
     uncensored = forms.BooleanField(required=False, label=_('Uncensored'))
 
-    TAG_LIMIT = 100
+    TAG_LIMIT = 50
 
     class Meta:
         model = Manga
@@ -82,39 +82,57 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
             if name: self.tags.append((tag_type, name))
         return tags
 
-    def clean_authors(self):    return self.clean_tags(TagType.AUTHOR, 'authors')
-    def clean_circles(self):    return self.clean_tags(TagType.AUTHOR, 'circles')
-    def clean_content(self):    return self.clean_tags(TagType.AUTHOR, 'content')
-    def clean_events(self):     return self.clean_tags(TagType.AUTHOR, 'events')
-    def clean_magazines(self):  return self.clean_tags(TagType.AUTHOR, 'magazines')
-    def clean_parodies(self):   return self.clean_tags(TagType.AUTHOR, 'parodies')
-    def clean_scanlators(self): return self.clean_tags(TagType.AUTHOR, 'scanlators')
+    def clean_tank(self):               return self.cleaned_data.get('tank').strip()
+    def clean_tank_chapter(self):       return self.cleaned_data.get('tank_chapter').strip()
+    def clean_collection(self):         return self.cleaned_data.get('collection').strip()
+    def clean_collection_part(self):    return self.cleaned_data.get('collection_part').strip()
+
+    def clean_authors(self):            return self.clean_tags(TagType.AUTHOR, 'authors')
+    def clean_circles(self):            return self.clean_tags(TagType.AUTHOR, 'circles')
+    def clean_content(self):            return self.clean_tags(TagType.AUTHOR, 'content')
+    def clean_events(self):             return self.clean_tags(TagType.AUTHOR, 'events')
+    def clean_magazines(self):          return self.clean_tags(TagType.AUTHOR, 'magazines')
+    def clean_parodies(self):           return self.clean_tags(TagType.AUTHOR, 'parodies')
+    def clean_scanlators(self):         return self.clean_tags(TagType.AUTHOR, 'scanlators')
 
     def clean(self):
         cd = self.cleaned_data
         if len(self.tags) > self.TAG_LIMIT:
             raise forms.ValidationError(_('Exceeded maximum number of allowed tags that can be assigned.'))
 
-        # handle tank and collection
+        tank = cd.get('tank')
+        tank_chapter = cd.get('tank_chapter')
+
+        if bool(tank) != bool(tank_chapter):
+            raise forms.ValidationError(_('Please specify both tank and tank chapter.'))
+        elif tank and tank_chapter:
+            self.tank = get_or_create_tag_data(TagType.TANK, cd.get('language'), tank)
+            self.tank_chapter = tank_chapter
+
+        collection = cd.get('collection')
+        collection_part = cd.get('collection_part')
+
+        if bool(collection) != bool(collection_part):
+            raise forms.ValidationError(_('Please specify both collection and collection part.'))
+        elif collection and collection_part:
+            self.collection = get_or_create_tag_data(TagType.COLLECTION, cd.get('language'), collection)
+            self.collection_part = collection_part
+
         return cd
 
     def save_m2m(self, manga):
+        tag_list = []
         for tag_type, name in self.tags:
-            try:
-                tag_data = TagData.objects.get(language=Language.ENGLISH, name=name, tag__tag_type=tag_type)
-            except TagData.DoesNotExist:
-                tag = Tag.objects.create(tag_type=tag_type)
-                tag_data = TagData.objects.create(
-                    tag=tag,
-                    language=Language.ENGLISH,
-                    name=name,
-                )
+            tag_data = get_or_create_tag_data(tag_type, Language.ENGLISH, name)
+            while tag_data.alias: tag_data = tag_data.alias
+            tag_list.append(tag_data.tag)
+
+        manga.tags.add(*tag_list)
 
     def save(self):
         manga = super().save(commit=False)
         manga.save(updated_by=self.request.user)
 
         # update tank and collection
-
         self.save_m2m(manga)
         return manga
