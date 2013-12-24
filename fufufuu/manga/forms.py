@@ -74,6 +74,8 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.request = request
         self.tags = []
+        self.collection_obj = None
+        self.tank_obj = None
 
     def clean_tags(self, tag_type, field_name):
         tags = self.cleaned_data.get(field_name)
@@ -106,8 +108,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         if bool(tank) != bool(tank_chapter):
             raise forms.ValidationError(_('Please specify both tank and tank chapter.'))
         elif tank and tank_chapter:
-            self.tank = get_or_create_tag_data(TagType.TANK, cd.get('language'), tank)
-            self.tank_chapter = tank_chapter
+            self.tank_obj = get_or_create_tag_data(TagType.TANK, cd.get('language'), tank)
 
         collection = cd.get('collection')
         collection_part = cd.get('collection_part')
@@ -115,8 +116,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         if bool(collection) != bool(collection_part):
             raise forms.ValidationError(_('Please specify both collection and collection part.'))
         elif collection and collection_part:
-            self.collection = get_or_create_tag_data(TagType.COLLECTION, cd.get('language'), collection)
-            self.collection_part = collection_part
+            self.collection_obj = get_or_create_tag_data(TagType.COLLECTION, cd.get('language'), collection)
 
         return cd
 
@@ -126,13 +126,17 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
             tag_data = get_or_create_tag_data(tag_type, Language.ENGLISH, name)
             while tag_data.alias: tag_data = tag_data.alias
             tag_list.append(tag_data.tag)
-
         manga.tags.add(*tag_list)
 
     def save(self):
         manga = super().save(commit=False)
-        manga.save(updated_by=self.request.user)
+        if self.tank_obj:
+            manga.tank = self.tank_obj
+            manga.tank_chapter = self.cleaned_data.get('tank_chapter')
+        if self.collection_obj:
+            manga.collection = self.collection_obj
+            manga.collection_part = self.cleaned_data.get('collection_part')
 
-        # update tank and collection
+        manga.save(updated_by=self.request.user)
         self.save_m2m(manga)
         return manga
