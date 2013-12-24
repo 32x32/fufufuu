@@ -18,10 +18,7 @@ class Tag(models.Model):
         db_table = 'tag'
 
 
-class TagData(BaseAuditableModel):
-
-    tag = models.ForeignKey(Tag)
-    language = models.CharField(max_length=20, choices=Language.choices, db_index=True)
+class TagBase(models.Model):
 
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, db_index=True)
@@ -30,44 +27,32 @@ class TagData(BaseAuditableModel):
     cover = models.FileField(upload_to=tag_cover_upload_to, null=True)
 
     class Meta:
+        abstract = True
+
+
+class TagData(TagBase, BaseAuditableModel):
+
+    tag = models.ForeignKey(Tag)
+    language = models.CharField(max_length=20, choices=Language.choices, db_index=True)
+    alias = models.ForeignKey('self', null=True, related_name='alias_set')
+
+    class Meta:
         db_table = 'tag_data'
-        unique_together = (('tag', 'language'),)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)[:100] or '-'
         super().save(*args, **kwargs)
 
 
-class TagDataHistory(models.Model):
+class TagDataHistory(TagBase):
 
     tag_data = models.ForeignKey(TagData)
-
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, db_index=True)
-    markdown = models.TextField(blank=True)
-    html = models.TextField(blank=True)
-    cover = models.FileField(upload_to=tag_cover_upload_to, null=True)
 
     created_by = models.ForeignKey(User)
     created_on = models.DateTimeField()
 
     class Meta:
         db_table = 'tag_data_history'
-
-
-class TagAlias(BaseAuditableModel):
-
-    tag = models.ForeignKey(TagData)
-
-    name = models.CharField(max_length=100)
-    slug = models.CharField(max_length=100, db_index=True)
-
-    class Meta:
-        db_table = 'tag_alias'
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)[:100] or '-'
-        super().save(*args, **kwargs)
 
 
 #-------------------------------------------------------------------------------

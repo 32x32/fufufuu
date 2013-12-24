@@ -5,6 +5,7 @@ from fufufuu.core.languages import Language
 from fufufuu.manga.enums import MangaCategory
 from fufufuu.manga.models import Manga
 from fufufuu.tag.enums import TagType
+from fufufuu.tag.models import TagData, Tag
 
 
 class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
@@ -29,15 +30,9 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         })
     )
 
-    cover = forms.FileField(
-        required=False,
-        label=_('Cover'),
-    )
+    cover = forms.FileField(required=False, label=_('Cover'))
 
-    tank = forms.CharField(
-        required=False,
-        label=_('Tank'),
-    )
+    tank = forms.CharField(required=False, label=_('Tank'))
     tank_chapter = forms.CharField(
         required=False,
         label=_('Chapter'),
@@ -47,10 +42,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         })
     )
 
-    collection = forms.CharField(
-        required=False,
-        label=_('Collection'),
-    )
+    collection = forms.CharField(required=False, label=_('Collection'))
     collection_part = forms.CharField(
         required=False,
         label=_('Part'),
@@ -72,6 +64,8 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     language = forms.ChoiceField(label=_('Language'), choices=Language.choices)
     uncensored = forms.BooleanField(required=False, label=_('Uncensored'))
 
+    TAG_LIMIT = 100
+
     class Meta:
         model = Manga
         fields = ('title', 'markdown', 'cover', 'category', 'language', 'uncensored')
@@ -79,6 +73,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.request = request
+        self.tags = []
 
     def clean_tags(self, tag_type, field_name):
         tags = self.cleaned_data.get(field_name)
@@ -97,14 +92,29 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     def clean(self):
         cd = self.cleaned_data
+        if len(self.tags) > self.TAG_LIMIT:
+            raise forms.ValidationError(_('Exceeded maximum number of allowed tags that can be assigned.'))
+
         # handle tank and collection
         return cd
+
+    def save_m2m(self, manga):
+        for tag_type, name in self.tags:
+            try:
+                tag_data = TagData.objects.get(language=Language.ENGLISH, name=name, tag__tag_type=tag_type)
+            except TagData.DoesNotExist:
+                tag = Tag.objects.create(tag_type=tag_type)
+                tag_data = TagData.objects.create(
+                    tag=tag,
+                    language=Language.ENGLISH,
+                    name=name,
+                )
 
     def save(self):
         manga = super().save(commit=False)
         manga.save(updated_by=self.request.user)
 
         # update tank and collection
-        # process m2m information
 
+        self.save_m2m(manga)
         return manga
