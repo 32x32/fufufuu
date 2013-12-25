@@ -1,3 +1,4 @@
+from collections import defaultdict
 from django import forms
 from django.utils.translation import ugettext as _
 from fufufuu.core.forms import BlankLabelSuffixMixin
@@ -74,8 +75,19 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.request = request
         self.tags = []
-        self.collection_obj = None
-        self.tank_obj = None
+
+        manga = kwargs['instance']
+        self.collection_obj = manga.collection
+        self.tank_obj = manga.tank
+        self.initialize_tag_fields(manga)
+        self.fields['cover'].required = bool(manga.cover)
+
+    def initialize_tag_fields(self, manga):
+        tag_list = manga.tags.all()
+        tag_dict = defaultdict(list)
+        for tag in tag_list:
+            tag_dict[tag.tag_type].append(tag)
+        self.fields['authors'].initial = ', '.join(tag_dict[TagType.AUTHOR])
 
     def clean_tags(self, tag_type, field_name):
         tags = self.cleaned_data.get(field_name)

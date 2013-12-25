@@ -87,7 +87,8 @@ class TagUtilTests(BaseTestCase):
     def test_get_or_create_tag_data_get(self):
         tag_data = TagData.objects.all()[0]
         tag_type = tag_data.tag.tag_type
-        self.assertEqual(tag_data, get_or_create_tag_data(tag_type, tag_data.language, tag_data.name, self.user))
+        actual_tag = get_or_create_tag_data(tag_type, tag_data.language, tag_data.name, self.user)
+        self.assertEqual(tag_data, actual_tag)
 
     def test_get_or_create_tag_data_create(self):
         tag_data = get_or_create_tag_data(TagType.AUTHOR, Language.JAPANESE, 'Brand New Tag 1', self.user)
@@ -96,3 +97,11 @@ class TagUtilTests(BaseTestCase):
         self.assertEqual(tag_data.name, 'Brand New Tag 1')
         self.assertEqual(tag_data.updated_by, self.user)
         self.assertEqual(tag_data.created_by, self.user)
+
+    def test_get_or_create_tag_data_follow_alias(self):
+        tag_data1 = TagData.objects.all()[0]
+        tag_data2 = TagData.objects.all()[1]
+        tag_data2.alias = tag_data1
+        tag_data2.save(updated_by=self.user)
+        actual_tag = get_or_create_tag_data(tag_data2.tag.tag_type, tag_data2.language, tag_data2.name, self.user)
+        self.assertEqual(tag_data1, actual_tag)
