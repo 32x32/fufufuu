@@ -15,10 +15,10 @@ class Migration(SchemaMigration):
         # Adding model 'Tag'
         db.create_table('tag', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
-            ('updated_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, db_index=True, auto_now=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(on_delete=models.SET_NULL, null=True, related_name='+', to=orm['account.User'], blank=True)),
-            ('updated_by', self.gf('django.db.models.fields.related.ForeignKey')(on_delete=models.SET_NULL, null=True, related_name='+', to=orm['account.User'], blank=True)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('updated_on', self.gf('django.db.models.fields.DateTimeField')(db_index=True, auto_now=True, blank=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, related_name='+', to=orm['account.User'], on_delete=models.SET_NULL, blank=True)),
+            ('updated_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, related_name='+', to=orm['account.User'], on_delete=models.SET_NULL, blank=True)),
             ('tag_type', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
             ('slug', self.gf('django.db.models.fields.SlugField')(max_length=100)),
@@ -32,11 +32,10 @@ class Migration(SchemaMigration):
         db.create_table('tag_history', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('tag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tag.Tag'])),
-            ('tag_type', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
             ('slug', self.gf('django.db.models.fields.SlugField')(max_length=100)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(on_delete=models.SET_NULL, null=True, related_name='+', to=orm['account.User'], blank=True)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, related_name='+', to=orm['account.User'], on_delete=models.SET_NULL, blank=True)),
         ))
         db.send_create_signal('tag', ['TagHistory'])
 
@@ -46,8 +45,8 @@ class Migration(SchemaMigration):
             ('tag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tag.Tag'])),
             ('language', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(on_delete=models.SET_NULL, null=True, related_name='+', to=orm['account.User'], blank=True)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, related_name='+', to=orm['account.User'], on_delete=models.SET_NULL, blank=True)),
         ))
         db.send_create_signal('tag', ['TagAlias'])
 
@@ -57,10 +56,10 @@ class Migration(SchemaMigration):
         # Adding model 'TagData'
         db.create_table('tag_data', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
-            ('updated_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, db_index=True, auto_now=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(on_delete=models.SET_NULL, null=True, related_name='+', to=orm['account.User'], blank=True)),
-            ('updated_by', self.gf('django.db.models.fields.related.ForeignKey')(on_delete=models.SET_NULL, null=True, related_name='+', to=orm['account.User'], blank=True)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('updated_on', self.gf('django.db.models.fields.DateTimeField')(db_index=True, auto_now=True, blank=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, related_name='+', to=orm['account.User'], on_delete=models.SET_NULL, blank=True)),
+            ('updated_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, related_name='+', to=orm['account.User'], on_delete=models.SET_NULL, blank=True)),
             ('tag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tag.Tag'])),
             ('language', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('markdown', self.gf('django.db.models.fields.TextField')(blank=True)),
@@ -75,13 +74,13 @@ class Migration(SchemaMigration):
         # Adding model 'TagDataHistory'
         db.create_table('tag_data_history', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('tag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tag.Tag'])),
+            ('tag_data', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tag.TagData'])),
             ('language', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('markdown', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('html', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('cover', self.gf('django.db.models.fields.files.FileField')(null=True, max_length=100)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(on_delete=models.SET_NULL, null=True, related_name='+', to=orm['account.User'], blank=True)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, related_name='+', to=orm['account.User'], on_delete=models.SET_NULL, blank=True)),
         ))
         db.send_create_signal('tag', ['TagDataHistory'])
 
@@ -117,8 +116,8 @@ class Migration(SchemaMigration):
             'Meta': {'db_table': "'user'", 'object_name': 'User'},
             'avatar': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'max_length': '100', 'blank': 'True'}),
             'comment_limit': ('django.db.models.fields.IntegerField', [], {'default': '100'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
-            'email': ('django.db.models.fields.EmailField', [], {'blank': 'True', 'max_length': '254'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '254', 'blank': 'True'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
@@ -126,63 +125,62 @@ class Migration(SchemaMigration):
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'markdown': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'updated_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now': 'True'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'upload_limit': ('django.db.models.fields.IntegerField', [], {'default': '10'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         'tag.tag': {
-            'Meta': {'db_table': "'tag'", 'object_name': 'Tag', 'unique_together': "[('name', 'tag_type')]"},
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'blank': 'True'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'Meta': {'db_table': "'tag'", 'unique_together': "[('name', 'tag_type')]", 'object_name': 'Tag'},
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '100'}),
             'tag_type': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
-            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'blank': 'True'}),
-            'updated_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'db_index': 'True', 'auto_now': 'True'})
+            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True', 'auto_now': 'True', 'blank': 'True'})
         },
         'tag.tagalias': {
-            'Meta': {'db_table': "'tag_alias'", 'object_name': 'TagAlias', 'unique_together': "[('tag', 'language', 'name')]"},
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'blank': 'True'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'Meta': {'db_table': "'tag_alias'", 'unique_together': "[('tag', 'language', 'name')]", 'object_name': 'TagAlias'},
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'language': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tag.Tag']"})
         },
         'tag.tagdata': {
-            'Meta': {'db_table': "'tag_data'", 'object_name': 'TagData', 'unique_together': "[('tag', 'language')]"},
+            'Meta': {'db_table': "'tag_data'", 'unique_together': "[('tag', 'language')]", 'object_name': 'TagData'},
             'cover': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'max_length': '100'}),
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'blank': 'True'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'language': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'markdown': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tag.Tag']"}),
-            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'blank': 'True'}),
-            'updated_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'db_index': 'True', 'auto_now': 'True'})
+            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True', 'auto_now': 'True', 'blank': 'True'})
         },
         'tag.tagdatahistory': {
             'Meta': {'db_table': "'tag_data_history'", 'object_name': 'TagDataHistory'},
             'cover': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'max_length': '100'}),
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'blank': 'True'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'language': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'markdown': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tag.Tag']"})
+            'tag_data': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tag.TagData']"})
         },
         'tag.taghistory': {
             'Meta': {'db_table': "'tag_history'", 'object_name': 'TagHistory'},
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'blank': 'True'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']", 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '100'}),
-            'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tag.Tag']"}),
-            'tag_type': ('django.db.models.fields.CharField', [], {'max_length': '20'})
+            'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tag.Tag']"})
         }
     }
 

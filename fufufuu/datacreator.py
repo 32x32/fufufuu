@@ -1,17 +1,18 @@
 import argparse, datetime, os, random, sys
 from collections import defaultdict
-from django.utils import timezone
 
 PROJECT_PATH = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
 sys.path.append(PROJECT_PATH)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 
+from django.utils import timezone
 from fufufuu.account.models import User
+from fufufuu.core.languages import Language
 from fufufuu.core.utils import slugify
 from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.models import Manga, MangaTag, MangaHistory, MangaHistoryTag
 from fufufuu.tag.enums import TagType
-from fufufuu.tag.models import Tag, TagData, TagDataHistory
+from fufufuu.tag.models import Tag, TagData, TagDataHistory, TagHistory, TagAlias
 
 #-------------------------------------------------------------------------------
 
@@ -69,26 +70,49 @@ class DataCreator:
     @timed
     def create_tags(self):
         tag_list = []
-        for tag_type, _ in TagType.choices:
+        for tag_type in TagType.choices_dict:
             for i in range(1, self.config['TAGS']+1):
-                tag_list.append(Tag(tag_type=tag_type))
+                name = '{} {}'.format(TagType.choices_dict[tag_type], i)
+                tag = Tag(tag_type=tag_type, name=name, slug=slugify(name), created_by=self.user, updated_by=self.user)
+                tag_list.append(tag)
         Tag.objects.bulk_create(tag_list)
+
+    @timed
+    def create_tag_histories(self):
+        tag_history_list = []
+        for tag in Tag.objects.all():
+            i = 1
+            while random.random() < 0.5:
+                tag_history = TagHistory(tag=tag, name='{} - History {}'.format(tag.name, i))
+                tag_history_list.append(tag_history)
+                i += 1
+        TagHistory.objects.bulk_create(tag_history_list)
+
+    @timed
+    def create_tag_aliases(self):
+        tag_alias_list = []
+        for tag in Tag.objects.all():
+            i = 1
+            while random.random() < 0.2:
+                language = random.choice([Language.ENGLISH, Language.JAPANESE])
+                tag_alias = TagAlias(tag=tag, language=language, name='{} - Alias {}'.format(tag.name, i))
+                tag_alias_list.append(tag_alias)
+                i += 1
+        TagAlias.objects.bulk_create(tag_alias_list)
 
     @timed
     def create_tag_data(self):
         for language in ['en', 'ja']:
             tag_data_list = []
-            for tag_type, _ in TagType.choices:
-                for i, tag in enumerate(Tag.objects.filter(tag_type=tag_type), start=1):
-                    name = '{} {} - {}'.format(TagType.choices_dict[tag_type], i, language)
-                    tag_data_list.append(TagData(
-                        tag=tag,
-                        language=language,
-                        name=name,
-                        slug=slugify(name),
-                        created_by=self.user,
-                        updated_by=self.user,
-                    ))
+            for tag in Tag.objects.all():
+                tag_data_list.append(TagData(
+                    tag=tag,
+                    language=language,
+                    markdown='Tag Data - {} - {}'.format(tag.name, language),
+                    html='Tag Data - {} - {}'.format(tag.name, language),
+                    created_by=self.user,
+                    updated_by=self.user,
+                ))
             TagData.objects.bulk_create(tag_data_list)
 
     @timed
@@ -99,15 +123,12 @@ class DataCreator:
             while random.random() < 0.3:
                 tdh_list.append(TagDataHistory(
                     tag_data=tag_data,
-                    name=tag_data.name,
-                    slug=tag_data.slug,
                     markdown='History {}'.format(i),
                     html='History {}'.format(i),
                     created_by=self.user,
                     created_on=timezone.now(),
                 ))
                 i += 1
-
         TagDataHistory.objects.bulk_create(tdh_list)
 
     @timed
@@ -208,6 +229,8 @@ class DataCreator:
 
         self.create_users()
         self.create_tags()
+        self.create_tag_histories()
+        self.create_tag_aliases()
         self.create_tag_data()
         self.create_tag_data_histories()
         self.create_manga()

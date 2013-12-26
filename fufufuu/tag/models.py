@@ -27,7 +27,6 @@ class Tag(BaseAuditableModel):
 class TagHistory(models.Model):
 
     tag = models.ForeignKey(Tag)
-    tag_type = models.CharField(max_length=20, choices=TagType.choices)
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100)
 
@@ -67,7 +66,7 @@ class TagData(BaseAuditableModel):
 
 class TagDataHistory(models.Model):
 
-    tag = models.ForeignKey(Tag)
+    tag_data = models.ForeignKey(TagData)
     language = models.CharField(max_length=20, choices=Language.choices)
     markdown = models.TextField(blank=True)
     html = models.TextField(blank=True)
