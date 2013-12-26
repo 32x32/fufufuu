@@ -17,7 +17,7 @@ class Tag(BaseAuditableModel):
 
     class Meta:
         db_table = 'tag'
-        unique_together = [('name', 'tag_type')]
+        unique_together = [('tag_type', 'name')]
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)[:100] or '-'

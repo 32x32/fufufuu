@@ -6,7 +6,6 @@ from fufufuu.core.languages import Language
 from fufufuu.manga.enums import MangaCategory
 from fufufuu.manga.models import Manga
 from fufufuu.tag.enums import TagType
-from fufufuu.tag.utils import get_or_create_tag_data
 
 
 class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
