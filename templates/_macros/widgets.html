@@ -1,0 +1,18 @@
+{% macro pagination(page, request) %}
+    <div class="pagination right">
+        {% if page.has_previous() %}
+            <a href="?p={{ page.previous_page_number() }}" class="icon icon-left-open pagination-prev"></a>
+        {% else %}
+            <span class="icon icon-left-open pagination-disabled pagination-prev"></span>
+        {% endif %}
+        <form class="pagination-control">
+            <input type="text" value="{{ page.number }}" name="p">
+            <span class="space-left-10">of {{ page.paginator.num_pages }}</span>
+        </form>
+        {% if page.has_next() %}
+            <a href="?p={{ page.next_page_number() }}" class="icon icon-right-open pagination-next"></a>
+        {% else %}
+            <span class="icon icon-right-open pagination-disabled pagination-next"></span>
+        {% endif %}
+    </div>
+{% endmacro %}

@@ -90,6 +90,47 @@ img {
 }
 
 /* --------------------------------------------------
+    pagination
+---------------------------------------------------*/
+
+.pagination {
+    .border-radius(@border-radius);
+    .inline-block();
+
+    background-color: @pagination-bg;
+    border: @pagination-border;
+}
+
+.pagination-control {
+    .inline-block();
+    border-right: @pagination-border;
+    border-left: @pagination-border-alt;
+    padding: 0 10px;
+
+    > input {
+        .inline-block();
+
+        line-height: 24px;
+        height: 36px;
+        margin: 6px 0;
+        padding: 5px;
+        width: 48px;
+        text-align: center;
+    }
+    > span { line-height: 48px; }
+}
+
+.pagination-prev, .pagination-next {
+    .inline-block();
+    line-height: 48px;
+    text-align: center;
+    width: 48px;
+}
+
+.pagination-prev { border-right: @pagination-border; }
+.pagination-next { border-left: @pagination-border-alt; }
+
+/* --------------------------------------------------
     small space adjustment
 ---------------------------------------------------*/
 
