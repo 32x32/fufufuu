@@ -1,3 +1,4 @@
+from collections import namedtuple
 from django.core.management import call_command
 from django.db import connections
 from django.test.runner import DiscoverRunner
@@ -42,6 +43,9 @@ class BaseTestCase(TestCase):
         self.user = User.objects.get(username='testuser')
         self.user.set_password('password')
         self.user.save()
+
+        self.request = namedtuple('Request', 'user')
+        self.request.user = self.user
 
         self.manga = Manga.published.latest('published_on')
 
