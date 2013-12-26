@@ -9,47 +9,72 @@ from fufufuu.core.utils import slugify
 from fufufuu.tag.enums import TagType
 
 
-class Tag(models.Model):
+class Tag(BaseAuditableModel):
 
-    tag_type = models.CharField(max_length=20, choices=TagType.choices, db_index=True)
-    created_on = models.DateTimeField(auto_now_add=True)
+    tag_type = models.CharField(max_length=20, choices=TagType.choices)
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
 
     class Meta:
         db_table = 'tag'
-
-
-class TagBase(models.Model):
-
-    name = models.CharField(max_length=100, db_index=True)
-    slug = models.SlugField(max_length=100)
-    markdown = models.TextField(blank=True)
-    html = models.TextField(blank=True)
-    cover = models.FileField(upload_to=tag_cover_upload_to, null=True)
-
-    class Meta:
-        abstract = True
-
-
-class TagData(TagBase, BaseAuditableModel):
-
-    tag = models.ForeignKey(Tag)
-    language = models.CharField(max_length=20, choices=Language.choices, db_index=True)
-    alias = models.ForeignKey('self', null=True, related_name='alias_set')
-
-    class Meta:
-        db_table = 'tag_data'
+        unique_together = [('name', 'tag_type')]
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)[:100] or '-'
         super().save(*args, **kwargs)
 
 
-class TagDataHistory(TagBase):
+class TagHistory(models.Model):
 
-    tag_data = models.ForeignKey(TagData)
+    tag = models.ForeignKey(Tag)
+    tag_type = models.CharField(max_length=20, choices=TagType.choices)
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
 
-    created_by = models.ForeignKey(User)
-    created_on = models.DateTimeField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, null=True, blank=True, related_name='+', on_delete=models.SET_NULL, db_index=True)
+
+    class Meta:
+        db_table = 'tag_history'
+
+
+class TagAlias(models.Model):
+
+    tag = models.ForeignKey(Tag)
+    language = models.CharField(max_length=20, choices=Language.choices)
+    name = models.CharField(max_length=100)
+
+    created_on = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, null=True, blank=True, related_name='+', on_delete=models.SET_NULL, db_index=True)
+
+    class Meta:
+        db_table = 'tag_alias'
+        unique_together = [('tag', 'language', 'name')]
+
+
+class TagData(BaseAuditableModel):
+
+    tag = models.ForeignKey(Tag)
+    language = models.CharField(max_length=20, choices=Language.choices)
+    markdown = models.TextField(blank=True)
+    html = models.TextField(blank=True)
+    cover = models.FileField(upload_to=tag_cover_upload_to, null=True)
+
+    class Meta:
+        db_table = 'tag_data'
+        unique_together = [('tag', 'language')]
+
+
+class TagDataHistory(models.Model):
+
+    tag = models.ForeignKey(Tag)
+    language = models.CharField(max_length=20, choices=Language.choices)
+    markdown = models.TextField(blank=True)
+    html = models.TextField(blank=True)
+    cover = models.FileField(upload_to=tag_cover_upload_to, null=True)
+
+    created_on = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, null=True, blank=True, related_name='+', on_delete=models.SET_NULL, db_index=True)
 
     class Meta:
         db_table = 'tag_data_history'

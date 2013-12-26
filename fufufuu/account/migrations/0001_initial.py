@@ -22,7 +22,7 @@ class Migration(SchemaMigration):
             ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('upload_limit', self.gf('django.db.models.fields.IntegerField')(default=10)),
             ('comment_limit', self.gf('django.db.models.fields.IntegerField')(default=100)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now=True)),
         ))
         db.send_create_signal('account', ['User'])
@@ -35,10 +35,10 @@ class Migration(SchemaMigration):
 
     models = {
         'account.user': {
-            'Meta': {'object_name': 'User', 'db_table': "'user'"},
+            'Meta': {'db_table': "'user'", 'object_name': 'User'},
             'avatar': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'blank': 'True', 'null': 'True'}),
             'comment_limit': ('django.db.models.fields.IntegerField', [], {'default': '100'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '254', 'blank': 'True'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
