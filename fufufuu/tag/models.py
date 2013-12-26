@@ -13,7 +13,7 @@ class Tag(BaseAuditableModel):
 
     tag_type = models.CharField(max_length=20, choices=TagType.choices)
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100)
+    slug = models.SlugField(max_length=100, db_index=True)
 
     class Meta:
         db_table = 'tag'

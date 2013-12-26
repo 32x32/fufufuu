@@ -32,11 +32,15 @@ class MangaEditFormTests(BaseTestCase):
         self.assertEqual(manga.category, MangaCategory.VANILLA)
         self.assertEqual(manga.language, Language.ENGLISH)
         self.assertEqual(manga.title, 'Test Manga Title')
+        self.assertFalse(manga.tank)
+        self.assertFalse(manga.tank_chapter)
+        self.assertFalse(manga.collection)
+        self.assertFalse(manga.collection_part)
 
-    def test_manga_edit_form_tank_and_collection(self):
+    def test_manga_edit_form_tag_limit(self):
         pass
 
-    def test_manga_edit_form_tank_and_collection_delete(self):
+    def test_manga_edit_form_tank_and_collection(self):
         pass
 
     def test_manga_edit_form_tags(self):
