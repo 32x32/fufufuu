@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
-from fufufuu.manga.enums import MangaStatus
+from fufufuu.manga.enums import MangaStatus, MangaCategory
 from fufufuu.manga.forms import MangaEditForm
 from fufufuu.manga.models import Manga
 
@@ -14,8 +14,20 @@ class MangaListView(TemplateView):
     template_name = 'manga/manga-list.html'
     page_size = 120
 
+    def get_filters(self):
+        filters = {}
+
+        # filter by category
+        categories = list(filter(lambda c: self.request.GET.get(c.lower()), list(MangaCategory.choices_dict)))
+        if categories:
+            filters['category__in'] = categories
+
+        # filter by language
+
+        return filters
+
     def get(self, request):
-        manga_list = Manga.published.all()
+        manga_list = Manga.published.filter(**self.get_filters())
         manga_list = paginate(manga_list, self.page_size, request.GET.get('p'))
         return self.render_to_response({
             'manga_list': manga_list,

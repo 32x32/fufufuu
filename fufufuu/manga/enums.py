@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 
 class MangaCategory:
 
-    NON_H           = 'NON-H'
+    NON_H           = 'NON_H'
     ECCHI           = 'ECCHI'
     VANILLA         = 'VANILLA'
     ALTERNATIVE     = 'ALTERNATIVE'
