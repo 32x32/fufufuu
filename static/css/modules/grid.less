@@ -2,12 +2,16 @@
     grid styles
 ---------------------------------------------------*/
 
-.container {
-    padding: 15px;
-}
+.container      { padding: 10px; }
+.container-fat  { padding: 15px; }
+
 @media screen and (max-width: @screen-xs1) {
-    .container { padding: 10px; }
+    .container-fat { padding: 10px; }
 }
+
+/* --------------------------------------------------
+    conditional display
+---------------------------------------------------*/
 
 @media screen and (max-width: @screen-xs1) {
     .min-xs { display: none !important; }
