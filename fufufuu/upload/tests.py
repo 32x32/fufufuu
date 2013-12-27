@@ -11,7 +11,7 @@ class UploadListViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'upload/upload-list.html')
 
     def test_upload_list_view_post_limit(self):
-        for i in range(self.user.upload_limit):
+        for i in range(self.user.upload_limit+1):
             Manga().save(updated_by=self.user)
 
         response = self.client.post(reverse('upload.list'))

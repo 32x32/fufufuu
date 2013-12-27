@@ -9,10 +9,13 @@
         <form class="right">
             {{ widgets.pagination(manga_list, request) }}
         </form>
-        <form action="" method="post" target="_blank">
+        <form action="" method="post" target="_blank" class="min-md inline-block space-right-10">
             {{ forms.csrf_token(csrf_token) }}
-            <button type="submit" class="btn btn-primary space-bottom"><span class="icon icon-up-circled space-right"></span>{% trans %}New Upload{% endtrans %}</button>
+            <button type="submit" class="btn btn-primary space-bottom"{% if upload_slots_used >= user.upload_limit %} disabled{% endif %}><span class="icon icon-up-circled space-right"></span>{% trans %}New Upload{% endtrans %}</button>
         </form>
+        <span class="block-message {% if upload_slots_used >= user.upload_limit %}message-error{% else %}message-info{% endif %} min-md">
+            Used {{ upload_slots_used }} / {{ user.upload_limit }} upload slots in the past 24 hours.
+        </span>
         <table class="table-hover">
             <thead>
                 <tr>

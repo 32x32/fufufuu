@@ -164,6 +164,9 @@ class DataCreator:
 
         Manga.objects.bulk_create(manga_list)
 
+        two_days_ago = timezone.now() - timezone.timedelta(days=2)
+        Manga.objects.update(created_on=two_days_ago, updated_on=two_days_ago, published_on=two_days_ago)
+
     @timed
     def create_manga_tags(self):
         tag_dict = defaultdict(list)

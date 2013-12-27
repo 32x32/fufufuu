@@ -15,6 +15,18 @@
 @message-border-error:      @color-accent4;
 
 /* --------------------------------------------------
+    block message
+---------------------------------------------------*/
+
+.block-message {
+    .border-radius(0 @border-radius @border-radius 0);
+    .inline-block();
+
+    border-left: 5px solid transparent;
+    padding: 8px 12px;
+}
+
+/* --------------------------------------------------
     messages styles
 ---------------------------------------------------*/
 
@@ -50,4 +62,3 @@
     background-color: @message-bg-error;
     border-color: @message-border-error;
 }
-

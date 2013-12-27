@@ -59,3 +59,10 @@ button::-moz-focus-inner {
     display: block;
     width: 100%;
 }
+
+.btn[disabled] {
+    background-color: @btn-disabled-bg;
+    border-color: @btn-disabled-border;
+    color: @btn-disabled-color;
+    cursor: not-allowed;
+}
