@@ -1,3 +1,4 @@
+from fufufuu.core.languages import Language
 from fufufuu.manga.enums import MangaStatus, MangaCategory
 
 
@@ -8,3 +9,6 @@ class MangaMixin:
 
     @property
     def category_display(self): return MangaCategory.choices_dict[self.category]
+
+    @property
+    def language_display(self): return Language.choices_dict[self.language]
