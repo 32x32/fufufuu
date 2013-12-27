@@ -5,7 +5,7 @@
 
 {% block content %}
     <form action="" method="post">
-        <div class="container-fat">
+        <div class="container-fat manga-edit-main">
             {{ forms.csrf_token(csrf_token) }}
             {{ forms.non_field_errors(form) }}
             <div class="half-wrapper">
@@ -90,7 +90,7 @@
                 </div>
             </div>
         </div>
-        <div class="well">
+        <div class="manga-edit-sidebar">
             <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
             {% if manga.status == 'DRAFT' %}
                 <button type="submit" class="btn btn-warning">{% trans %}Save and Publish{% endtrans %}</button>

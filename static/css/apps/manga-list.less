@@ -1,0 +1,95 @@
+/* --------------------------------------------------
+    manga-list styles
+---------------------------------------------------*/
+
+@mli-core-bg:       #fff;
+@mli-core-border:   1px solid #ccc;
+
+.ml {
+    .transform(translateZ(0));
+    margin: -5px 0;
+    padding: 0 5px;
+}
+
+.mli {
+    .inline-block();
+    padding: 5px;
+    width: 210px;
+}
+
+@media screen and (max-width: 479px) {
+    .mli { width: 100/2%; }
+}
+@media screen and (min-width: 480px) and (max-width: 767px) {
+    .mli { width: 100/3%; }
+}
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+    .mli { width: 100/4%; }
+}
+@media screen and (min-width: 1200px) and (max-width: 1559px) {
+    .mli { width: 100/5%; }
+}
+@media screen and (min-width: 1560px) and (max-width: 1799px) {
+    .mli { width: 100/6%; }
+}
+@media screen and (min-width: 1800px) {
+    .mli { width: 100/8%; }
+}
+
+.mli-core {
+    background-color: @mli-core-bg;
+    border: @mli-core-border;
+}
+
+.mli-title {
+    font-size: 14px;
+    height: 54px;
+    line-height: 1.6;
+    overflow: hidden;
+    padding: 10px 10px 0;
+}
+.mli-info {
+    padding: 10px 10px 5px;
+    > span { margin-bottom: 5px; }
+}
+
+/* --------------------------------------------------
+    manga-status and manga-category styles
+---------------------------------------------------*/
+
+@manga-status-draft:            #999;
+@manga-status-published:        @color-accent2;
+@manga-status-pending:          @color-accent3;
+@manga-status-deleted:          @color-accent4;
+
+@manga-category-non-h:          @color-accent5;
+@manga-category-ecchi:          @color-accent4;
+@manga-category-vanilla:        @color-accent3;
+@manga-category-alternative:    @color-accent2;
+@manga-category-yaoi:           #aa66cc;
+@manga-category-yuri:           #f897aa;
+@manga-category-other:          #999;
+
+.manga-status, .manga-category {
+    .border-radius(@border-radius - 1px);
+    .inline-block();
+
+    background-color: #999;
+    color: #fff;
+    font-size: 13px;
+    line-height: 24px;
+    padding: 0 5px;
+}
+
+.manga-status-draft     { background-color: @manga-status-draft; }
+.manga-status-published { background-color: @manga-status-published; }
+.manga-status-pending   { background-color: @manga-status-pending; }
+.manga-status-deleted   { background-color: @manga-status-deleted; }
+
+.manga-category-non_h       { background-color: @manga-category-non-h; }
+.manga-category-ecchi       { background-color: @manga-category-ecchi; }
+.manga-category-vanilla     { background-color: @manga-category-vanilla; }
+.manga-category-alternative { background-color: @manga-category-alternative; }
+.manga-category-yaoi        { background-color: @manga-category-yaoi; }
+.manga-category-yuri        { background-color: @manga-category-yuri; }
+.manga-category-other       { background-color: @manga-category-other; }

@@ -129,7 +129,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         tank_chapter = cd.get('tank_chapter')
 
         if bool(tank_name) != bool(tank_chapter):
-            raise forms.ValidationError(_('Please specify both tank and tank chapter.'))
+            raise forms.ValidationError(_('Please specify both tank and tank chapter (or leave them both blank).'))
         elif tank_name and tank_chapter:
             self.tank_obj = get_or_create_tag_by_name_or_alias(TagType.TANK, tank_name, self.request.user)
 
@@ -137,7 +137,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         collection_part = cd.get('collection_part')
 
         if bool(collection_name) != bool(collection_part):
-            raise forms.ValidationError(_('Please specify both collection and collection part.'))
+            raise forms.ValidationError(_('Please specify both collection and collection part (or leave them both blank).'))
         elif collection_name and collection_part:
             self.collection_obj = get_or_create_tag_by_name_or_alias(TagType.COLLECTION, collection_name, self.request.user)
 

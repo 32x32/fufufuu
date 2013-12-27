@@ -96,7 +96,7 @@ class MangaEditView(MangaEditMixin, ProtectedTemplateView):
         if form.is_valid():
             manga = form.save()
             messages.success(request, _('{} has been updated').format(manga.title))
-            return redirect('manga.edit', id=id, slug=slug)
+            return redirect('manga.edit', id=id, slug=manga.slug)
 
         messages.error(request, _('{} has not been updated. Please fix the errors on the page and try again.').format(manga.title))
         return self.render_to_response({
