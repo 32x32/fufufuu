@@ -4,10 +4,40 @@
 {% block title %}{% trans %}Latest{% endtrans %}{% endblock %}
 
 {% block content %}
-    <div class="ml-control-bar">
+    <form class="ml-control-bar">
+        <div class="ml-control-bar-cat-wrapper">
+            <label class="ml-control-bar-cat manga-category-non-h">
+                <input type="checkbox" name="nonh">
+                <span for="id_nonh">{% trans %}Non-H{% endtrans %}</span>
+            </label>
+            <label class="ml-control-bar-cat manga-category-ecchi">
+                <input type="checkbox" name="ecchi">
+                <span>{% trans %}Ecchi{% endtrans %}</span>
+            </label>
+            <label class="ml-control-bar-cat manga-category-vanilla">
+                <input type="checkbox" name="vanilla">
+                <span>{% trans %}Vanilla{% endtrans %}</span>
+            </label>
+            <label class="ml-control-bar-cat manga-category-alternative">
+                <input type="checkbox" name="alternative">
+                <span>{% trans %}Alternative{% endtrans %}</span>
+            </label>
+            <label class="ml-control-bar-cat manga-category-yaoi">
+                <input type="checkbox" name="yaoi">
+                <span>{% trans %}Yaoi{% endtrans %}</span>
+            </label>
+            <label class="ml-control-bar-cat manga-category-yuri">
+                <input type="checkbox" name="yuri">
+                <span>{% trans %}Yuri{% endtrans %}</span>
+            </label>
+            <label class="ml-control-bar-cat manga-category-other">
+                <input type="checkbox" name="other">
+                <span>{% trans %}Other{% endtrans %}</span>
+            </label>
+            <button type="submit" class="btn btn-primary ml-control-bar-cat-button">{% trans %}Go{% endtrans %}</button>
+        </div>
         {{ widgets.pagination(manga_list, request) }}
-        <div class="clear"></div>
-    </div>
+    </form>
     <ul class="ml">
         {% for manga in manga_list %}
             {% set url_manga = url('manga', args=[manga.id, manga.slug]) %}
@@ -25,8 +55,7 @@
             </li>
         {% endfor %}
     </ul>
-    <div class="ml-control-bar">
+    <div class="control-bar text-center">
         {{ widgets.pagination(manga_list, request) }}
-        <div class="clear"></div>
     </div>
 {% endblock %}

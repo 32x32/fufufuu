@@ -9,6 +9,14 @@ label {
     font-weight: @font-weight-bold;
     font-size: 13px;
     text-transform: uppercase;
+
+    > input[type="checkbox"] {
+        margin-right: 5px;
+    }
+    > span {
+        font-weight: @font-weight-bold;
+        font-size: 13px;
+    }
 }
 
 /* --------------------------------------------------
@@ -27,6 +35,10 @@ input[type="text"], input[type="email"], input[type="password"], textarea {
     outline: none;
     padding: 10px 10px;
     width: 100%;
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
 }
 
 textarea {
@@ -52,6 +64,7 @@ input[type="file"] {
 .form-field {
     margin-bottom: 10px;
 }
+
 .form-buttons {
     margin-top: 20px;
 }

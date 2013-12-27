@@ -16,6 +16,7 @@ class AccountRegisterForm(BlankLabelSuffixMixin, forms.ModelForm):
         min_length=4,
         max_length=20,
         widget=forms.TextInput(attrs={
+            'autofocus': 'autofocus',
             'required': 'required',
             'minlength': 4,
             'maxlength': 20,
@@ -76,6 +77,7 @@ class AccountLoginForm(BlankLabelSuffixMixin, forms.Form):
     username = forms.CharField(
         label=_('Username'),
         widget=forms.TextInput(attrs={
+            'autofocus': 'autofocus',
             'required': 'required',
         }),
     )
