@@ -75,13 +75,13 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.request = request
         self.tags = []
+        self.collection_obj = None
+        self.tank_obj = None
 
         if 'instance' not in kwargs:
             raise RuntimeError('MangaEditForm must be used with an existing Manga instance.')
 
         manga = kwargs['instance']
-        self.collection_obj = manga.collection
-        self.tank_obj = manga.tank
         self.fields['cover'].required = bool(manga.cover)
 
         if 'data' not in kwargs:

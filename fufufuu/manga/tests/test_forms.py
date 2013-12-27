@@ -4,6 +4,7 @@ from fufufuu.manga.enums import MangaCategory
 from fufufuu.manga.forms import MangaEditForm
 from fufufuu.manga.models import MangaTag
 from fufufuu.tag.enums import TagType
+from fufufuu.tag.models import Tag
 
 
 class MangaEditFormTests(BaseTestCase):
@@ -21,6 +22,10 @@ class MangaEditFormTests(BaseTestCase):
         self.assertEqual(form.fields['authors'].initial, ', '.join(sorted(author_list)))
 
     def test_manga_edit_form_basic(self):
+        self.manga.tank = Tag.objects.filter(tag_type=TagType.TANK)[0]
+        self.manga.tank_chapter = '1'
+        self.manga.save(updated_by=self.user)
+
         form = MangaEditForm(request=self.request, instance=self.manga, data={
             'title': 'Test Manga Title',
             'category': MangaCategory.VANILLA,
