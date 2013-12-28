@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.http.response import Http404
+from django.http.response import Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from fufufuu.core.utils import paginate
@@ -7,6 +7,7 @@ from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.manga.enums import MangaStatus, MangaCategory
 from fufufuu.manga.forms import MangaEditForm
 from fufufuu.manga.models import Manga
+from fufufuu.manga.utils import process_zipfile, process_images
 
 
 class MangaListView(TemplateView):
@@ -160,3 +161,24 @@ class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
         return self.render_to_response({
             'manga': manga,
         })
+
+
+class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
+
+    def get(self, request, id, slug):
+        return HttpResponseNotAllowed(permitted_methods=['post'])
+
+    def post(self, request, id, slug):
+        manga = self.get_manga(id)
+        if 'zipfile' in request.FILES:
+            errors = process_zipfile(manga, request.FILES.get('zipfile'))
+        elif 'images' in request.FILES:
+            errors = process_images(manga, request.FILES.get('images', []))
+        else:
+            raise Http404
+
+        if errors:
+            messages.error(request, '\n'.join(errors))
+
+        return redirect('manga.edit.images', id=manga.id, slug=manga.slug)
+

@@ -1,4 +1,5 @@
 {% extends 'manga/manga-base.html' %}
+{% import '_macros/forms.html' as forms with context %}
 
 {% block title %}{% trans title=manga.title %}Edit Images: {{ title }}{% endtrans %}{% endblock %}
 
@@ -10,14 +11,16 @@
             </form>
         </div>
         <div class="manga-edit-sidebar">
-            <form action="" method="post" enctype="multipart/form-data" class="panel space-bottom-15">
+            <form action="{{ url('manga.edit.upload', args=[manga.id, manga.slug]) }}" method="post" enctype="multipart/form-data" class="panel space-bottom-15">
+                {{ forms.csrf_token(csrf_token) }}
                 <h5 class="panel-heading">{% trans %}Upload a Zip File{% endtrans %}</h5>
                 <div class="panel-body">
                     <input type="file" name="zipfile" id="id_zipfile">
                     <p class="help-block space-top-10">{% trans %}Maximum file size: 50MB{% endtrans %}</p>
                 </div>
             </form>
-            <form action="" method="post" enctype="multipart/form-data" class="panel">
+            <form action="{{ url('manga.edit.upload', args=[manga.id, manga.slug]) }}" method="post" enctype="multipart/form-data" class="panel">
+                {{ forms.csrf_token(csrf_token) }}
                 <h5 class="panel-heading">{% trans %}Upload Image Files{% endtrans %}</h5>
                 <div class="panel-body">
                     <input type="file" multiple="multiple" name="images" id="id_images">

@@ -43,6 +43,11 @@
 
   $(function() {
     var autocompleteParams, bindAutocompleteKeydown, extractLast, split, success;
+    if ($('#template-manga-edit-images').length) {
+      $('input[type="file"]').change(function() {
+        return $(this).parents('form').submit();
+      });
+    }
     if ($('#template-manga-edit').length) {
       split = function(val) {
         return val.split(/,\s*/);
