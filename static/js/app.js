@@ -7,7 +7,14 @@
       return $navbar.toggleClass('active');
     });
     $('.message .icon-cancel').click(function() {
-      return $(this).parent().slideUp(200);
+      var self;
+      self = $(this).parent();
+      return self.slideUp(200, function() {
+        self.remove();
+        if (!$('#message-list li').length) {
+          return $('#message-list').remove();
+        }
+      });
     });
     if ($('.lazy-image').length) {
       VERTICAL_BUFFER = 500;

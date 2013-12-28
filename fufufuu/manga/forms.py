@@ -77,6 +77,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     def __init__(self, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.messages = []
         self.request = request
         self.tags = []
         self.collection_obj = None
@@ -152,6 +153,8 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         tag_list = []
         for tag_type, name in self.tags:
             tag = get_or_create_tag_by_name_or_alias(tag_type, name, self.request.user)
+            if tag.name != name:
+                self.messages.append(_('{} has been replaced with {}'.format(name, tag.name)))
             tag_list.append(tag)
         manga.tags.add(*tag_list)
 

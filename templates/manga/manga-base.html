@@ -3,8 +3,8 @@
 {% block body %}
     {% include 'manga/_include/manga-header.html' %}
     {% include 'manga/_include/manga-nav.html' %}
-    {% include '_include/messages.html' %}
     <div id="template-{{ TEMPLATE_NAME }}" class="manga-content">
+        {% include '_include/messages.html' %}
         {% block content %}{% endblock %}
     </div>
 {% endblock %}

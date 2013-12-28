@@ -11,7 +11,12 @@ $ ->
     # messages
     #---------------------------------------------------------------------------
 
-    $('.message .icon-cancel').click -> $(this).parent().slideUp(200)
+    $('.message .icon-cancel').click ->
+        self = $(this).parent()
+        self.slideUp 200, ->
+            self.remove()
+            if not $('#message-list li').length
+                $('#message-list').remove()
 
     #---------------------------------------------------------------------------
     # lazy image loading
