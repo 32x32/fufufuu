@@ -1,12 +1,13 @@
 from django.contrib import messages
+from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.manga.enums import MangaStatus, MangaCategory
-from fufufuu.manga.forms import MangaEditForm
-from fufufuu.manga.models import Manga
+from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
+from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import process_zipfile, process_images
 
 
@@ -156,11 +157,25 @@ class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
 
     template_name = 'manga/manga-edit-images.html'
 
+    def get_formset_cls(self):
+        return modelformset_factory(
+            model=MangaPage,
+            form=MangaPageForm,
+            formset=MangaPageFormSet,
+            extra=0,
+            can_order=True,
+            max_num=100,
+        )
+
     def get(self, request, id, slug):
         manga = self.get_manga(id)
         return self.render_to_response({
             'manga': manga,
+            'formset': self.get_formset_cls()(queryset=MangaPage.objects.filter(manga=manga))
         })
+
+    def post(self, request, id, slug):
+        raise NotImplementedError
 
 
 class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):

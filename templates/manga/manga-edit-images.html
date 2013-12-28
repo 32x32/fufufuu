@@ -7,10 +7,19 @@
     <div class="relative">
         <div class="container-fat manga-edit-main">
             <form action="" method="post" enctype="multipart/form-data">
-                <p>{% trans %}Please start by uploading images.{% endtrans %}</p>
+                <ul class="upload-pl">
+                    {{ formset.management_form }}
+                    {% for form in formset %}{% with page=form.instance %}
+                        <li class="upload-pli">
+                            {{ form.id }}
+                            <img src="{{ page.image.url }}">
+                        </li>
+                    {% endwith %}{% endfor %}
+                </ul>
             </form>
         </div>
         <div class="manga-edit-sidebar">
+            <hr class="max-lg">
             <form action="{{ url('manga.edit.upload', args=[manga.id, manga.slug]) }}" method="post" enctype="multipart/form-data" class="panel space-bottom-15">
                 {{ forms.csrf_token(csrf_token) }}
                 <h5 class="panel-heading">{% trans %}Upload a Zip File{% endtrans %}</h5>

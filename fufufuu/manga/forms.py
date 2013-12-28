@@ -1,10 +1,11 @@
 from collections import defaultdict
 from django import forms
+from django.forms.models import BaseModelFormSet
 from django.utils.translation import ugettext as _
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
 from fufufuu.manga.enums import MangaCategory
-from fufufuu.manga.models import Manga
+from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
 
@@ -178,3 +179,19 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         manga.save(updated_by=self.request.user)
         self.save_tags(manga)
         return manga
+
+
+class MangaPageForm(forms.ModelForm):
+
+    select = forms.BooleanField(label=_('Select'), required=False)
+
+    class Meta:
+        model = MangaPage
+        fields = []
+
+
+class MangaPageFormSet(BaseModelFormSet):
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
