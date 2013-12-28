@@ -90,6 +90,27 @@ img {
 }
 
 /* --------------------------------------------------
+    well styles
+---------------------------------------------------*/
+
+@well-bg:       #eee;
+@well-border:   1px solid #ddd;
+
+.well {
+    .border-radius(@border-radius);
+
+    padding: 15px;
+    background-color: @well-bg;
+    border: @well-border;
+
+    > *:last-of-type { margin-bottom: 0; }
+}
+
+@media screen and (max-width: @screen-xs1) {
+    .well { padding: 10px; }
+}
+
+/* --------------------------------------------------
     pagination
 ---------------------------------------------------*/
 
@@ -168,3 +189,5 @@ img {
 .block  { display: block; }
 .none   { display: none; }
 .hidden { visibility: hidden; }
+
+.relative { position: relative; }
