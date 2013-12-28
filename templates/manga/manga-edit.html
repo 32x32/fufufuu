@@ -122,10 +122,10 @@
         <div class="manga-edit-sidebar">
             <label>&nbsp;</label>
             <div class="well">
-                <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+                <button type="submit" class="btn btn-primary" name="action" value="save">{% trans %}Save{% endtrans %}</button>
                 {% if manga.status == 'DRAFT' %}
-                    <button type="submit" class="btn btn-warning">{% trans %}Save and Publish{% endtrans %}</button>
-                    <button type="submit" class="btn btn-error">{% trans %}Delete{% endtrans %}</button>
+                    <button type="submit" class="btn btn-warning" name="action" value="publish">{% trans %}Save and Publish{% endtrans %}</button>
+                    <button type="submit" class="btn btn-error" name="action" value="delete">{% trans %}Delete{% endtrans %}</button>
                 {% endif %}
             </div>
         </div>

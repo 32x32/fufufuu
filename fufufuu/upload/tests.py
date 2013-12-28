@@ -20,4 +20,4 @@ class UploadListViewTests(BaseTestCase):
     def test_upload_list_view_post(self):
         response = self.client.post(reverse('upload.list'))
         manga = Manga.objects.latest('created_on')
-        self.assertRedirects(response, reverse('manga.edit', args=[manga.id, manga.slug]))
+        self.assertRedirects(response, reverse('manga.edit.images', args=[manga.id, manga.slug]))

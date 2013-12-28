@@ -196,4 +196,3 @@ class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
             messages.error(request, '\n'.join(errors))
 
         return redirect('manga.edit.images', id=manga.id, slug=manga.slug)
-

@@ -33,4 +33,4 @@ class UploadListView(ProtectedTemplateView):
 
         manga = Manga()
         manga.save(updated_by=request.user)
-        return redirect('manga.edit', id=manga.id, slug=manga.slug)
+        return redirect('manga.edit.images', id=manga.id, slug=manga.slug)
