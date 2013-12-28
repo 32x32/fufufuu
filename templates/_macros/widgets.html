@@ -2,7 +2,7 @@
     {% if page.paginator.num_pages > 1 %}
         <div class="pagination">
             {% if page.has_previous() %}
-                <a href="?p={{ page.previous_page_number() }}" class="icon icon-left-open pagination-prev"></a>
+                <a href="?{{ request.GET|getparams('p') }}&p={{ page.previous_page_number() }}" class="icon icon-left-open pagination-prev"></a>
             {% else %}
                 <span class="icon icon-left-open pagination-disabled pagination-prev"></span>
             {% endif %}
@@ -11,7 +11,7 @@
                 <span class="space-left-10">of {{ page.paginator.num_pages }}</span>
             </div>
             {% if page.has_next() %}
-                <a href="?p={{ page.next_page_number() }}" class="icon icon-right-open pagination-next"></a>
+                <a href="?{{ request.GET|getparams('p') }}&p={{ page.next_page_number() }}" class="icon icon-right-open pagination-next"></a>
             {% else %}
                 <span class="icon icon-right-open pagination-disabled pagination-next"></span>
             {% endif %}
