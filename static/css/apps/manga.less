@@ -16,63 +16,23 @@
     > #message-list { margin-top: -1px; }
 }
 
-/* --------------------------------------------------
-    manga-list control bar styles
----------------------------------------------------*/
+.manga-edit-category-table {
+    margin: -10px -10px -11px;
+    border: none;
 
-.ml-control-bar, .control-bar {
-    padding: 10px;
-}
-
-.ml-control-bar-cat-wrapper {
-    .inline-block();
-    margin-right: 10px;
-    > label { text-transform: none; }
-}
-
-.ml-control-bar-cat {
-    .inline-block();
-
-    border-left: none;
-    line-height: 40px;
-    padding: 0 10px;
-
-    &:first-of-type { .border-radius(@border-radius 0 0 @border-radius); }
-    > input[type="checkbox"] {
+    td {
+        border: none;
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0px;
+    }
+    td:first-child { text-align: center; }
+    input[type="radio"] {
         display: inline-block;
         vertical-align: bottom;
         position: relative;
-        top: -13px;
+        top: -6px;
     }
-    > span { color: #fff; }
-}
-
-.ml-control-bar-cat-button {
-    .border-radius(0 @border-radius @border-radius 0);
-    border: 1px solid @btn-primary-bg;
-}
-
-@media screen and (max-width: @screen-lg1) {
-    .ml-control-bar-cat {
-        > input[type="checkbox"] { margin-right: 0; }
-        > span { display: none; }
-    }
-}
-
-@media screen and (min-width: @screen-xs) {
-    .ml-control-bar > .pagination { float: right; }
-}
-
-@media screen and (max-width: @screen-xs1) {
-    .ml-control-bar-cat-wrapper {
-        margin-bottom: 10px;
-        width: 100%;
-    }
-    .ml-control-bar-cat { width: 100/8%; }
-    .ml-control-bar-cat-button {
-        padding: 7px 0;
-        width: 100/8%;
-    }
+    label { text-transform: none; }
 }
 
 /* --------------------------------------------------

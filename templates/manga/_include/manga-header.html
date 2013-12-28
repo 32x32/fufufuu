@@ -1,5 +1,12 @@
 <div id="m-header">
     <a href="{{ url('manga.list') }}" class="header-heading min-md">Fufufuu</a>
     <a href="{{ url('manga.list') }}" class="m-header-heading max-md">FU</a>
-    <h1 class="inline-block manga-title">{% if manga.status != 'PUBLISHED' %}<span class="manga-status manga-status{{ manga.status.lower() }}">{{ manga.status_display }}</span>{% endif %}{{ manga.title }}</h1>
+    <h1 class="inline-block manga-title">
+        {% if manga.status != 'PUBLISHED' %}
+            <span class="manga-status manga-status-{{ manga.status.lower() }}">{{ manga.status_display }}</span>
+        {% else %}
+            <span class="manga-category manga-category-{{ manga.category.lower() }}">{{ manga.category_display }}</span>
+        {% endif %}
+        <span>{{ manga.title }}</span>
+    </h1>
 </div>
