@@ -2,16 +2,45 @@
     manga-edit-images page
 ---------------------------------------------------*/
 
-@media screen and (max-width: @screen-lg1) {
-    #template-manga-edit-images .manga-edit-sidebar {
-        padding: 15px;
-    }
-}
-
 .upload-pl {
+    margin: -5px;
 }
 
 .upload-pli {
     .inline-block();
-    width: 120px;
+
+    width: 152px;
+    padding: 5px;
+}
+.upload-pli-inner {
+    border: 1px solid #ccc;
+}
+.upload-pli-info {
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+    padding: 5px 10px;
+}
+
+.upload-pli-image-wrapper {
+    height: 210px;
+    background-color: #fff;
+
+    > img { cursor: move; }
+}
+
+.upload-pli-link {
+    display: block;
+    font-size: 13px;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+}
+
+input[id$="ORDER"] {
+    background-color: transparent;
+    border: none;
+    height: 24px;
+    padding: 0;
+    text-align: left;
+    width: 30px;
 }

@@ -4,38 +4,58 @@
 {% block title %}{% trans title=manga.title %}Edit Images: {{ title }}{% endtrans %}{% endblock %}
 
 {% block content %}
-    <div class="relative">
-        <div class="container-fat manga-edit-main">
-            <form action="" method="post" enctype="multipart/form-data">
+    <div class="container-fat relative">
+        <form action="" method="post" enctype="multipart/form-data">
+            <div class="manga-edit-main">
                 <ul class="upload-pl">
+                    {{ forms.csrf_token(csrf_token) }}
                     {{ formset.management_form }}
                     {% for form in formset %}{% with page=form.instance %}
                         <li class="upload-pli">
-                            {{ form.id }}
-                            <img src="{{ page.image.url }}">
+                            <div class="upload-pli-inner">
+                                {{ form.id }}
+                                <div class="upload-pli-image-wrapper">
+                                    <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ page.image.url }}">
+                                </div>
+                                <div class="upload-pli-info">
+                                    {{ form.ORDER }}
+                                    <a href="{{ page.image.url }}" target="_blank" class="upload-pli-link"{% if page.name %} title="{{ page.name }}"{% endif %}>{% if page.name %}{{ page.name }}{% else %}{{ page.page }}{% endif %}</a>
+                                </div>
+                            </div>
                         </li>
                     {% endwith %}{% endfor %}
                 </ul>
-            </form>
-        </div>
-        <div class="manga-edit-sidebar">
-            <hr class="max-lg">
-            <form action="{{ url('manga.edit.upload', args=[manga.id, manga.slug]) }}" method="post" enctype="multipart/form-data" class="panel space-bottom-15">
-                {{ forms.csrf_token(csrf_token) }}
-                <h5 class="panel-heading">{% trans %}Upload a Zip File{% endtrans %}</h5>
-                <div class="panel-body">
-                    <input type="file" name="zipfile" id="id_zipfile">
-                    <p class="help-block space-top-10">{% trans %}Maximum file size: 50MB{% endtrans %}</p>
+            </div>
+            <div class="manga-edit-sidebar">
+                <div class="well space-bottom-15">
+                    <button class="btn btn-primary">{% trans %}Save Image Order{% endtrans %}</button>
+                    <button class="btn btn-error">{% trans %}Delete Selected{% endtrans %}</button>
                 </div>
-            </form>
-            <form action="{{ url('manga.edit.upload', args=[manga.id, manga.slug]) }}" method="post" enctype="multipart/form-data" class="panel">
-                {{ forms.csrf_token(csrf_token) }}
-                <h5 class="panel-heading">{% trans %}Upload Image Files{% endtrans %}</h5>
-                <div class="panel-body">
-                    <input type="file" multiple="multiple" name="images" id="id_images">
-                    <p class="help-block space-top-10">{% trans %}Maximum total size: 50MB{% endtrans %}</p>
+                <p class="help-block">{% trans %}Images can be re-ordered by dragging and dropping. Remember to save after re-ordering images.{% endtrans %}</p>
+            </div>
+        </form>
+        <hr>
+        <form action="{{ url('manga.edit.upload', args=[manga.id, manga.slug]) }}" method="post" enctype="multipart/form-data" class="half-wrapper">
+            <div class="half half-sm">
+                <div class="panel">
+                    {{ forms.csrf_token(csrf_token) }}
+                    <h5 class="panel-heading">{% trans %}Upload a Zip File{% endtrans %}</h5>
+                    <div class="panel-body">
+                        <input type="file" name="zipfile" id="id_zipfile">
+                        <p class="help-block space-top-10">{% trans %}Maximum file size: 50MB{% endtrans %}</p>
+                    </div>
                 </div>
-            </form>
-        </div>
+            </div>
+            <div class="half half-sm">
+                <div class="panel">
+                    {{ forms.csrf_token(csrf_token) }}
+                    <h5 class="panel-heading">{% trans %}Upload Image Files{% endtrans %}</h5>
+                    <div class="panel-body">
+                        <input type="file" multiple="multiple" name="images" id="id_images">
+                        <p class="help-block space-top-10">{% trans %}Maximum total size: 50MB{% endtrans %}</p>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 {% endblock %}

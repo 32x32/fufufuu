@@ -42,11 +42,28 @@
   });
 
   $(function() {
-    var autocompleteParams, bindAutocompleteKeydown, extractLast, split, success;
+    var $imageList, $imageOrderInput, autocompleteParams, bindAutocompleteKeydown, extractLast, split, success;
     if ($('#template-manga-edit-images').length) {
       $('input[type="file"]').change(function() {
         return $(this).parents('form').submit();
       });
+      $imageList = $('.upload-pl');
+      if ($imageList.length) {
+        $imageList.sortable();
+        $imageOrderInput = $imageList.find('input[id$="ORDER"]');
+        $imageOrderInput.attr('readonly', 'readonly');
+        $imageOrderInput.attr('type', 'text');
+        $imageList.bind('sortstop', function(event, ui) {
+          var i, item, _i, _len, _ref, _results;
+          _ref = $('.upload-pli');
+          _results = [];
+          for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+            item = _ref[i];
+            _results.push($(item).find('input[id$="ORDER"]').attr('value', i + 1));
+          }
+          return _results;
+        });
+      }
     }
     if ($('#template-manga-edit').length) {
       split = function(val) {

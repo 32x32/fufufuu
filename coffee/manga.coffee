@@ -1,11 +1,22 @@
 $ ->
 
     #---------------------------------------------------------------------------
-    # upload files input auto submit
+    # manga edit page
     #---------------------------------------------------------------------------
 
     if $('#template-manga-edit-images').length
         $('input[type="file"]').change -> $(this).parents('form').submit()
+
+        # upload-images sorting
+        $imageList = $('.upload-pl')
+        if $imageList.length
+            $imageList.sortable()
+            $imageOrderInput = $imageList.find('input[id$="ORDER"]')
+            $imageOrderInput.attr('readonly', 'readonly')
+            $imageOrderInput.attr('type', 'text')
+            $imageList.bind 'sortstop', (event, ui) ->
+                for item, i in $('.upload-pli')
+                    $(item).find('input[id$="ORDER"]').attr('value', i+1)
 
     #---------------------------------------------------------------------------
     # manga edit tag autocomplete
@@ -49,5 +60,3 @@ $ ->
             $('#id_tank').bind('keydown', bindAutocompleteKeydown).autocomplete({source: data.TANK, delay: 0})
 
         $.get '/tag/autocomplete.json', success
-
-
