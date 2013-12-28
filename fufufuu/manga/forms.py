@@ -31,7 +31,11 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         })
     )
 
-    cover = forms.FileField(required=False, label=_('Cover'))
+    cover = forms.FileField(
+        required=False,
+        label=_('Cover'),
+        widget=forms.FileInput(),
+    )
 
     tank = forms.CharField(required=False, label=_('Tank'))
     tank_chapter = forms.CharField(

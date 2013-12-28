@@ -43,7 +43,7 @@
         {{ manga_nav_item(request, url_manga_thumbnails, 'icon-sweden', gettext('Thumbnails')) }}
         {{ manga_nav_item(request, url_manga_comments, 'icon-comment', gettext('Comments')) }}
         {{ manga_nav_item(request, url_manga_download, 'icon-down-circled', gettext('Download')) }}
-        <a href="#">
+        <a href="#" class="{% if request.path == url %} active{% endif %}{% if manga.status != 'PUBLISHED' %} disabled{% endif %}"{% if manga.status != 'PUBLISHED' %} title="{% trans %}This upload has not been published.{% endtrans %}"{% endif %}>
             <span class="icon icon-heart-empty"></span>
             <span class="min-xs">{% trans %}Favorite{% endtrans %}</span>
         </a>

@@ -136,7 +136,7 @@ class MangaEditView(MangaEditMixin, ProtectedTemplateView):
 
     def post(self, request, id, slug):
         manga = self.get_manga(id)
-        form = MangaEditForm(request=request, instance=manga, data=request.POST)
+        form = MangaEditForm(request=request, instance=manga, data=request.POST, files=request.FILES)
         if form.is_valid():
             manga = form.save()
             messages.success(request, _('{} has been updated').format(manga.title))

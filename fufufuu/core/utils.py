@@ -18,6 +18,7 @@ def paginate(object_list, page_size, page_num):
     Takes an object_list, page_size, page_num and paginates the object list.
     """
 
+    page_num = page_num or 1
     paginator = Paginator(object_list, page_size)
 
     try:

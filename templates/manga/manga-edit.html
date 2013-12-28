@@ -4,7 +4,7 @@
 {% block title %}{% trans title=manga.title %}Edit: {{ title }}{% endtrans %}{% endblock %}
 
 {% block content %}
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
         <div class="container-fat manga-edit-main">
             {{ forms.csrf_token(csrf_token) }}
             {{ forms.non_field_errors(form) }}
@@ -12,18 +12,7 @@
                 <div class="half half-md">
                     {{ forms.field(form.title) }}
                     {{ forms.field(form.markdown) }}
-                    <table class="table-full-border space-top-15">
-                        <tr>
-                            <td width="120"><label>{% trans %}Current{% endtrans %}</label></td>
-                            <td>
-                                <img src="{{ STATIC_URL }}images/no-image.png" class="manga-cover">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="120">{{ form.cover.label_tag() }}</td>
-                            <td>{{ form.cover }}</td>
-                        </tr>
-                    </table>
+                    {{ forms.field_file(form.cover, manga.cover, 'manga-cover') }}
                 </div>
                 <div class="half half-md">
                     <label>{% trans %}Tags{% endtrans %}</label>
