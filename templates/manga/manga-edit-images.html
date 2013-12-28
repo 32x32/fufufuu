@@ -6,7 +6,7 @@
 {% block content %}
     <div class="container-fat relative">
         <form action="" method="post" enctype="multipart/form-data">
-            <div class="manga-edit-main">
+            <div class="manga-edit-main space-bottom-15">
                 <ul class="upload-pl">
                     {{ forms.csrf_token(csrf_token) }}
                     {{ formset.management_form }}
@@ -18,6 +18,7 @@
                                     <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ page.image.url }}">
                                 </div>
                                 <div class="upload-pli-info">
+                                    <label class="right">{{ form.select }}</label>
                                     {{ form.ORDER }}
                                     <a href="{{ page.image.url }}" target="_blank" class="upload-pli-link"{% if page.name %} title="{{ page.name }}"{% endif %}>{% if page.name %}{{ page.name }}{% else %}{{ page.page }}{% endif %}</a>
                                 </div>
@@ -34,7 +35,7 @@
                 <p class="help-block">{% trans %}Images can be re-ordered by dragging and dropping. Remember to save after re-ordering images.{% endtrans %}</p>
             </div>
         </form>
-        <hr>
+        <hr class="min-lg">
         <form action="{{ url('manga.edit.upload', args=[manga.id, manga.slug]) }}" method="post" enctype="multipart/form-data" class="half-wrapper">
             <div class="half half-sm">
                 <div class="panel">
