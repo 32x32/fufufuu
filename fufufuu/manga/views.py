@@ -45,6 +45,50 @@ class MangaView(TemplateView):
         })
 
 
+class MangaThumbnailsView(TemplateView):
+
+    template_name = 'manga/manga-thumbnails.html'
+
+    def get(self, request, id, slug):
+        manga = get_object_or_404(Manga.published, id=id)
+        return self.render_to_response({
+            'manga': manga,
+        })
+
+
+class MangaCommentsView(TemplateView):
+
+    template_name = 'manga/manga-comments.html'
+
+    def get(self, request, id, slug):
+        manga = get_object_or_404(Manga.published, id=id)
+        return self.render_to_response({
+            'manga': manga,
+        })
+
+
+class MangaDownloadView(TemplateView):
+
+    template_name = 'manga/manga-download.html'
+
+    def get(self, request, id, slug):
+        manga = get_object_or_404(Manga.published, id=id)
+        return self.render_to_response({
+            'manga': manga,
+        })
+
+
+class MangaReportView(TemplateView):
+
+    template_name = 'manga/manga-report.html'
+
+    def get(self, request, id, slug):
+        manga = get_object_or_404(Manga.published, id=id)
+        return self.render_to_response({
+            'manga': manga,
+        })
+
+
 class MangaHistoryView(TemplateView):
 
     template_name = 'manga/manga-history.html'

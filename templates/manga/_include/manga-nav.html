@@ -1,0 +1,52 @@
+{% if manga.status == 'PUBLISHED' %}
+    {% set url_manga = url('manga', args=[manga.id, manga.slug]) %}
+    {% set url_manga_thumbnails = url('manga.thumbnails', args=[manga.id, manga.slug]) %}
+    {% set url_manga_comments = url('manga.comments', args=[manga.id, manga.slug]) %}
+    {% set url_manga_download = url('manga.download', args=[manga.id, manga.slug]) %}
+    {% set url_manga_report = url('manga.report', args=[manga.id, manga.slug]) %}
+{% else %}
+    {% set url_manga = '#' %}
+    {% set url_manga_thumbnails = '#' %}
+    {% set url_manga_comments = '#' %}
+    {% set url_manga_download = '#' %}
+    {% set url_manga_report = '#' %}
+{% endif %}
+
+{% set url_manga_history = url('manga.history', args=[manga.id, manga.slug]) %}
+{% set url_manga_edit = url('manga.edit', args=[manga.id, manga.slug]) %}
+{% set url_manga_edit_images = url('manga.edit.images', args=[manga.id, manga.slug]) %}
+
+{% macro manga_nav_item(request, url, icon_class, name) %}
+    <a href="{{ url }}" class="{% if request.path == url %} active{% endif %}{% if manga.status != 'PUBLISHED' %} disabled{% endif %}"{% if manga.status != 'PUBLISHED' %} title="{% trans %}This upload has not been published.{% endtrans %}"{% endif %}>
+        <span class="icon {{ icon_class }}"></span>
+        <span class="min-xs">{{ name }}</span>
+    </a>
+{% endmacro %}
+
+<div id="m-nav">
+    <div class="right min-md">
+        <a href="{{ url_manga_history }}"{% if request.path == url_manga_history %} class="active"{% endif %}>
+            <span class="icon icon-back-in-time"></span>
+            <span>{% trans %}History{% endtrans %}</span>
+        </a>
+        <a href="{{ url_manga_edit }}"{% if request.path == url_manga_edit %} class="active"{% endif %}>
+            <span class="icon icon-pencil"></span>
+            <span>{% trans %}Edit{% endtrans %}</span>
+        </a>
+        <a href="{{ url_manga_edit_images }}"{% if request.path == url_manga_edit_images %} class="active"{% endif %}>
+            <span class="icon icon-pencil"></span>
+            <span>{% trans %}Edit Images{% endtrans %}</span>
+        </a>
+    </div>
+    <div class="m-nav-main">
+        {{ manga_nav_item(request, url_manga, 'icon-docs', gettext('Read')) }}
+        {{ manga_nav_item(request, url_manga_thumbnails, 'icon-sweden', gettext('Thumbnails')) }}
+        {{ manga_nav_item(request, url_manga_comments, 'icon-comment', gettext('Comments')) }}
+        {{ manga_nav_item(request, url_manga_download, 'icon-down-circled', gettext('Download')) }}
+        <a href="#">
+            <span class="icon icon-heart-empty"></span>
+            <span class="min-xs">{% trans %}Favorite{% endtrans %}</span>
+        </a>
+        {{ manga_nav_item(request, url_manga_report, 'icon-attention', gettext('Report')) }}
+    </div>
+</div>

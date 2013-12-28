@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
 {% block body %}
-    {% include 'manga/manga-header.html' %}
-    {% include 'manga/manga-nav.html' %}
+    {% include 'manga/_include/manga-header.html' %}
+    {% include 'manga/_include/manga-nav.html' %}
     {% include '_include/messages.html' %}
     <div id="template-{{ TEMPLATE_NAME }}" class="manga-content">
         {% block content %}{% endblock %}

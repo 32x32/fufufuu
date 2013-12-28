@@ -25,6 +25,38 @@ class MangaViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 404)
 
 
+class MangaThumbnailsViewTests(BaseTestCase):
+
+    def test_manga_thumbnails_view_get(self):
+        response = self.client.get(reverse('manga.thumbnails', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-thumbnails.html')
+
+
+class MangaCommentsViewTests(BaseTestCase):
+
+    def test_manga_comments_view_get(self):
+        response = self.client.get(reverse('manga.comments', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-comments.html')
+
+
+class MangaDownloadView(BaseTestCase):
+
+    def test_manga_thumbnail_view_get(self):
+        response = self.client.get(reverse('manga.download', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-download.html')
+
+
+class MangaReportViewTests(BaseTestCase):
+
+    def test_manga_thumbnail_view_get(self):
+        response = self.client.get(reverse('manga.report', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-report.html')
+
+
 class MangaHistoryViewTests(BaseTestCase):
 
     def test_manga_history_view_get(self):
