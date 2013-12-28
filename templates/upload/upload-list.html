@@ -46,14 +46,14 @@
                 {% endfor %}
             </tbody>
         </table>
-        {% if manga_list.paginator.num_pages > 1 %}
+        {% if manga_list and manga_list.paginator.num_pages > 1 %}
             <hr>
+            <div class="space-bottom-15">
+                <form class="right">
+                    {{ widgets.pagination(manga_list, request) }}
+                </form>
+                <div class="clear"></div>
+            </div>
         {% endif %}
-        <div class="space-bottom-15">
-            <form class="right">
-                {{ widgets.pagination(manga_list, request) }}
-            </form>
-            <div class="clear"></div>
-        </div>
     </div>
 {% endblock %}
