@@ -23,18 +23,9 @@ def paginate(object_list, page_size, page_num):
     try:
         page = paginator.page(page_num)
     except PageNotAnInteger:
-        page = paginator.page(1)
+        return Page([], 1, paginator)
     except EmptyPage:
-        page = Page([], 1, paginator)
-        page.page_range = []
-        return page
-
-    start = page.number - 3
-    if start < 0: start = 0
-    end = page.number + 2
-    if end > paginator.num_pages: end = paginator.num_pages
-
-    page.page_range = paginator.page_range[start:end]
+        return Page([], 1, paginator)
 
     return page
 

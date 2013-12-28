@@ -7,7 +7,7 @@
                 <span class="icon icon-left-open pagination-disabled pagination-prev"></span>
             {% endif %}
             <div class="pagination-control">
-                <input type="text" value="{{ page.number }}" name="p">
+                <input type="text" value="{{ request.GET.p or 1 }}" name="p">
                 <span class="space-left-10">of {{ page.paginator.num_pages }}</span>
             </div>
             {% if page.has_next() %}
