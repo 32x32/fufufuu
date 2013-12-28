@@ -1,7 +1,22 @@
+from collections import defaultdict
+from django.http.response import Http404
+from fufufuu.core.response import HttpResponseJson
 from fufufuu.core.utils import paginate
-from fufufuu.core.views import TemplateView
+from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
+
+
+class TagAutocompleteView(ProtectedTemplateView):
+
+    def get(self, request):
+        if not request.is_ajax():
+            raise Http404
+
+        tag_dict = defaultdict(list)
+        for tag in Tag.objects.only('tag_type', 'name'):
+            tag_dict[tag.tag_type].append(tag.name)
+        return HttpResponseJson(tag_dict)
 
 
 class TagListGridView(TemplateView):

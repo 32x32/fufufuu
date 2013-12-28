@@ -1,9 +1,11 @@
 from django.conf.urls import patterns, url
 from fufufuu.tag.enums import TagType
-from fufufuu.tag.views import TagListView, TagListGridView
+from fufufuu.tag.views import TagListView, TagListGridView, TagAutocompleteView
 
 
 urlpatterns = patterns('',
+
+    url(r'^autocomplete.json',      TagAutocompleteView.as_view(), name='tag.autocomplete'),
 
     url(r'^collections/$',          TagListGridView.as_view(tag_type=TagType.COLLECTION), name='tag.list.collection'),
     url(r'^tanks/$',                TagListGridView.as_view(tag_type=TagType.TANK), name='tag.list.tank'),

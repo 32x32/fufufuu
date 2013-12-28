@@ -1,3 +1,4 @@
+import json
 import os
 from io import BytesIO
 from django.core.files.base import File
@@ -80,6 +81,23 @@ class TagListViewTests(BaseTestCase):
         response = self.client.get(reverse('tag.list.tank'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tag/tag-list-grid.html')
+
+
+class TagAutocompleteViewTests(BaseTestCase):
+
+    def test_tag_autocomplete_view_get_not_ajax(self):
+        response = self.client.get(reverse('tag.autocomplete'))
+        self.assertEqual(response.status_code, 404)
+
+    def test_tag_autocomplete_view_get(self):
+        response = self.client.get(
+            reverse('tag.autocomplete'),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        tag_dict = json.loads(response.content.decode('utf-8'))
+        for tag_type in TagType.choices_dict:
+            self.assertTrue(tag_type in tag_dict, '{} not in tag_dict'.format(tag_type))
 
 
 class TagUtilTests(BaseTestCase):

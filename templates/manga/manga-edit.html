@@ -1,5 +1,5 @@
 {% extends 'manga/manga-base.html' %}
-{% import '_macros/forms.html' as forms %}
+{% import '_macros/forms.html' as forms with context %}
 
 {% block title %}{% trans title=manga.title %}Edit: {{ title }}{% endtrans %}{% endblock %}
 
