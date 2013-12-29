@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
-from fufufuu.manga.enums import MangaStatus, MangaCategory
+from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
 from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import process_zipfile, process_images
@@ -138,6 +138,11 @@ class MangaEditView(MangaEditMixin, ProtectedTemplateView):
 
     def post(self, request, id, slug):
         manga = self.get_manga(id)
+
+        if request.POST.get('action') == MangaAction.DELETE:
+            manga.delete(updated_by=request.user)
+            return redirect('upload.list')
+
         form = MangaEditForm(request=request, instance=manga, data=request.POST, files=request.FILES)
         if form.is_valid():
             manga = form.save()

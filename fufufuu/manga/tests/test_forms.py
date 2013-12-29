@@ -30,6 +30,7 @@ class MangaEditFormTests(BaseTestCase):
             'title': 'Test Manga Title',
             'category': MangaCategory.VANILLA,
             'language': Language.ENGLISH,
+            'action': 'save',
         })
         self.assertTrue(form.is_valid())
         manga = form.save()
@@ -41,6 +42,13 @@ class MangaEditFormTests(BaseTestCase):
         self.assertFalse(manga.tank_chapter)
         self.assertFalse(manga.collection)
         self.assertFalse(manga.collection_part)
+
+    def test_manga_edit_form_already_published(self):
+        form = MangaEditForm(request=self.request, instance=self.manga, data={
+            'action': 'publish',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['action'], ['This upload has already been published.'])
 
     def test_manga_edit_form_tag_limit(self):
         pass

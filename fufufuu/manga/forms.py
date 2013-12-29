@@ -4,7 +4,7 @@ from django.forms.models import BaseModelFormSet
 from django.utils.translation import ugettext as _
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
-from fufufuu.manga.enums import MangaCategory
+from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus
 from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
@@ -15,7 +15,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     title = forms.CharField(
         label=_('Title'),
         max_length=100,
-        help_text=_('Please do not include [Circle], (Author) or other tag-related information in the title. Use the tags section below for this information.'),
+        help_text=_('Please do no90 include [Circle], (Author) or other tag-related information in the title. Use the tags section below for this information.'),
         widget=forms.TextInput(attrs={
             'required': 'required',
             'maxlength': '100',
@@ -69,6 +69,8 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     category = forms.ChoiceField(label=_('Category'), choices=MangaCategory.choices)
     language = forms.ChoiceField(label=_('Language'), choices=Language.choices)
     uncensored = forms.BooleanField(required=False, label=_('Uncensored'))
+
+    action = forms.ChoiceField(choices=MangaAction.choices)
 
     TAG_LIMIT = 50
 
@@ -126,6 +128,12 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     def clean_parodies(self):           return self.clean_tags(TagType.PARODY, 'parodies')
     def clean_scanlators(self):         return self.clean_tags(TagType.SCANLATOR, 'scanlators')
 
+    def clean_action(self):
+        action = self.cleaned_data.get('action')
+        if self.instance.status == MangaStatus.PUBLISHED and action == MangaAction.PUBLISH:
+            raise forms.ValidationError(_('This upload has already been published.'))
+        return action
+
     def clean(self):
         cd = self.cleaned_data
         if len(self.tags) > self.TAG_LIMIT:
@@ -175,6 +183,9 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         else:
             manga.collection = None
             manga.collection_part = None
+
+        if self.cleaned_data.get('action') == MangaAction.PUBLISH:
+            manga.status = MangaStatus.PUBLISHED
 
         manga.save(updated_by=self.request.user)
         self.save_tags(manga)

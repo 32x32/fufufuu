@@ -55,12 +55,12 @@ class Manga(BaseAuditableModel, MangaMixin):
         self.slug = slugify(self.title)[:100] or '-'
         super().save(*args, **kwargs)
 
-    def delete(self, force_delete=False, *args, **kwargs):
+    def delete(self, updated_by=None, force_delete=False, *args, **kwargs):
         if self.status == MangaStatus.DRAFT or force_delete:
             super().delete(*args, **kwargs)
         else:
             self.status = MangaStatus.DELETED
-            self.save(*args, **kwargs)
+            self.save(updated_by, *args, **kwargs)
 
 
 class MangaHistory(models.Model, MangaMixin):

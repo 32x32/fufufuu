@@ -39,3 +39,16 @@ class MangaStatus:
     )
 
     choices_dict = dict([(k,v) for (k,v) in choices])
+
+
+class MangaAction:
+
+    SAVE            = 'save'
+    PUBLISH         = 'publish'
+    DELETE          = 'delete'
+
+    choices = (
+        (SAVE, SAVE),
+        (PUBLISH, PUBLISH),
+        (DELETE, DELETE),
+    )
