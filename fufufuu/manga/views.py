@@ -191,9 +191,9 @@ class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
     def post(self, request, id, slug):
         manga = self.get_manga(id)
         if 'zipfile' in request.FILES:
-            errors = process_zipfile(manga, request.FILES.get('zipfile'))
+            errors = process_zipfile(manga, request.FILES.get('zipfile'), request.user)
         elif 'images' in request.FILES:
-            errors = process_images(manga, request.FILES.get('images', []))
+            errors = process_images(manga, request.FILES.get('images', []), request.user)
         else:
             raise Http404
 

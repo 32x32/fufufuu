@@ -1,4 +1,6 @@
 from collections import namedtuple
+from io import BytesIO
+from PIL import Image
 from django.core.management import call_command
 from django.db import connections
 from django.test.runner import DiscoverRunner
@@ -53,3 +55,9 @@ class BaseTestCase(TestCase):
 
     def assertTemplateUsed(self, response, template_name):
         self.assertEqual(response.template_name, template_name)
+
+    def create_test_image_file(self, width=800, height=1200, format='PNG'):
+        image_file = BytesIO()
+        img = Image.new('RGB', (width, height))
+        img.save(image_file, format=format)
+        return image_file

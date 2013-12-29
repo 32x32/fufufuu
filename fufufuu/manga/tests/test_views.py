@@ -1,3 +1,7 @@
+import zipfile
+from io import BytesIO
+from django.core.files.base import File
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
 from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
@@ -143,3 +147,40 @@ class MangaEditImagesViewTests(BaseTestCase):
 
     def test_manga_edit_images_view_post(self):
         pass
+
+
+class MangaEditUploadViewTests(BaseTestCase):
+
+    def test_manga_edit_upload_view_get(self):
+        response = self.client.get(reverse('manga.edit.upload', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_manga_edit_upload_view_post_empty(self):
+        response = self.client.post(reverse('manga.edit.upload', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_manga_edit_upload_view_post_zipfile(self):
+        content = self.create_test_image_file().getvalue()
+
+        upload_file = BytesIO()
+        upload_file_zip = zipfile.ZipFile(upload_file, 'w')
+        upload_file_zip.writestr('01.png', bytes(content))
+        upload_file_zip.writestr('02.png', bytes(content))
+        upload_file_zip.writestr('03.png', bytes('0', 'utf-8'))
+        upload_file_zip.close()
+
+        response = self.client.post(reverse('manga.edit.upload', args=[self.manga.id, self.manga.slug]), {
+            'zipfile': SimpleUploadedFile('test.zip', upload_file.getvalue()),
+        })
+        self.assertRedirects(response, reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
+
+    def test_manga_edit_upload_view_post_images(self):
+        content = self.create_test_image_file().getvalue()
+        response = self.client.post(reverse('manga.edit.upload', args=[self.manga.id, self.manga.slug]), {
+            'images': [
+                SimpleUploadedFile('01.png', File(content)),
+                SimpleUploadedFile('02.png', File(content)),
+                SimpleUploadedFile('03.png', File(content)),
+            ]
+        })
+        self.assertRedirects(response, reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))

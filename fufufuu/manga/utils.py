@@ -7,13 +7,14 @@ from PIL import Image
 from fufufuu.manga.models import MangaPage
 
 
-MAX_IMAGE_FILE_SIZE     = 10 * 1024 * 1024
+MAX_TOTAL_SIZE          = 200 * 1024 * 1024
+MAX_IMAGE_FILE_SIZE     = 8 * 1024 * 1024
 MAX_IMAGE_DIMENSION     = (8000, 8000)
 MANGA_PAGE_LIMIT        = 100
 SUPPORTED_IMAGE_FORMATS = ['JPEG', 'PNG']
 
 
-def process_images(manga, file_list):
+def process_images(manga, file_list, user):
     errors, manga_page_list = [], []
     page_num = MangaPage.objects.filter(manga=manga).count()
 
@@ -54,13 +55,13 @@ def process_images(manga, file_list):
 
         if not manga.cover:
             manga.cover = f
-            manga.save()
+            manga.save(updated_by=user)
 
     MangaPage.objects.bulk_create(manga_page_list)
     return errors
 
 
-def process_zipfile(manga, file):
+def process_zipfile(manga, file, user):
     if not zipfile.is_zipfile(file):
         return [_('The uploaded file is not a valid zip file.')]
 
@@ -77,6 +78,6 @@ def process_zipfile(manga, file):
             file = File(open(zip.extract(zipinfo, temp_dir.name), 'rb'), name=zipinfo.filename.split('/')[-1])
             file_list.append(file)
 
-        errors.extend(process_images(manga, file_list))
+        errors.extend(process_images(manga, file_list, user))
 
     return errors

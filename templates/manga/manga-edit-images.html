@@ -5,7 +5,7 @@
 
 {% block content %}
     <div class="container-fat relative">
-        {% if formset|length > 1 %}
+        {% if formset|length > 0 %}
             <form action="" method="post" enctype="multipart/form-data">
                 <div class="manga-edit-main space-bottom-15">
                     <ul class="upload-pl">
@@ -16,12 +16,18 @@
                                 <div class="upload-pli-inner">
                                     {{ form.id }}
                                     <div class="upload-pli-image-wrapper">
-                                        <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ page.image.url }}">
+                                        {% if page.image %}
+                                            <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ page.image.url }}">
+                                        {% else %}
+                                            <img src="{{ STATIC_URL }}images/no-image.png">
+                                        {% endif %}
                                     </div>
                                     <div class="upload-pli-info">
                                         <label class="right">{{ form.select }}</label>
                                         {{ form.ORDER }}
-                                        <a href="{{ page.image.url }}" target="_blank" class="upload-pli-link"{% if page.name %} title="{{ page.name }}"{% endif %}>{% if page.name %}{{ page.name }}{% else %}{{ page.page }}{% endif %}</a>
+                                        {% if page.image %}
+                                            <a href="{{ page.image.url }}" target="_blank" class="upload-pli-link"{% if page.name %} title="{{ page.name }}"{% endif %}>{% if page.name %}{{ page.name }}{% else %}{{ page.page }}{% endif %}</a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </li>
@@ -62,27 +68,29 @@
                 </div>
             </div>
         </form>
-        <div class="panel">
-            <h5 class="panel-heading">{% trans %}Getting Started with Uploading{% endtrans %}</h5>
-            <div class="panel-body">
-                <p>{% trans %}Please remember to check that you are not violiating any rules or uploading a duplicate.{% endtrans %}</p>
-                <h4 class="space-bottom-10">{% trans %}Upload Rules{% endtrans %}</h4>
-                <p class="space-bottom-10">{% trans %}The following content should <strong>NOT</strong> be uploaded to Fufufuu:{% endtrans %}</p>
-                <ul class="bullet-list">
-                    <li>{% trans %}Loli and Shota{% endtrans %}</li>
-                    <li>{% trans %}Scat{% endtrans %}</li>
-                    <li>{% trans %}Western comics{% endtrans %}</li>
-                </ul>
-                <h4 class="space-bottom-10">{% trans %}Upload Guidelines{% endtrans %}</h4>
-                <ul class="bullet-list">
-                    <li>{% trans %}There is a hard limit of 100 images per upload{% endtrans %}</li>
-                    <li>{% trans %}There is a hard limit of 200 MB per upload{% endtrans %}</li>
-                    <li>{% trans %}Each image file must to be smaller than 8000x8000 pixels{% endtrans %}</li>
-                    <li>{% trans %}Each image file must to be smaller than 8MB{% endtrans %}</li>
-                    <li>{% trans %}Each image file must be in either JPG or PNG format{% endtrans %} </li>
-                    <li>{% trans %}Please only upload Japanese manga/doujinshi, no Western comics allowed!{% endtrans %}</li>
-                </ul>
+        {% if formset|length == 0%}
+            <div class="panel">
+                <h5 class="panel-heading">{% trans %}Getting Started with Uploading{% endtrans %}</h5>
+                <div class="panel-body">
+                    <p>{% trans %}Please remember to check that you are not violiating any rules or uploading a duplicate.{% endtrans %}</p>
+                    <h4 class="space-bottom-10">{% trans %}Upload Rules{% endtrans %}</h4>
+                    <p class="space-bottom-10">{% trans %}The following content should <strong>NOT</strong> be uploaded to Fufufuu:{% endtrans %}</p>
+                    <ul class="bullet-list">
+                        <li>{% trans %}Loli and Shota{% endtrans %}</li>
+                        <li>{% trans %}Scat{% endtrans %}</li>
+                        <li>{% trans %}Western comics{% endtrans %}</li>
+                    </ul>
+                    <h4 class="space-bottom-10">{% trans %}Upload Guidelines{% endtrans %}</h4>
+                    <ul class="bullet-list">
+                        <li>{% trans %}There is a hard limit of 100 images per upload{% endtrans %}</li>
+                        <li>{% trans %}There is a hard limit of 200 MB per upload{% endtrans %}</li>
+                        <li>{% trans %}Each image file must to be smaller than 8000x8000 pixels{% endtrans %}</li>
+                        <li>{% trans %}Each image file must to be smaller than 8MB{% endtrans %}</li>
+                        <li>{% trans %}Each image file must be in either JPG or PNG format{% endtrans %} </li>
+                        <li>{% trans %}Please only upload Japanese manga/doujinshi, no Western comics allowed!{% endtrans %}</li>
+                    </ul>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 {% endblock %}
