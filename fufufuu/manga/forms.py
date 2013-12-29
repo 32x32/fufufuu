@@ -130,8 +130,12 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     def clean_action(self):
         action = self.cleaned_data.get('action')
-        if self.instance.status == MangaStatus.PUBLISHED and action == MangaAction.PUBLISH:
-            raise forms.ValidationError(_('This upload has already been published.'))
+        if action == MangaAction.PUBLISH:
+            if self.instance.status == MangaStatus.DRAFT:
+                if self.instance.mangapage_set.count() < 1:
+                    raise forms.ValidationError(_('Please upload at least one image before publishing.'))
+            else:
+                raise forms.ValidationError(_('This upload cannot be published.'))
         return action
 
     def clean(self):

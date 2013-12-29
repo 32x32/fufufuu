@@ -10,7 +10,7 @@ from fufufuu.account.models import User
 from fufufuu.core.languages import Language
 from fufufuu.core.utils import slugify
 from fufufuu.manga.enums import MangaCategory, MangaStatus
-from fufufuu.manga.models import Manga, MangaTag, MangaHistory, MangaHistoryTag
+from fufufuu.manga.models import Manga, MangaTag, MangaHistory, MangaHistoryTag, MangaPage
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag, TagData, TagDataHistory, TagHistory, TagAlias
 
@@ -225,6 +225,16 @@ class DataCreator:
 
         MangaHistoryTag.objects.bulk_create(manga_history_tag_list)
 
+    def create_manga_pages(self):
+        manga_page_list = []
+        for manga in Manga.objects.all():
+            manga_page_list.append(MangaPage(
+                manga=manga,
+                page=1,
+                name='001.jpg',
+            ))
+        MangaPage.objects.bulk_create(manga_page_list)
+
     def run(self):
         print('-'*80)
         print('datacreator.py started')
@@ -240,6 +250,7 @@ class DataCreator:
         self.create_manga_tags()
         self.create_manga_history()
         self.create_manga_history_tags()
+        self.create_manga_pages()
 
         finish = datetime.datetime.now()
         print('datacreator.py finished in {}'.format(finish-start))

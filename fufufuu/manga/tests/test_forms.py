@@ -1,8 +1,8 @@
 from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
-from fufufuu.manga.enums import MangaCategory
+from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.forms import MangaEditForm
-from fufufuu.manga.models import MangaTag
+from fufufuu.manga.models import MangaTag, Manga
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 
@@ -48,7 +48,32 @@ class MangaEditFormTests(BaseTestCase):
             'action': 'publish',
         })
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['action'], ['This upload has already been published.'])
+        self.assertEqual(form.errors['action'], ['This upload cannot be published.'])
+
+    def test_manga_edit_form_publish_no_page(self):
+        self.manga.mangapage_set.all().delete()
+        self.manga.status = MangaStatus.DRAFT
+        self.manga.save(updated_by=self.user)
+
+        form = MangaEditForm(request=self.request, instance=self.manga, data={
+            'action': 'publish',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['action'], ['Please upload at least one image before publishing.'])
+
+    def test_manga_edit_form_publish(self):
+        self.manga.status = MangaStatus.DRAFT
+        self.manga.save(updated_by=self.user)
+
+        form = MangaEditForm(request=self.request, instance=self.manga, data={
+            'title': 'Test Manga Title',
+            'category': MangaCategory.VANILLA,
+            'language': Language.ENGLISH,
+            'action': 'publish',
+        })
+        self.assertTrue(form.is_valid())
+        form.save()
+        self.assertEqual((Manga.objects.get(id=self.manga.id)).status, MangaStatus.PUBLISHED)
 
     def test_manga_edit_form_tag_limit(self):
         pass
@@ -60,4 +85,7 @@ class MangaEditFormTests(BaseTestCase):
         pass
 
     def test_manga_edit_form_cover_required(self):
+        pass
+
+    def test_manga_edit_form_cover_update(self):
         pass
