@@ -1,7 +1,14 @@
+from PIL import Image
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, Page
 from django.utils import timezone
 from django.utils.text import slugify as django_slugify
 from unidecode import unidecode
+
+
+IMAGE_FORMAT_EXTENSION = {
+    'PNG': 'png',
+    'JPEG': 'jpg',
+}
 
 
 def slugify(s):
@@ -54,6 +61,14 @@ def count_abbr(n):
     else:                              # millions
         n /= float(MILLION)
         return '{0:.1f}m'.format(n)
+
+
+def get_image_extension(f):
+    try:
+        im = Image.open(f)
+        return IMAGE_FORMAT_EXTENSION.get(im.format, '')
+    except:
+        return ''
 
 
 #def email_alert(subject, template, context):

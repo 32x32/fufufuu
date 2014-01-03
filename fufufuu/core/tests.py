@@ -6,6 +6,7 @@ from django.db import connections
 from django.test.runner import DiscoverRunner
 from django.test.testcases import TestCase
 from fufufuu.account.models import User
+from fufufuu.core.utils import slugify
 from fufufuu.datacreator import DataCreator
 from fufufuu.manga.models import Manga
 
@@ -61,3 +62,10 @@ class BaseTestCase(TestCase):
         img = Image.new('RGB', (width, height))
         img.save(image_file, format=format)
         return image_file
+
+
+class CoreUtilTests(BaseTestCase):
+
+    def test_slugify(self):
+        self.assertEqual(slugify('北京'), 'bei-jing')
+        self.assertEqual(slugify('~'), '')

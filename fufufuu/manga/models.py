@@ -105,9 +105,11 @@ class MangaPage(models.Model):
 
 class MangaArchive(models.Model):
 
-    manga = models.ForeignKey(Manga)
+    manga = models.ForeignKey(Manga, unique=True)
     file = models.FileField(upload_to=manga_archive_upload_to)
     downloads = models.PositiveIntegerField(default=0)
+
+    updated_on = models.DateTimeField(auto_now=True)
     created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
