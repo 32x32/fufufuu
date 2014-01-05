@@ -25,16 +25,6 @@ specs[ImageKeyType.MANGA_THUMB_RETINA] = {
 #-------------------------------------------------------------------------------
 
 specs[ImageKeyType.MANGA_COVER] = {
-    'width':    200,
-    'height':   300,
-    'crop':     True,
-}
-
-#-------------------------------------------------------------------------------
-# MANGA_COVER_RETINA
-#-------------------------------------------------------------------------------
-
-specs[ImageKeyType.MANGA_COVER_RETINA] = {
     'width':    400,
     'height':   600,
     'crop':     True,
