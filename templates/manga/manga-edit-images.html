@@ -17,7 +17,7 @@
                                     {{ form.id }}
                                     <div class="upload-pli-image-wrapper">
                                         {% if page.image %}
-                                            <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ page.image.url }}">
+                                            <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ page.image|image('manga_thumb', page.id) }}" data-src-retina="{{ page.image|image('manga_thumb_retina', page.id) }}">
                                         {% else %}
                                             <img src="{{ STATIC_URL }}images/no-image.png">
                                         {% endif %}
@@ -44,6 +44,32 @@
                 </div>
             </form>
             <hr class="min-lg">
+        {% else %}
+            <div class="panel">
+                <h5 class="panel-heading">{% trans %}Getting Started with Uploading{% endtrans %}</h5>
+                <div class="panel-body">
+                    <p>{% trans %}Please remember to check that you are not violiating any rules or uploading a duplicate.{% endtrans %}</p>
+                    <h4 class="space-bottom-10">{% trans %}Upload Rules{% endtrans %}</h4>
+                    <p class="space-bottom-10">{% trans %}The following content should <strong>NOT</strong> be uploaded to Fufufuu:{% endtrans %}</p>
+                    <ul class="bullet-list">
+                        <li><a href="http://en.wikipedia.org/wiki/Lolicon" target="_blank">{% trans %}Loli and Shota{% endtrans %}</a></li>
+                        <li><a href="http://en.wikipedia.org/wiki/Coprophilia" target="_blank">{% trans %}Scat{% endtrans %}</a></li>
+                        <li><a href="http://en.wikipedia.org/wiki/Zoophilia#Bestiality" target="_blank">{% trans %}Beastiality{% endtrans %}</a></li>
+                        <li><a href="http://en.wikipedia.org/wiki/Ero_guro" target="_blank">{% trans %}Ero Guro{% endtrans %}</a></li>
+                        <li><a href="http://en.wikipedia.org/wiki/Vorarephilia" target="_blank">{% trans %}Vore{% endtrans %}</a></li>
+                    </ul>
+                    <p class="help-block">{% trans %}Note: If you come across uploaded content that is unfit for Fufufuu, please help report it.{% endtrans %}</p>
+                    <h4 class="space-bottom-10">{% trans %}Upload Guidelines{% endtrans %}</h4>
+                    <ul class="bullet-list">
+                        <li>{% trans %}There is a hard limit of 100 images per upload{% endtrans %}</li>
+                        <li>{% trans %}There is a hard limit of 200 MB per upload{% endtrans %}</li>
+                        <li>{% trans %}Each image file must to be smaller than 8000x8000 pixels{% endtrans %}</li>
+                        <li>{% trans %}Each image file must to be smaller than 8MB{% endtrans %}</li>
+                        <li>{% trans %}Each image file must be in either JPG or PNG format{% endtrans %} </li>
+                        <li>{% trans %}Please only upload Japanese manga/doujinshi, no Western comics allowed!{% endtrans %}</li>
+                    </ul>
+                </div>
+            </div>
         {% endif %}
         <form action="{{ url('manga.edit.upload', args=[manga.id, manga.slug]) }}" method="post" enctype="multipart/form-data" class="half-wrapper">
             <div class="half half-sm">
@@ -69,29 +95,5 @@
                 </div>
             </div>
         </form>
-        {% if formset|length == 0%}
-            <div class="panel">
-                <h5 class="panel-heading">{% trans %}Getting Started with Uploading{% endtrans %}</h5>
-                <div class="panel-body">
-                    <p>{% trans %}Please remember to check that you are not violiating any rules or uploading a duplicate.{% endtrans %}</p>
-                    <h4 class="space-bottom-10">{% trans %}Upload Rules{% endtrans %}</h4>
-                    <p class="space-bottom-10">{% trans %}The following content should <strong>NOT</strong> be uploaded to Fufufuu:{% endtrans %}</p>
-                    <ul class="bullet-list">
-                        <li>{% trans %}Loli and Shota{% endtrans %}</li>
-                        <li>{% trans %}Scat{% endtrans %}</li>
-                        <li>{% trans %}Western comics{% endtrans %}</li>
-                    </ul>
-                    <h4 class="space-bottom-10">{% trans %}Upload Guidelines{% endtrans %}</h4>
-                    <ul class="bullet-list">
-                        <li>{% trans %}There is a hard limit of 100 images per upload{% endtrans %}</li>
-                        <li>{% trans %}There is a hard limit of 200 MB per upload{% endtrans %}</li>
-                        <li>{% trans %}Each image file must to be smaller than 8000x8000 pixels{% endtrans %}</li>
-                        <li>{% trans %}Each image file must to be smaller than 8MB{% endtrans %}</li>
-                        <li>{% trans %}Each image file must be in either JPG or PNG format{% endtrans %} </li>
-                        <li>{% trans %}Please only upload Japanese manga/doujinshi, no Western comics allowed!{% endtrans %}</li>
-                    </ul>
-                </div>
-            </div>
-        {% endif %}
     </div>
 {% endblock %}

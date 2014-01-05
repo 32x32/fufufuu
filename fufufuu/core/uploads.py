@@ -34,9 +34,9 @@ def tag_cover_upload_to(instance, filename):
 
 
 def image_upload_to(instance, filename):
-    filename = '{}.{}'.format(int_to_base36(instance.id), get_image_extension(instance.output))
-    dirs = int_to_base36(instance.id)[:-1]
-    return os.sep.join(['image'] + list(dirs) + [filename])
+    filename = '{}-{}.jpg'.format(instance.key_type, int_to_base36(instance.key_id))
+    dirs = int_to_base36(instance.key_id)[:-1]
+    return os.sep.join(['image', instance.key_type] + list(dirs) + [filename])
 
 
 def disabled_upload_to(instance, filename):
