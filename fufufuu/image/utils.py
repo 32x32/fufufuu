@@ -1,6 +1,5 @@
 from io import BytesIO
 from PIL import Image, ImageFile, ImageOps
-from django.core.files.base import File, ContentFile
 
 from fufufuu.image.transforms import specs
 
@@ -10,8 +9,10 @@ class ImageTransformer(object):
     @classmethod
     def transform(cls, key_type, source):
         """
-        Return a ContentFile with the transformed image
+        return a BytesIO object with the transformed image
         """
+
+        source.seek(0)
 
         im = Image.open(source)
         ImageFile.MAXBLOCK = im.size[0] * im.size[1]
@@ -34,8 +35,8 @@ class ImageTransformer(object):
             else:
                 im = ImageOps.fit(im, (spec['width'], spec['height']), Image.ANTIALIAS)
         else:
-            im.thumbnail(spec['width'], spec['height'], Image.ANTIALIAS)
+            im.thumbnail((spec['width'], spec['height']), Image.ANTIALIAS)
 
         output = BytesIO()
         im.save(output, format='JPEG', quality=spec.get('quality', 75), optimize=True, progressive=False)
-        return ContentFile(output.getvalue())
+        return output

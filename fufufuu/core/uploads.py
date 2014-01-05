@@ -1,4 +1,6 @@
 import os
+import random
+import string
 from django.utils.http import int_to_base36
 from fufufuu.core.utils import get_image_extension
 
@@ -34,9 +36,16 @@ def tag_cover_upload_to(instance, filename):
 
 
 def image_upload_to(instance, filename):
-    filename = '{}-{}.jpg'.format(instance.key_type, int_to_base36(instance.key_id))
+    """
+    random_key is used to prevent scraping of the website
+    """
+
+    random_key_length = 4
+    random_key = ''.join([random.choice(string.hexdigits) for _ in range(random_key_length)])
+
+    filename = '{}-{}-{}.jpg'.format(instance.key_type.lower(), random_key, int_to_base36(instance.key_id))
     dirs = int_to_base36(instance.key_id)[:-1]
-    return os.sep.join(['image', instance.key_type] + list(dirs) + [filename])
+    return os.sep.join(['image', instance.key_type.lower()] + list(dirs) + [filename])
 
 
 def disabled_upload_to(instance, filename):

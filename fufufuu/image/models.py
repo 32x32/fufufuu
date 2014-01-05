@@ -1,3 +1,4 @@
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import models
 from fufufuu.core.uploads import image_upload_to
 from fufufuu.image.enums import ImageKeyType
@@ -18,5 +19,6 @@ class Image(models.Model):
         unique_together = [('key_type', 'key_id')]
 
     def save(self, source, *args, **kwargs):
-        self.file = ImageTransformer.transform(self.key_type, source)
+        file_content = ImageTransformer.transform(self.key_type, source)
+        self.file.save('', SimpleUploadedFile('', file_content.getvalue()), save=False)
         super().save(*args, **kwargs)
