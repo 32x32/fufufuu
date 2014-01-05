@@ -1,6 +1,7 @@
 from collections import defaultdict
 from django import forms
 from django.forms.models import BaseModelFormSet
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
@@ -190,6 +191,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
         if self.cleaned_data.get('action') == MangaAction.PUBLISH:
             manga.status = MangaStatus.PUBLISHED
+            manga.published_on = timezone.now()
 
         manga.save(updated_by=self.request.user)
         self.save_tags(manga)

@@ -63,6 +63,7 @@ class MangaEditFormTests(BaseTestCase):
 
     def test_manga_edit_form_publish(self):
         self.manga.status = MangaStatus.DRAFT
+        self.manga.published_on = None
         self.manga.save(updated_by=self.user)
 
         form = MangaEditForm(request=self.request, instance=self.manga, data={
@@ -73,7 +74,10 @@ class MangaEditFormTests(BaseTestCase):
         })
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertEqual((Manga.objects.get(id=self.manga.id)).status, MangaStatus.PUBLISHED)
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(manga.status, MangaStatus.PUBLISHED)
+        self.assertTrue(manga.published_on)
 
     def test_manga_edit_form_tag_limit(self):
         pass

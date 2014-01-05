@@ -20,22 +20,3 @@
         {% endif %}
     </div>
 {% endmacro %}
-
-{% macro field_file(field, image, class) %}
-    <table class="table-full-border space-top-15">
-        <tr>
-            <td width="120"><label>{% trans %}Current{% endtrans %}</label></td>
-            <td>
-                {% if image %}
-                    <img src="{{ image.url }}" class="{{ class }}">
-                {% else %}
-                    <img src="{{ STATIC_URL }}images/no-image.png" class="{{ class }}">
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <td width="120">{{ field.label_tag() }}</td>
-            <td>{{ field }}</td>
-        </tr>
-    </table>
-{% endmacro %}
