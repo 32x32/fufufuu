@@ -79,6 +79,17 @@ LOGOUT_URL = '/account/logout/'
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 #-------------------------------------------------------------------------------
+# cache settings
+#-------------------------------------------------------------------------------
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+#-------------------------------------------------------------------------------
 # template settings
 #-------------------------------------------------------------------------------
 
