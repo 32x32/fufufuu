@@ -42,7 +42,7 @@
   });
 
   $(function() {
-    var $imageList, $imageOrderInput, autocompleteParams, bindAutocompleteKeydown, extractLast, split, success;
+    var $deleteButton, $imageList, $imageOrderInput, $setCoverButton, autocompleteParams, bindAutocompleteKeydown, extractLast, split, success, update_buttons;
     if ($('#template-manga-edit-images').length) {
       $('input[type="file"]').change(function() {
         return $(this).parents('form').submit();
@@ -64,6 +64,25 @@
           return _results;
         });
       }
+      $setCoverButton = $('#id_button_set_cover');
+      $deleteButton = $('#id_button_delete');
+      update_buttons = function() {
+        var selected_count;
+        selected_count = $('.mp-select:checked').length;
+        console.log(selected_count);
+        if (selected_count === 1) {
+          $setCoverButton.removeAttr('disabled');
+        } else {
+          $setCoverButton.attr('disabled', 'disabled');
+        }
+        if (selected_count > 0) {
+          return $deleteButton.removeAttr('disabled');
+        } else {
+          return $deleteButton.attr('disabled', 'disabled');
+        }
+      };
+      $('.mp-select').on('change', update_buttons);
+      update_buttons();
     }
     if ($('#template-manga-edit').length) {
       split = function(val) {

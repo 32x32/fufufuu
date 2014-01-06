@@ -1,7 +1,7 @@
 $ ->
 
     #---------------------------------------------------------------------------
-    # manga edit page
+    # manga edit images page
     #---------------------------------------------------------------------------
 
     if $('#template-manga-edit-images').length
@@ -18,8 +18,27 @@ $ ->
                 for item, i in $('.upload-pli')
                     $(item).find('input[id$="ORDER"]').attr('value', i+1)
 
+        # enabling/disabling of form buttons based on selected images
+        $setCoverButton = $('#id_button_set_cover')
+        $deleteButton = $('#id_button_delete')
+
+        update_buttons = ->
+            selected_count = $('.mp-select:checked').length
+            console.log selected_count
+            if selected_count == 1
+                $setCoverButton.removeAttr('disabled')
+            else
+                $setCoverButton.attr('disabled', 'disabled')
+            if selected_count > 0
+                $deleteButton.removeAttr('disabled')
+            else
+                $deleteButton.attr('disabled', 'disabled')
+
+        $('.mp-select').on('change', update_buttons)
+        update_buttons()
+
     #---------------------------------------------------------------------------
-    # manga edit tag autocomplete
+    # manga edit page
     #---------------------------------------------------------------------------
 
     if $('#template-manga-edit').length

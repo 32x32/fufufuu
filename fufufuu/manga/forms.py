@@ -200,7 +200,11 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
 class MangaPageForm(forms.ModelForm):
 
-    select = forms.BooleanField(label=_('Select'), required=False)
+    select = forms.BooleanField(
+        label=_('Select'),
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'mp-select'})
+    )
 
     class Meta:
         model = MangaPage

@@ -36,11 +36,13 @@
                 </div>
                 <div class="manga-edit-sidebar">
                     <div class="well space-bottom-15">
-                        <button class="btn btn-primary">{% trans %}Save Order{% endtrans %}</button>
-                        <button class="btn btn-primary">{% trans %}Set Selected as Cover{% endtrans %}</button>
-                        <button class="btn btn-error">{% trans %}Delete Selected{% endtrans %}</button>
+                        <p class="help-block">{% trans %}Images can be re-ordered by dragging and dropping. Remember to save after re-ordering images.{% endtrans %}</p>
                     </div>
-                    <p class="help-block">{% trans %}Images can be re-ordered by dragging and dropping. Remember to save after re-ordering images.{% endtrans %}</p>
+                    <div class="well space-bottom-15">
+                        <button class="btn btn-primary">{% trans %}Save Order{% endtrans %}</button>
+                        <button class="btn btn-primary" name="cover" id="id_button_set_cover">{% trans %}Set Selected as Cover{% endtrans %}</button>
+                        <button class="btn btn-error" name="delete" id="id_button_delete">{% trans %}Delete Selected{% endtrans %}</button>
+                    </div>
                 </div>
             </form>
             <hr class="min-lg">
