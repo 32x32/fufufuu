@@ -190,7 +190,12 @@ class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
 
         if formset.is_valid():
             formset.save()
+            for level, message in formset.messages:
+                getattr(messages, level)(request, message)
             return redirect('manga.edit.images', id=id, slug=manga.slug)
+
+        for error in formset.non_form_errors():
+            messages.error(request, error)
 
         return self.render_to_response({
             'manga': manga,
@@ -208,7 +213,7 @@ class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
         if 'zipfile' in request.FILES:
             errors = process_zipfile(manga, request.FILES.get('zipfile'), request.user)
         elif 'images' in request.FILES:
-            errors = process_images(manga, request.FILES.get('images', []), request.user)
+            errors = process_images(manga, request.FILES.getlist('images', []), request.user)
         else:
             raise Http404
 

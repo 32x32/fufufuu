@@ -1,11 +1,13 @@
 import os
+from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import models
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 from fufufuu.core.uploads import image_upload_to
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.utils import ImageTransformer
+from manga.models import Manga
 
 
 class Image(models.Model):
@@ -42,3 +44,9 @@ def image_post_delete(instance, **kwargs):
     for field in ['file']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)
+
+
+@receiver(post_save, sender=Manga)
+def manga_post_save(instance, **kwargs):
+    Image.objects.filter(key_type=ImageKeyType.MANGA_COVER, key_id=instance.id).delete()
+    cache.delete('image-{}-{}'.format(ImageKeyType.MANGA_COVER, instance.id))

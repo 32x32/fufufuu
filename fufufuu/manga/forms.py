@@ -234,6 +234,7 @@ class MangaPageFormSet(BaseModelFormSet):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
+        self.messages = []
 
     def clean(self):
         cd = self.cleaned_data
@@ -258,14 +259,14 @@ class MangaPageFormSet(BaseModelFormSet):
         for page, form in enumerate(self.ordered_forms, start=1):
             form.instance.page = page
             form.instance.save()
+        self.messages.append(('success', _('The image order has been updated.')))
 
     def set_cover(self):
         form = self.selected_forms[0]
         manga = form.instance.manga
         manga.cover = form.instance.image.file
         manga.save(self.user)
+        self.messages.append(('success', _('The selected image has been set as cover.')))
 
     def delete(self):
-        pass
-
-
+        self.messages.append(('error', _('The selected images have been deleted.')))
