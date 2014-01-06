@@ -16,7 +16,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     title = forms.CharField(
         label=_('Title'),
         max_length=100,
-        help_text=_('Please do no90 include [Circle], (Author) or other tag-related information in the title. Use the tags section below for this information.'),
+        help_text=_('Please do not include [Circle], (Author) or other tag-related information in the title. Use the tags section for this information.'),
         widget=forms.TextInput(attrs={
             'required': 'required',
             'maxlength': '100',
