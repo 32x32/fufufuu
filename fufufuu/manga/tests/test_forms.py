@@ -223,8 +223,70 @@ class MangaPageFormsetTests(BaseTestCase):
         self.assertNotEqual(manga.cover.path, self.page2.image.path)
         self.assertTrue(os.path.exists(manga.cover.path))
 
-    def test_manga_page_formset_delete_invalid(self):
-        pass
+    def test_manga_page_formset_delete_non_selected(self):
+        formset = MangaEditImagesView.get_formset_cls()(
+            user=self.user,
+            queryset=MangaPage.objects.filter(manga=self.manga),
+            data={
+                'form-TOTAL_FORMS': '3',
+                'form-INITIAL_FORMS': '3',
+                'form-MAX_NUM_FORMS': '100',
+                'form-0-id': self.page1.id,
+                'form-0-ORDER': '1',
+                'form-1-id': self.page2.id,
+                'form-1-ORDER': '2',
+                'form-2-id': self.page3.id,
+                'form-2-ORDER': '3',
+                'action': 'delete',
+            },
+        )
+        self.assertFalse(formset.is_valid())
+        self.assertEqual(formset.non_form_errors(), ['Please select at least one image to delete.'])
+
+    def test_manga_page_formset_delete_all_selected(self):
+        formset = MangaEditImagesView.get_formset_cls()(
+            user=self.user,
+            queryset=MangaPage.objects.filter(manga=self.manga),
+            data={
+                'form-TOTAL_FORMS': '3',
+                'form-INITIAL_FORMS': '3',
+                'form-MAX_NUM_FORMS': '100',
+                'form-0-id': self.page1.id,
+                'form-0-ORDER': '1',
+                'form-0-select': 'on',
+                'form-1-id': self.page2.id,
+                'form-1-ORDER': '2',
+                'form-1-select': 'on',
+                'form-2-id': self.page3.id,
+                'form-2-ORDER': '3',
+                'form-2-select': 'on',
+                'action': 'delete',
+            },
+        )
+        self.assertFalse(formset.is_valid())
+        self.assertEqual(formset.non_form_errors(), ['Please leave at least one image in this upload undeleted.'])
 
     def test_manga_page_formset_delete(self):
-        pass
+        formset = MangaEditImagesView.get_formset_cls()(
+            user=self.user,
+            queryset=MangaPage.objects.filter(manga=self.manga),
+            data={
+                'form-TOTAL_FORMS': '3',
+                'form-INITIAL_FORMS': '3',
+                'form-MAX_NUM_FORMS': '100',
+                'form-0-id': self.page1.id,
+                'form-0-ORDER': '1',
+                'form-1-id': self.page2.id,
+                'form-1-ORDER': '2',
+                'form-1-select': 'on',
+                'form-2-id': self.page3.id,
+                'form-2-ORDER': '3',
+                'action': 'delete',
+            },
+        )
+        self.assertTrue(formset.is_valid())
+        formset.save()
+
+        self.assertEqual(MangaPage.objects.get(id=self.page1.id).page, 1)
+        self.assertEqual(MangaPage.objects.get(id=self.page3.id).page, 2)
+        self.assertFalse(MangaPage.objects.filter(id=self.page2.id).exists())

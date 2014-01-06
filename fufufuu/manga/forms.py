@@ -248,7 +248,9 @@ class MangaPageFormSet(BaseModelFormSet):
                 raise forms.ValidationError(_('Please select only a single image to set as the cover.'))
         elif action == 'delete':
             if len(self.unselected_forms) == 0:
-                raise forms.ValidationError(_('Please leave at least one image in this upload.'))
+                raise forms.ValidationError(_('Please leave at least one image in this upload undeleted.'))
+            elif len(self.selected_forms) == 0:
+                raise forms.ValidationError(_('Please select at least one image to delete.'))
 
         return cd
 
@@ -269,4 +271,9 @@ class MangaPageFormSet(BaseModelFormSet):
         self.messages.append(('success', _('The selected image has been set as cover.')))
 
     def delete(self):
+        for form in self.selected_forms:
+            form.instance.delete()
+        for page, form in enumerate(self.unselected_forms, start=1):
+            form.instance.page = page
+            form.instance.save()
         self.messages.append(('error', _('The selected images have been deleted.')))
