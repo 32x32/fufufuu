@@ -1,6 +1,7 @@
 import os
 from io import BytesIO
 from django.core.files.base import File
+from django.core.files.uploadedfile import SimpleUploadedFile
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.manga.enums import MangaStatus
 from fufufuu.manga.models import Manga, MangaPage, MangaArchive
@@ -31,8 +32,11 @@ class MangaModelTests(BaseTestCase):
         self.assertEqual(manga.status, MangaStatus.DELETED)
 
     def test_manga_page_delete(self):
-        mp = MangaPage(manga=self.manga, page=1)
-        mp.image.save('sample-file.jpg', File(BytesIO()), save=False)
+        mp = MangaPage(
+            manga=self.manga,
+            page=1,
+            image=SimpleUploadedFile('sample.jpg', self.create_test_image_file().getvalue())
+        )
         mp.save()
 
         path = mp.image.path

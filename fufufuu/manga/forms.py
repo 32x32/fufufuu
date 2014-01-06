@@ -213,6 +213,59 @@ class MangaPageForm(forms.ModelForm):
 
 class MangaPageFormSet(BaseModelFormSet):
 
-    def __init__(self, user=None, *args, **kwargs):
+    @property
+    def unselected_forms(self):
+        if hasattr(self, '_unselected_forms'):
+            return self._unselected_forms
+
+        def _unselected(form): return not form.cleaned_data.get('select')
+        self._unselected_forms = list(filter(_unselected, self.ordered_forms))
+        return self._unselected_forms
+
+    @property
+    def selected_forms(self):
+        if hasattr(self, '_selected_forms'):
+            return self._selected_forms
+
+        def _selected(form): return form.cleaned_data.get('select')
+        self._selected_forms = list(filter(_selected, self.ordered_forms))
+        return self._selected_forms
+
+    def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
+
+    def clean(self):
+        cd = self.cleaned_data
+
+        action = self.data.get('action')
+        if action not in ['reorder', 'set_cover', 'delete']:
+            raise forms.ValidationError(_('The form was submitted without an action, please re-submit this form.'))
+
+        if action == 'set_cover':
+            if len(self.selected_forms) != 1:
+                raise forms.ValidationError(_('Please select only a single image to set as the cover.'))
+        elif action == 'delete':
+            if len(self.unselected_forms) == 0:
+                raise forms.ValidationError(_('Please leave at least one image in this upload.'))
+
+        return cd
+
+    def save(self, commit=True):
+        getattr(self, self.data.get('action'))()
+
+    def reorder(self):
+        for page, form in enumerate(self.ordered_forms, start=1):
+            form.instance.page = page
+            form.instance.save()
+
+    def set_cover(self):
+        form = self.selected_forms[0]
+        manga = form.instance.manga
+        manga.cover = form.instance.image.file
+        manga.save(self.user)
+
+    def delete(self):
+        pass
+
+

@@ -1,7 +1,6 @@
 import json
 import os
-from io import BytesIO
-from django.core.files.base import File
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
 from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
@@ -14,7 +13,7 @@ class TagModelTests(BaseTestCase):
 
     def test_tag_data_delete(self):
         tag_data = TagData.objects.all()[0]
-        tag_data.cover.save('sample-file.jpg', File(BytesIO()), save=False)
+        tag_data.cover = SimpleUploadedFile('sample.jpg', self.create_test_image_file().getvalue())
         tag_data.save(self.user)
 
         path = tag_data.cover.path
@@ -25,7 +24,7 @@ class TagModelTests(BaseTestCase):
 
     def test_tag_data_history_delete(self):
         tag_data_history = TagDataHistory.objects.all()[0]
-        tag_data_history.cover.save('sample-file.jpg', File(BytesIO()), save=False)
+        tag_data_history.cover = SimpleUploadedFile('sample.jpg', self.create_test_image_file().getvalue())
         tag_data_history.save()
 
         path = tag_data_history.cover.path

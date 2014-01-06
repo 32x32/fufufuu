@@ -140,13 +140,32 @@ class MangaEditViewTests(BaseTestCase):
 class MangaEditImagesViewTests(BaseTestCase):
 
     def test_manga_edit_images_view_get(self):
-        pass
+        response = self.client.get(reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-edit-images.html')
 
     def test_manga_edit_images_view_post_invalid(self):
-        pass
+        manga_page = self.manga.mangapage_set.all()[0]
+        response = self.client.post(reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]), {
+            'form-TOTAL_FORMS': '1',
+            'form-INITIAL_FORMS': '1',
+            'form-MAX_NUM_FORMS': '100',
+            'form-0-id': manga_page.id,
+            'action': 'set_cover',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-edit-images.html')
 
     def test_manga_edit_images_view_post(self):
-        pass
+        manga_page = self.manga.mangapage_set.all()[0]
+        response = self.client.post(reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]), {
+            'form-TOTAL_FORMS': '1',
+            'form-INITIAL_FORMS': '1',
+            'form-MAX_FORMS': '1',
+            'form-0-id': manga_page.id,
+            'action': 'reorder'
+        })
+        self.assertRedirects(response, reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
 
 
 class MangaEditUploadViewTests(BaseTestCase):

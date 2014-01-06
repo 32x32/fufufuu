@@ -43,7 +43,7 @@ def image_upload_to(instance, filename):
     random_key_length = 4
     random_key = ''.join([random.choice(string.hexdigits) for _ in range(random_key_length)])
 
-    filename = '{}-{}-{}.jpg'.format(instance.key_type.lower(), random_key, int_to_base36(instance.key_id))
+    filename = '{}-{}-{}.jpg'.format(instance.key_type.lower(), int_to_base36(instance.key_id), random_key)
     dirs = int_to_base36(instance.key_id)[:-1]
     return os.sep.join(['image', instance.key_type.lower()] + list(dirs) + [filename])
 

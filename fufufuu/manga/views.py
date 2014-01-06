@@ -162,7 +162,8 @@ class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
 
     template_name = 'manga/manga-edit-images.html'
 
-    def get_formset_cls(self):
+    @classmethod
+    def get_formset_cls(cls):
         return modelformset_factory(
             model=MangaPage,
             form=MangaPageForm,
@@ -176,11 +177,25 @@ class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
         manga = self.get_manga(id)
         return self.render_to_response({
             'manga': manga,
-            'formset': self.get_formset_cls()(queryset=MangaPage.objects.filter(manga=manga))
+            'formset': self.get_formset_cls()(user=request.user, queryset=MangaPage.objects.filter(manga=manga))
         })
 
     def post(self, request, id, slug):
-        raise NotImplementedError
+        manga = self.get_manga(id)
+        formset = self.get_formset_cls()(
+            user=request.user,
+            queryset=MangaPage.objects.filter(manga=manga),
+            data=request.POST
+        )
+
+        if formset.is_valid():
+            formset.save()
+            return redirect('manga.edit.images', id=id, slug=manga.slug)
+
+        return self.render_to_response({
+            'manga': manga,
+            'formset': formset,
+        })
 
 
 class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):

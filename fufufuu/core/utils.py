@@ -64,12 +64,9 @@ def count_abbr(n):
 
 
 def get_image_extension(f):
-    try:
-        f.seek(0)
-        im = Image.open(f)
-        return IMAGE_FORMAT_EXTENSION.get(im.format, 'unknown')
-    except:
-        return 'error'
+    f.seek(0)
+    im = Image.open(f)
+    return IMAGE_FORMAT_EXTENSION.get(im.format, 'unknown')
 
 #def email_alert(subject, template, context):
 #    """

@@ -78,6 +78,8 @@ LOGOUT_URL = '/account/logout/'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
+DEFAULT_FILE_STORAGE = 'fufufuu.core.storage.FufufuuStorage'
+
 #-------------------------------------------------------------------------------
 # cache settings
 #-------------------------------------------------------------------------------
