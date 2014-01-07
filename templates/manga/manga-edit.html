@@ -28,6 +28,16 @@
                             <td>{{ form.cover }}</td>
                         </tr>
                     </table>
+                    <table class="table-full-border space-top-15">
+                        <tr>
+                            <td width="120">{{ form.language.label_tag() }}</td>
+                            <td>{{ form.language }}</td>
+                        </tr>
+                        <tr>
+                            <td width="120">{{ form.uncensored.label_tag() }}</td>
+                            <td>{{ form.uncensored }}</td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="half half-md">
                     <label>{% trans %}Tags{% endtrans %}</label>
@@ -84,7 +94,7 @@
                                 <div class="manga-edit-category-table">
                                     <table>
                                         <tr>
-                                            <td width="30"><input id="id_category_0" name="category" type="radio" value="NON-H"{% if form.category.value() == "NON-H" %} checked="checked"{% endif %}></td>
+                                            <td width="30"><input id="id_category_0" name="category" type="radio" value="NON_H"{% if form.category.value() == "NON_H" %} checked="checked"{% endif %}></td>
                                             <td width="85"><label for="id_category_0"><div class="manga-category manga-category-non_h block">{% trans %}Non-H{% endtrans %}</div></label></td>
                                             <td><label for="id_category_0">{% trans %}Non-pornographic doujinshi, no nudity.{% endtrans %}</label></td>
                                         </tr>
@@ -122,25 +132,24 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td width="120">{{ form.language.label_tag() }}</td>
-                            <td>{{ form.language }}</td>
-                        </tr>
-                        <tr>
-                            <td width="120">{{ form.uncensored.label_tag() }}</td>
-                            <td>{{ form.uncensored }}</td>
-                        </tr>
                     </table>
                 </div>
             </div>
         </div>
         <div class="manga-edit-sidebar">
             <label>&nbsp;</label>
-            <div class="well">
+            <div class="well space-bottom-15">
                 <button type="submit" class="btn btn-primary" name="action" value="save">{% trans %}Save{% endtrans %}</button>
                 {% if manga.status == 'DRAFT' %}
                     <button type="submit" class="btn btn-warning" name="action" value="publish">{% trans %}Save and Publish{% endtrans %}</button>
+                {% endif %}
+            </div>
+            <div class="well space-top-15">
+                {% if user == manga.created_by %}
                     <button type="submit" class="btn btn-error" name="action" value="delete">{% trans %}Delete{% endtrans %}</button>
+                {% else %}
+                    <p class="help-block">{% trans %}Vote to remove this upload from Fufufuu. This upload will be removed from Fufufuu automatically when there are enough votes.{% endtrans %}</p>
+                    <button type="submit" class="btn btn-error space-top-10" name="action" value="vote_remove">{% trans %}Vote to Remove{% endtrans %}</button>
                 {% endif %}
             </div>
         </div>

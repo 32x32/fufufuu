@@ -83,7 +83,13 @@ class MangaEditFormTests(BaseTestCase):
         self.assertTrue(manga.published_on)
 
     def test_manga_edit_form_tag_limit(self):
-        pass
+        form = MangaEditForm(request=self.request, instance=self.manga, data={
+            'title': 'Test Manga Title',
+            'category': MangaCategory.VANILLA,
+            'language': Language.ENGLISH,
+            'authors': ', '.join(['Author {}'.format(i) for i in range(100)]),
+            'action': 'save',
+        })
 
     def test_manga_edit_form_tank_and_collection(self):
         pass

@@ -55,6 +55,7 @@ class MangaThumbnailsView(TemplateView):
         manga = get_object_or_404(Manga.published, id=id)
         return self.render_to_response({
             'manga': manga,
+            'manga_page_list': manga.mangapage_set.all(),
         })
 
 

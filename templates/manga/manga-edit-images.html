@@ -6,7 +6,7 @@
 {% block content %}
     <div class="container-fat relative">
         {% if formset|length > 0 %}
-            <form action="" method="post" enctype="multipart/form-data">
+            <form action="" method="post" enctype="multipart/form-data" style="min-height: 314px;">
                 <div class="manga-edit-main space-bottom-15">
                     <ul class="upload-pl">
                         {{ forms.csrf_token(csrf_token) }}
@@ -15,7 +15,7 @@
                             <li class="upload-pli">
                                 <div class="upload-pli-inner">
                                     {{ form.id }}
-                                    <div class="upload-pli-image-wrapper">
+                                    <div class="upload-pli-image-wrapper move">
                                         {% if page.image %}
                                             <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ page.image|image('manga_thumb', page.id) }}" data-src-retina="{{ page.image|image('manga_thumb_retina', page.id) }}">
                                         {% else %}
