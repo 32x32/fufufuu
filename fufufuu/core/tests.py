@@ -1,3 +1,5 @@
+import os
+import shutil
 from collections import namedtuple
 from io import BytesIO
 from PIL import Image
@@ -5,10 +7,15 @@ from django.core.management import call_command
 from django.db import connections
 from django.test.runner import DiscoverRunner
 from django.test.testcases import TestCase
+from django.test.utils import override_settings
 from fufufuu.account.models import User
 from fufufuu.core.utils import slugify
 from fufufuu.datacreator import DataCreator
 from fufufuu.manga.models import Manga
+from settings import BASE_DIR
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media-test')
 
 
 def fast_set_password(self, raw_password):
@@ -32,9 +39,10 @@ class FufufuuTestSuiteRunner(DiscoverRunner):
             self.create_testdb()
 
     def teardown_databases(self, old_config, **kwargs):
-        pass
+        shutil.rmtree(MEDIA_ROOT)
 
 
+@override_settings(MEDIA_ROOT=MEDIA_ROOT)
 class BaseTestCase(TestCase):
 
     def setUp(self):
@@ -47,11 +55,10 @@ class BaseTestCase(TestCase):
         self.user.set_password('password')
         self.user.save()
 
-        self.request = namedtuple('Request', 'user')
-        self.request.user = self.user
-
         self.manga = Manga.published.latest('published_on')
 
+        self.request = namedtuple('Request', 'user')
+        self.request.user = self.user
         self.client.login(username='testuser', password='password')
 
     def assertTemplateUsed(self, response, template_name):

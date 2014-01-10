@@ -7,7 +7,7 @@ from django.dispatch.dispatcher import receiver
 from fufufuu.core.uploads import image_upload_to
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.utils import ImageTransformer
-from manga.models import Manga
+from fufufuu.manga.models import Manga
 
 
 class Image(models.Model):
