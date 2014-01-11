@@ -4,18 +4,18 @@
 
 {% block content %}
     <div class="container-fat">
-        <ul class="upload-pl">
+        <ul class="mtl">
             {% for page in manga_page_list %}
-                <li class="upload-pli">
-                    <a href="#" class="upload-pli-inner block">
-                        <div class="upload-pli-image-wrapper">
+                <li class="mtli">
+                    <a href="#" class="mtli-inner block">
+                        <div class="mtli-image-wrapper">
                             {% if page.image %}
                                 <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ page.image|image('manga_thumb', page.id) }}" data-src-retina="{{ page.image|image('manga_thumb_retina', page.id) }}">
                             {% else %}
                                 <img src="{{ STATIC_URL }}images/no-image.png">
                             {% endif %}
                         </div>
-                        <div class="upload-pli-info">
+                        <div class="mtli-info">
                             <span>{{ page.page }}</span>
                         </div>
                     </a>

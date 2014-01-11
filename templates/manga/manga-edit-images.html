@@ -8,25 +8,25 @@
         {% if formset|length > 0 %}
             <form action="" method="post" enctype="multipart/form-data" style="min-height: 314px;">
                 <div class="manga-edit-main space-bottom-15">
-                    <ul class="upload-pl">
+                    <ul class="mtl">
                         {{ forms.csrf_token(csrf_token) }}
                         {{ formset.management_form }}
                         {% for form in formset %}{% with page=form.instance %}
-                            <li class="upload-pli">
-                                <div class="upload-pli-inner">
+                            <li class="mtli">
+                                <div class="mtli-inner">
                                     {{ form.id }}
-                                    <div class="upload-pli-image-wrapper move">
+                                    <div class="mtli-image-wrapper move">
                                         {% if page.image %}
                                             <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ page.image|image('manga_thumb', page.id) }}" data-src-retina="{{ page.image|image('manga_thumb_retina', page.id) }}">
                                         {% else %}
                                             <img src="{{ STATIC_URL }}images/no-image.png">
                                         {% endif %}
                                     </div>
-                                    <div class="upload-pli-info">
+                                    <div class="mtli-info">
                                         <label class="right">{{ form.select }}</label>
                                         {{ form.ORDER }}
                                         {% if page.image %}
-                                            <a href="{{ page.image.url }}" target="_blank" class="upload-pli-link"{% if page.name %} title="{{ page.name }}"{% endif %}>{% if page.name %}{{ page.name }}{% else %}{{ page.page }}{% endif %}</a>
+                                            <a href="{{ page.image.url }}" target="_blank" class="mtli-link"{% if page.name %} title="{{ page.name }}"{% endif %}>{% if page.name %}{{ page.name }}{% else %}{{ page.page }}{% endif %}</a>
                                         {% endif %}
                                     </div>
                                 </div>
