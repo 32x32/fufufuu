@@ -1,6 +1,29 @@
 /* --------------------------------------------------
-    manga-edit page
+    custom manga page styles
 ---------------------------------------------------*/
+
+.manga-edit-inputs {
+    input { margin-bottom: 0; }
+}
+
+.manga-edit-category-table {
+    margin: -10px -10px -11px;
+    border: none;
+
+    td {
+        border: none;
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0px;
+    }
+    td:first-child { text-align: center; }
+    input[type="radio"] {
+        display: inline-block;
+        vertical-align: bottom;
+        position: relative;
+        top: -6px;
+    }
+    label { text-transform: none; }
+}
 
 @manga-sidebar-width: 240px;
 

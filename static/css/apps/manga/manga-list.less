@@ -98,3 +98,74 @@
 .manga-category-yaoi        { background-color: @manga-category-yaoi; }
 .manga-category-yuri        { background-color: @manga-category-yuri; }
 .manga-category-other       { background-color: @manga-category-other; }
+
+.manga-cover {
+    border: 1px solid #ddd;
+    width: 202px;
+    height: 302px;
+}
+
+.manga-content {
+    border-top: 1px solid #fff;
+    > #message-list { margin-top: -1px; }
+}
+
+
+/* --------------------------------------------------
+    manga-list control bar styles
+---------------------------------------------------*/
+
+.ml-control-bar, .control-bar {
+    padding: 10px;
+}
+
+.ml-control-bar-cat-wrapper {
+    .inline-block();
+    margin-right: 10px;
+    > label { text-transform: none; }
+}
+
+.ml-control-bar-cat {
+    .inline-block();
+
+    border-left: none;
+    line-height: 40px;
+    padding: 0 10px;
+
+    &:first-of-type { .border-radius(@border-radius 0 0 @border-radius); }
+    > input[type="checkbox"] {
+        display: inline-block;
+        vertical-align: bottom;
+        position: relative;
+        top: -13px;
+    }
+    > span { color: #fff; }
+}
+
+.ml-control-bar-cat-button {
+    .border-radius(0 @border-radius @border-radius 0);
+    border: 1px solid @btn-primary-bg;
+}
+
+@media screen and (max-width: @screen-lg1) {
+    .ml-control-bar-cat {
+        > input[type="checkbox"] { margin-right: 0; }
+        > span { display: none; }
+    }
+}
+
+@media screen and (min-width: @screen-xs) {
+    .ml-control-bar > .pagination { float: right; }
+}
+
+@media screen and (max-width: @screen-xs1) {
+    .ml-control-bar-cat-wrapper {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+    .ml-control-bar-cat { width: 100/8%; }
+    .ml-control-bar-cat-button {
+        padding: 7px 0;
+        width: 100/8%;
+    }
+}
