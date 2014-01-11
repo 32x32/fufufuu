@@ -1,3 +1,5 @@
 coffee --join static/js/app.js --watch --compile \
-    coffee/app.coffee \
-    coffee/manga.coffee
+    coffee/base.coffee \
+    coffee/manga/manga.coffee \
+    coffee/manga/manga-edit.coffee \
+    coffee/manga/manga-edit-images.coffee

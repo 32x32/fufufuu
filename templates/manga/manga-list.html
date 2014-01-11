@@ -5,6 +5,7 @@
 
 {% block content %}
     <form class="ml-control-bar">
+        {{ widgets.pagination(manga_list, request) }}
         <div class="ml-control-bar-cat-wrapper">
             <label class="ml-control-bar-cat manga-category-non_h">
                 <input type="checkbox" name="non_h"{% if request.GET.non_h %} checked{% endif %}{% if request.GET.non_h %} checked{% endif %}>
@@ -36,7 +37,6 @@
             </label>
             <button type="submit" class="btn btn-primary ml-control-bar-cat-button">{% trans %}Go{% endtrans %}</button>
         </div>
-        {{ widgets.pagination(manga_list, request) }}
     </form>
     {% if manga_list %}
         <ul class="ml">
@@ -51,7 +51,7 @@
                                 <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ STATIC_URL }}images/no-image.png" alt="{{ manga.title }}">
                             {% endif %}
                         </a>
-                        <a href="{{ url_manga }}" class="block mli-title" title="{{ manga.title }}">{{ manga.title }}</a>
+                        <a href="{{ url_manga }}" target="_blank" class="block mli-title" title="{{ manga.title }}">{{ manga.title }}</a>
                         <div class="mli-info">
                             <span class="manga-category manga-category-{{ manga.category.lower() }} space-right">{{ manga.category_display }}</span>
                             <span class="manga-category manga-category-other">{{ manga.language_display }}</span>
