@@ -4,7 +4,6 @@
 
 .manga-container {
     padding: 15px;
-    text-align: center;
 }
 
 /* --------------------------------------------------
@@ -28,9 +27,8 @@
     position: relative;
     width: 802px;
 
-    > img {
-        border: 1px solid #ddd;
-    }
+    &.double { width: 1202px; }
+    > img { border: 1px solid #ddd; }
 }
 
 /* --------------------------------------------------
@@ -38,9 +36,9 @@
 ---------------------------------------------------*/
 
 #manga-image {
-    margin: 0 auto;
     width: auto;
 }
+
 #manga-prev-page {
     width: 100/3%;
 
@@ -54,6 +52,7 @@
         background-color: #000;
     }
 }
+
 #manga-next-page {
     width: 200/3%;
 

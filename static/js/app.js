@@ -113,9 +113,9 @@
             }
           };
           preloadPage(pageList[self.prevNum() - 1]);
-          return preloadPage(pageList[self.prevNum() + 1]);
+          return preloadPage(pageList[self.nextNum() - 1]);
         };
-        self.showDouble = function() {
+        self.double = function() {
           return self.page().double;
         };
         self.preload();

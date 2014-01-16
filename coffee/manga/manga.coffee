@@ -71,9 +71,9 @@ $ ->
                         (new Image()).src = page.url
                         page.loaded = true
                 preloadPage(pageList[self.prevNum()-1])
-                preloadPage(pageList[self.prevNum()+1])
+                preloadPage(pageList[self.nextNum()-1])
 
-            self.showDouble = ->
+            self.double = ->
                 return self.page().double
 
             # initialization
