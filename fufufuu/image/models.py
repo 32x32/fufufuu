@@ -49,4 +49,4 @@ def image_post_delete(instance, **kwargs):
 @receiver(post_save, sender=Manga)
 def manga_post_save(instance, **kwargs):
     Image.objects.filter(key_type=ImageKeyType.MANGA_COVER, key_id=instance.id).delete()
-    cache.delete('image-{}-{}'.format(ImageKeyType.MANGA_COVER, instance.id))
+    cache.delete('image-{}-{}'.format(ImageKeyType.MANGA_COVER.lower(), instance.id))

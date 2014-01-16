@@ -43,7 +43,7 @@ specs[ImageKeyType.MANGA_PAGE] = {
 # MANGA_PAGE_WIDE
 #-------------------------------------------------------------------------------
 
-specs[ImageKeyType.MANGA_PAGE] = {
+specs[ImageKeyType.MANGA_PAGE_DOUBLE] = {
     'width':    1200,
     'height':   900,
 }

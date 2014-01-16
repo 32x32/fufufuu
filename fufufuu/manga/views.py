@@ -1,3 +1,5 @@
+import json
+import base64
 from django.contrib import messages
 from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed
@@ -9,6 +11,8 @@ from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
 from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import process_zipfile, process_images
+from image.enums import ImageKeyType
+from image.filters import image
 
 
 class MangaListView(TemplateView):
@@ -40,10 +44,36 @@ class MangaView(TemplateView):
 
     template_name = 'manga/manga.html'
 
+    def get_payload(self, manga):
+        """
+        returns a base 64 encoded json dump of the data needed for manga page
+        """
+
+        page_list = []
+        for page in manga.mangapage_set.order_by('page'):
+            if page.double:
+                key_type = ImageKeyType.MANGA_PAGE_DOUBLE
+            else:
+                key_type = ImageKeyType.MANGA_PAGE
+            page_list.append({
+                'double': page.double,
+                'page': page.page,
+                'url': image(page.image, key_type, page.id),
+            })
+
+        payload = json.dumps({
+            'page_list': page_list,
+        })
+        payload = payload.encode('utf-8')
+        payload = base64.b64encode(payload)
+        return payload.decode('utf-8')
+
     def get(self, request, id, slug):
         manga = get_object_or_404(Manga.published, id=id)
+        payload = self.get_payload(manga)
         return self.render_to_response({
             'manga': manga,
+            'payload': payload,
         })
 
 

@@ -3,5 +3,11 @@
 {% block title %}{{ manga.title }}{% endblock %}
 
 {% block content %}
-    <div id="payload"></div>
+    <div class="manga-sidebar"></div>
+    <div class="manga-main">
+        <a id="manga-next-page"></a>
+        <a id="manga-prev-page"></a>
+        <img id="manga-image" data-bind="attr: { src: page().url }">
+    </div>
+    <div id="payload">{{ payload }}</div>
 {% endblock %}

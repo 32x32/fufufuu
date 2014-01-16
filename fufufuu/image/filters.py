@@ -4,9 +4,16 @@ from fufufuu.image.models import Image
 
 
 def image(source, key_type, key_id):
+    """
+    key_type should be one of ImageKeyType.choices
+    """
+
+    if not source:
+        return ''
+
     key_type = key_type.upper()
 
-    cache_key = 'image-{}-{}'.format(key_type, key_id)
+    cache_key = 'image-{}-{}'.format(key_type.lower(), key_id)
     url = cache.get(cache_key)
     if url: return url
 

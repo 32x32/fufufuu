@@ -41,7 +41,115 @@
     }
   });
 
-  $(function() {});
+  $(function() {
+    var MangaModelView, changePage, data, getPageNum, mangaModelView, nextChapter, pageList, pageNumRegex, payload, prevChapter;
+    if ($('#template-manga').length) {
+      payload = $('#payload').text();
+      payload = atob(payload);
+      data = JSON.parse(payload);
+      pageList = data.page_list;
+      console.log(pageList);
+      pageNumRegex = new RegExp("#/page/(\\d+)/");
+      getPageNum = function() {
+        var pageNum;
+        pageNum = pageNumRegex.exec(window.location.hash);
+        if (!pageNum) {
+          return 1;
+        }
+        pageNum = parseInt(pageNum[1]);
+        if (pageNum < 1) {
+          return 1;
+        }
+        if (pageNum > data.length) {
+          return data.length;
+        }
+        return pageNum;
+      };
+      nextChapter = $('#manga-chapter-jump option:selected').next().val();
+      prevChapter = $('#manga-chapter-jump option:selected').prev().val();
+      MangaModelView = function() {
+        var self;
+        self = this;
+        self.prevNum = function() {
+          if (self.pageNum() <= 1) {
+            return 1;
+          } else {
+            return self.pageNum() - 1;
+          }
+        };
+        self.nextNum = function() {
+          if (self.pageNum() >= pageList.length) {
+            return pageList.length;
+          } else {
+            return self.pageNum() + 1;
+          }
+        };
+        self.pageNum = ko.observable(getPageNum());
+        self.page = ko.computed(function() {
+          return pageList[self.pageNum() - 1];
+        });
+        self.prevUrl = ko.computed(function() {
+          if (prevChapter && self.prevNum() === self.pageNum()) {
+            return "" + prevChapter + "#/page/100/";
+          }
+          return "#/page/" + (self.pageNum()) + "/";
+        });
+        self.nextUrl = ko.computed(function() {
+          if (nextChapter && self.nextNum() === self.pageNum()) {
+            return "" + nextChapter + "#/page/1/";
+          }
+          return "#/page/" + (self.nextNum()) + "/";
+        });
+        self.jumpPage = function() {
+          var targetPage;
+          targetPage = $("#manga-page-jump").val();
+          return window.location.hash = "#/page/" + targetPage + "/";
+        };
+        self.preload = function() {
+          var preloadPage;
+          preloadPage = function(page) {
+            if (!page.loaded) {
+              (new Image()).src = page.url;
+              return page.loaded = true;
+            }
+          };
+          preloadPage(data[self.prevNum() - 1]);
+          return preloadPage(data[self.prevNum() + 1]);
+        };
+        self.showDouble = function() {
+          return self.page().double;
+        };
+      };
+      mangaModelView = new MangaModelView();
+      ko.applyBindings(mangaModelView);
+      changePage = function() {
+        var pageNum, scrollTop;
+        pageNum = getPageNum();
+        mangaModelView.pageNum(pageNum);
+        mangaModelView.preload();
+        if (pageNum === 1) {
+          scrollTop = 0;
+        } else {
+          scrollTop = $('.m-body').offset().top();
+        }
+        $('html, body').animate({
+          scrollTop: scrollTop
+        }, 100);
+      };
+      $(window).bind('hashchange', changePage);
+      $(document).keydown(function(e) {
+        if ($('textarea').is(':focus')) {
+          return;
+        }
+        if (e.which === 37) {
+          window.location = mangaModelView.prevUrl();
+        }
+        if (e.which === 39) {
+          window.location = mangaModelView.nextUrl();
+        }
+      });
+    }
+  });
 
   $(function() {
     var autocompleteParams, bindAutocompleteKeydown, extractLast, split, success;
