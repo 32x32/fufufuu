@@ -1,19 +1,72 @@
 /* --------------------------------------------------
-    manga page styles
+    manga container
 ---------------------------------------------------*/
 
-#payload {
-    display: none;
+.manga-container {
+    padding: 15px;
+    text-align: center;
 }
 
-.manga-sidebar {}
+/* --------------------------------------------------
+    manga sidebar
+---------------------------------------------------*/
+
+.manga-sidebar {
+    .inline-block();
+    background-color: #000;
+    height: 1000px;
+    margin-right: 15px;
+    width: 300px;
+}
+
+/* --------------------------------------------------
+    manga main
+---------------------------------------------------*/
 
 .manga-main {
-    width: 800px;
+    .inline-block();
     position: relative;
+    width: 802px;
+
+    > img {
+        border: 1px solid #ddd;
+    }
 }
+
+/* --------------------------------------------------
+    manga image
+---------------------------------------------------*/
 
 #manga-image {
     margin: 0 auto;
     width: auto;
+}
+#manga-prev-page {
+    width: 100/3%;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    &:hover {
+        .transparent(20);
+        background-color: #000;
+    }
+}
+#manga-next-page {
+    width: 200/3%;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* --------------------------------------------------
+    manga misc
+---------------------------------------------------*/
+
+#payload {
+    display: none;
 }

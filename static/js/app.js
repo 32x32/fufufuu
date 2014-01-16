@@ -48,7 +48,6 @@
       payload = atob(payload);
       data = JSON.parse(payload);
       pageList = data.page_list;
-      console.log(pageList);
       pageNumRegex = new RegExp("#/page/(\\d+)/");
       getPageNum = function() {
         var pageNum;
@@ -92,7 +91,7 @@
           if (prevChapter && self.prevNum() === self.pageNum()) {
             return "" + prevChapter + "#/page/100/";
           }
-          return "#/page/" + (self.pageNum()) + "/";
+          return "#/page/" + (self.prevNum()) + "/";
         });
         self.nextUrl = ko.computed(function() {
           if (nextChapter && self.nextNum() === self.pageNum()) {
@@ -113,12 +112,13 @@
               return page.loaded = true;
             }
           };
-          preloadPage(data[self.prevNum() - 1]);
-          return preloadPage(data[self.prevNum() + 1]);
+          preloadPage(pageList[self.prevNum() - 1]);
+          return preloadPage(pageList[self.prevNum() + 1]);
         };
         self.showDouble = function() {
           return self.page().double;
         };
+        self.preload();
       };
       mangaModelView = new MangaModelView();
       ko.applyBindings(mangaModelView);
@@ -130,9 +130,9 @@
         if (pageNum === 1) {
           scrollTop = 0;
         } else {
-          scrollTop = $('.m-body').offset().top();
+          scrollTop = $('.manga-content').offset().top;
         }
-        $('html, body').animate({
+        $('html').animate({
           scrollTop: scrollTop
         }, 100);
       };

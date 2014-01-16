@@ -15,7 +15,6 @@ $ ->
         data = JSON.parse(payload)
 
         pageList = data.page_list
-        console.log pageList
 
         #-----------------------------------------------------------------------
         # get page number
@@ -55,7 +54,7 @@ $ ->
             self.prevUrl = ko.computed ->
                 if prevChapter and self.prevNum() == self.pageNum()
                     return "#{prevChapter}#/page/100/"
-                return "#/page/#{self.pageNum()}/"
+                return "#/page/#{self.prevNum()}/"
 
             self.nextUrl = ko.computed ->
                 if nextChapter and self.nextNum() == self.pageNum()
@@ -71,11 +70,14 @@ $ ->
                     if not page.loaded
                         (new Image()).src = page.url
                         page.loaded = true
-                preloadPage(data[self.prevNum()-1])
-                preloadPage(data[self.prevNum()+1])
+                preloadPage(pageList[self.prevNum()-1])
+                preloadPage(pageList[self.prevNum()+1])
 
             self.showDouble = ->
                 return self.page().double
+
+            # initialization
+            self.preload()
 
             return
 
@@ -93,8 +95,8 @@ $ ->
             if pageNum == 1
                 scrollTop = 0
             else
-                scrollTop = $('.m-body').offset().top()
-            $('html, body').animate({ scrollTop: scrollTop }, 100)
+                scrollTop = $('.manga-content').offset().top
+            $('html').animate({ scrollTop: scrollTop }, 100)
             return
 
         $(window).bind 'hashchange', changePage

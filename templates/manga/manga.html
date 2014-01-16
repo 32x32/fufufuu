@@ -3,11 +3,13 @@
 {% block title %}{{ manga.title }}{% endblock %}
 
 {% block content %}
-    <div class="manga-sidebar"></div>
-    <div class="manga-main">
-        <a id="manga-next-page"></a>
-        <a id="manga-prev-page"></a>
-        <img id="manga-image" data-bind="attr: { src: page().url }">
+    <div class="manga-container">
+        <div class="manga-sidebar"></div>
+        <div class="manga-main">
+            <a id="manga-prev-page" data-bind="attr: { href: prevUrl() }"></a>
+            <a id="manga-next-page" data-bind="attr: { href: nextUrl() }"></a>
+            <img id="manga-image" data-bind="attr: { src: page().url }">
+        </div>
     </div>
     <div id="payload">{{ payload }}</div>
 {% endblock %}
