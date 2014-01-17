@@ -75,6 +75,17 @@ class MangaView(TemplateView):
         })
 
 
+class MangaInfoView(TemplateView):
+
+    template_name = 'manga/manga-info.html'
+
+    def get(self, request, id, slug):
+        manga = get_object_or_404(Manga.published, id=id)
+        return self.render_to_response({
+            'manga': manga,
+        })
+
+
 class MangaThumbnailsView(TemplateView):
 
     template_name = 'manga/manga-thumbnails.html'

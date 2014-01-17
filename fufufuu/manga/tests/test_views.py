@@ -32,6 +32,14 @@ class MangaViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 404)
 
 
+class MangaInfoTests(BaseTestCase):
+
+    def test_manga_info_view_get(self):
+        response = self.client.get(reverse('manga.info', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-info.html')
+
+
 class MangaThumbnailsViewTests(BaseTestCase):
 
     def test_manga_thumbnails_view_get(self):
