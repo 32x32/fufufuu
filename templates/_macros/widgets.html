@@ -18,3 +18,11 @@
         </div>
     {% endif %}
 {% endmacro %}
+
+{% macro user_avatar(user) %}
+    {% if user.avatar %}
+        <img src="{{ user.avatar|image('account_avatar', user.id) }}" alt="{{ user.username }}" class="account-avatar">
+    {% else %}
+        <img src="{{ STATIC_URL }}images/no-avatar.png" alt="{{ user.username }}" class="account-avatar">
+    {% endif %}
+{% endmacro %}

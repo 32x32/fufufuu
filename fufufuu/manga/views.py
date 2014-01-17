@@ -61,9 +61,7 @@ class MangaView(TemplateView):
                 'url': image(page.image, key_type, page.id),
             })
 
-        payload = json.dumps({
-            'page_list': page_list,
-        })
+        payload = json.dumps({'page_list': page_list})
         payload = payload.encode('utf-8')
         payload = base64.b64encode(payload)
         return payload.decode('utf-8')
