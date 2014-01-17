@@ -1,3 +1,13 @@
+"""
+Specification:
+
+    crop:       (boolean)   crop to fit image to size
+    height:     (int)       max height of image
+    quality:    (int)       0-100 jpeg quality (default is 75)
+    width:      (int)       max width of image
+
+"""
+
 from fufufuu.image.enums import ImageKeyType
 
 specs = dict()

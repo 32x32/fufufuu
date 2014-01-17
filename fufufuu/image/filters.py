@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.core.files.base import File
 from django.db.utils import IntegrityError
 from fufufuu.image.models import Image
 
@@ -8,7 +9,7 @@ def image(source, key_type, key_id):
     key_type should be one of ImageKeyType.choices
     """
 
-    if not source:
+    if not source or not isinstance(source, File):
         return ''
 
     key_type = key_type.upper()
