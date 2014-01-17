@@ -5,45 +5,6 @@
 
 {% block content %}
     <div class="manga-container">
-        <div class="manga-sidebar">
-            <div class="panel manga-panel">
-                <h5 class="panel-heading">{% trans %}Uploader{% endtrans %}</h5>
-                <div class="panel-body">
-                    <span class="left space-right-10">{{ widgets.user_avatar(manga.created_by) }}</span>
-                    <strong>{{ manga.created_by }}</strong>
-                    <p class="space-bottom-0 text-secondary text-xsmall">{% trans date=manga.created_on|naturaltime %}uploaded {{ date }}{% endtrans %}</p>
-                    <div class="clear"></div>
-                </div>
-            </div>
-            <div class="panel manga-panel">
-                <h5 class="panel-heading">{% trans %}Scanlators{% endtrans %}</h5>
-                <div class="panel-body"></div>
-            </div>
-            <div class="panel manga-panel">
-                <h5 class="panel-heading">{% trans %}Authors{% endtrans %}</h5>
-                <div class="panel-body"></div>
-            </div>
-            <div class="panel manga-panel">
-                <h5 class="panel-heading">{% trans %}Circles{% endtrans %}</h5>
-                <div class="panel-body"></div>
-            </div>
-            <div class="panel manga-panel">
-                <h5 class="panel-heading">{% trans %}Content{% endtrans %}</h5>
-                <div class="panel-body"></div>
-            </div>
-            <div class="panel manga-panel">
-                <h5 class="panel-heading">{% trans %}Events{% endtrans %}</h5>
-                <div class="panel-body"></div>
-            </div>
-            <div class="panel manga-panel">
-                <h5 class="panel-heading">{% trans %}Magazines{% endtrans %}</h5>
-                <div class="panel-body"></div>
-            </div>
-            <div class="panel manga-panel">
-                <h5 class="panel-heading">{% trans %}Parodies{% endtrans %}</h5>
-                <div class="panel-body"></div>
-            </div>
-        </div>
         <div class="manga-main" data-bind="css: { double: double() }">
             <a id="manga-prev-page" data-bind="attr: { href: prevUrl() }"></a>
             <a id="manga-next-page" data-bind="attr: { href: nextUrl() }"></a>

@@ -6,26 +6,8 @@
     padding: 15px;
 }
 
-/* --------------------------------------------------
-    manga sidebar
----------------------------------------------------*/
-
-.manga-sidebar {
-    .inline-block();
-    margin-right: 15px;
-    width: 300px;
-}
-
-.manga-panel {
-    margin-bottom: 10px;
-
-    > .panel-heading {
-        padding: 10px;
-    }
-
-    > .panel-body {
-        padding: 10px;
-    }
+@media screen and (max-width: @screen-md1) {
+    .manga-container { padding: 0; }
 }
 
 /* --------------------------------------------------
@@ -33,12 +15,22 @@
 ---------------------------------------------------*/
 
 .manga-main {
-    .inline-block();
     position: relative;
-    width: 802px;
+    margin: 0 auto;
+    max-width: 802px;
+    text-align: center;
 
-    &.double { width: 1202px; }
-    > img { border: 1px solid #ddd; }
+    &.double {
+        max-width: 1202px;
+    }
+
+    > img {
+        .inline-block();
+    }
+}
+
+@media screen and (min-width: @screen-md) {
+    .manga-main > img { border: 1px solid #ddd; }
 }
 
 /* --------------------------------------------------

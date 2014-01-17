@@ -130,7 +130,7 @@
         if (pageNum === 1) {
           scrollTop = 0;
         } else {
-          scrollTop = $('.manga-content').offset().top;
+          scrollTop = $('.manga-main').offset().top - 10;
         }
         $('html').animate({
           scrollTop: scrollTop
