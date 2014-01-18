@@ -132,7 +132,7 @@
         } else {
           scrollTop = $('.manga-main').offset().top - 10;
         }
-        $('html').animate({
+        $('html, body').animate({
           scrollTop: scrollTop
         }, 100);
       };

@@ -96,7 +96,7 @@ $ ->
                 scrollTop = 0
             else
                 scrollTop = $('.manga-main').offset().top - 10
-            $('html').animate({ scrollTop: scrollTop }, 100)
+            $('html, body').animate({ scrollTop: scrollTop }, 100)
             return
 
         $(window).bind 'hashchange', changePage
