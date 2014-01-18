@@ -17,19 +17,19 @@
 {% block title %}{{ manga.title }}{% endblock %}
 
 {% block content %}
-    <div id="manga-info-read">
+    <div id="manga-info-read" class="manga-info-section">
         <a href="{{ url('manga', args=[manga.id, manga.slug]) }}" title="{{ manga.title }}" class="manga-info-cover">
             {% if manga.cover %}
-                <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ manga.cover|image('manga_page', manga.id) }}" alt="{{ manga.title }}">
+                <img class="lazy-image" src="{{ manga.cover|image('manga_page', manga.id) }}" alt="{{ manga.title }}">
             {% else %}
-                <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ STATIC_URL }}images/no-image.png" alt="{{ manga.title }}">
+                <img class="lazy-image" src="{{ STATIC_URL }}images/no-image.png" alt="{{ manga.title }}">
             {% endif %}
             <strong>{% trans %}Read Online{% endtrans %}<span class="icon icon-right-open space-left"></span></strong>
         </a>
     </div>
-    <div id="manga-info-tags">
+    <div id="manga-info-tags" class="manga-info-section">
         <h2 id="tags">{% trans %}Tags{% endtrans %}</h2>
-        <div class="manga-info-section" data-section="tags">
+        <div data-section="tags">
             <div class="panel manga-info-panel">
                 <h5 class="panel-heading">{% trans %}Uploader{% endtrans %}</h5>
                 <div class="panel-body">
@@ -49,5 +49,17 @@
             {{ tag_widget(manga.tag_dictionary.MAGAZINE, gettext('Magazine')) }}
             {{ tag_widget(manga.tag_dictionary.Parody, gettext('Parody')) }}
         </div>
+    </div>
+    <div id="manga-info-related" class="manga-info-section">
+        <h2 id="related">{% trans %}Related{% endtrans %}</h2>
+        <div data-section="related"></div>
+    </div>
+    <div id="manga-info-stats" class="manga-info-section">
+        <h2 id="stats">{% trans %}Stats{% endtrans %}</h2>
+        <div data-section="stats"></div>
+    </div>
+    <div id="manga-info-comments" class="manga-info-section">
+        <h2 id="comments">{% trans %}Comments{% endtrans %}</h2>
+        <div data-section="comments"></div>
     </div>
 {% endblock %}

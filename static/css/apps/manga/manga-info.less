@@ -8,7 +8,26 @@
 
 h2 {
     border-bottom: 1px solid #ccc;
-    display: none;
+}
+@media screen and (min-width: @screen-xs) {
+    h2 { display: none; }
+}
+@media screen and (max-width: @screen-xs1) {
+    h2 {
+        cursor: pointer;
+        font-weight: @font-weight-base;
+        &:after {
+            content: '\e877';
+            float: right;
+            font-family: 'entypo';
+            padding: 0 10px;
+        }
+    }
+    h2 + div {
+        height: 0;
+        overflow: hidden;
+        &.active { height: auto; }
+    }
 }
 
 .manga-info-panel {
@@ -21,18 +40,21 @@ h2 {
     manga-info sections
 ---------------------------------------------------*/
 
-#manga-info-read {
+.manga-info-section {
     .inline-block();
     padding: 5px;
-    max-width: 320px;
     width: 100%;
+}
+
+#manga-info-read {
+    max-width: 320px;
 }
 #manga-info-tags {
-    .inline-block();
-    padding: 5px;
     max-width: 400px;
-    width: 100%;
 }
+#manga-info-related {}
+#manga-info-stats {}
+#manga-info-comments {}
 
 @media screen and (max-width: @screen-xs1) {
     #manga-info-read { max-width: 100%; padding-bottom: 0; }

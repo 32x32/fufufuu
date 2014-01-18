@@ -152,6 +152,16 @@
   });
 
   $(function() {
+    if ($('#template-manga-info').length) {
+      return $('h2').click(function() {
+        var id;
+        id = $(this).attr('id');
+        return $("[data-section=" + id + "]").toggleClass('active');
+      });
+    }
+  });
+
+  $(function() {
     var autocompleteParams, bindAutocompleteKeydown, extractLast, split, success;
     if ($('#template-manga-edit').length) {
       split = function(val) {
