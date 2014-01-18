@@ -1,7 +1,43 @@
 {% extends 'manga/manga-base.html' %}
 {% import '_macros/widgets.html' as widgets with context %}
 
+{% macro tag_widget(tag_list, title) %}
+    {% if tag_list %}
+        <div class="panel manga-info-panel">
+            <h5 class="panel-heading">{{ title }}</h5>
+            <div class="panel-body manga-info-tag-list">
+                {% for tag in tag_list %}
+                    <a href="#" class="manga-info-tag-item">{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
 {% block title %}{{ manga.title }}{% endblock %}
 
 {% block content %}
+    <div id="manga-info-tags">
+        <h2 id="tags">{% trans %}Tags{% endtrans %}</h2>
+        <div class="manga-info-section" data-section="tags">
+            <div class="panel manga-info-panel">
+                <h5 class="panel-heading">{% trans %}Uploader{% endtrans %}</h5>
+                <div class="panel-body">
+                    <a href="#">
+                        <span class="left space-right-10">{{ widgets.user_avatar(manga.created_by) }}</span>
+                        <strong>{{ manga.created_by }}</strong>
+                        <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
+                        <div class="clear"></div>
+                    </a>
+                </div>
+            </div>
+            {{ tag_widget(manga.tag_dictionary.SCANLATOR, gettext('Scanlators')) }}
+            {{ tag_widget(manga.tag_dictionary.AUTHOR, gettext('Authors')) }}
+            {{ tag_widget(manga.tag_dictionary.CIRCLE, gettext('Circles')) }}
+            {{ tag_widget(manga.tag_dictionary.CONTENT, gettext('Content')) }}
+            {{ tag_widget(manga.tag_dictionary.EVENT, gettext('Event')) }}
+            {{ tag_widget(manga.tag_dictionary.MAGAZINE, gettext('Magazine')) }}
+            {{ tag_widget(manga.tag_dictionary.Parody, gettext('Parody')) }}
+        </div>
+    </div>
 {% endblock %}

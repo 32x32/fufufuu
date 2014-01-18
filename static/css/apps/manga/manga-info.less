@@ -1,0 +1,45 @@
+/* --------------------------------------------------
+    manga-info styles
+---------------------------------------------------*/
+
+#template-manga-info {
+    padding: 5px;
+}
+
+h2 {
+    border-bottom: 1px solid #ccc;
+    display: none;
+}
+
+.manga-info-panel {
+    margin-bottom: 10px;
+    > .panel-heading { padding: 10px; }
+    > .panel-body { padding: 10px; }
+}
+
+
+/* --------------------------------------------------
+    manga-info tags
+---------------------------------------------------*/
+
+#manga-info-tags {
+    .inline-block();
+    padding: 10px;
+    width: 400px;
+}
+
+.manga-info-tag-list {
+    margin: -3px;
+}
+.manga-info-tag-item {
+    .border-radius(@border-radius - 1px);
+    .inline-block();
+
+    background-color: #999;
+    color: #fff;
+    font-size: 13px;
+    line-height: 24px;
+    margin: 3px;
+    padding: 0 5px;
+
+}
