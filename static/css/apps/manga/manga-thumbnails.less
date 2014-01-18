@@ -12,6 +12,20 @@
     width: 152px;
     padding: 5px;
 }
+
+@media screen and (max-width: 319px) {
+    .mtli { width: 100/2%; }
+}
+@media screen and (min-width: 320px) and (max-width: 479px) {
+    .mtli { width: 100/3%; }
+}
+@media screen and (min-width: 480px) and (max-width: @screen-sm1) {
+    .mtli { width: 100/4%; }
+}
+@media screen and (min-width: @screen-sm) and (max-width: @screen-md1) {
+    .mtli { width: 100/5%; }
+}
+
 .mtli-inner {
     border: 1px solid #ddd;
 }
