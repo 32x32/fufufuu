@@ -41,7 +41,7 @@
     {% if manga_list %}
         <ul class="ml">
             {% for manga in manga_list %}
-                {% set url_manga = url('manga', args=[manga.id, manga.slug]) %}
+                {% set url_manga = url('manga.info', args=[manga.id, manga.slug]) %}
                 <li class="mli">
                     <div class="mli-core">
                         <a href="{{ url_manga }}" target="_blank" title="{{ manga.title }}" class="mli-cover">

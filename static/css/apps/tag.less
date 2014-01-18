@@ -3,15 +3,12 @@
 ---------------------------------------------------*/
 
 .tl {
-    .column-width(300px);
-    .column-gap(0);
     padding: 5px;
 }
 .tli {
     .inline-block();
 
     padding: 5px;
-    width: 100%;
 
     > a {
         .border-radius(@border-radius);
@@ -25,4 +22,29 @@
             background-color: #eee;
         }
     }
+}
+
+@media screen and (max-width: 599px) {
+    .tli { width: 100/1%; }
+}
+@media screen and (min-width: 600px) and (max-width: 1099px) {
+    .tli { width: 100/2%; }
+}
+@media screen and (min-width: 1100px) and (max-width: 1399px) {
+    .tli { width: 100/3%; }
+}
+@media screen and (min-width: 1400px) and (max-width: 1699px) {
+    .tli { width: 100/4%; }
+}
+@media screen and (min-width: 1700px) and (max-width: 1999px) {
+    .tli { width: 100/5%; }
+}
+@media screen and (min-width: 2000px) and (max-width: 2299px) {
+    .tli { width: 100/6%; }
+}
+@media screen and (min-width: 2300px) and (max-width: 2599px) {
+    .tli { width: 100/7%; }
+}
+@media screen and (min-width: 2600px) {
+    .tli { width: 100/8%; }
 }
