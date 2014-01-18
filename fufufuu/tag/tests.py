@@ -99,6 +99,18 @@ class TagAutocompleteViewTests(BaseTestCase):
             self.assertTrue(tag_type in tag_dict, '{} not in tag_dict'.format(tag_type))
 
 
+class TagViewTests(BaseTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.tag = Tag.objects.all()[0]
+
+    def test_tag_view_get(self):
+        response = self.client.get(reverse('tag', args=[self.tag.id, self.tag.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tag/tag.html')
+
+
 class TagUtilTests(BaseTestCase):
 
     def test_get_or_create_tag_by_name_or_alias_in_tag(self):

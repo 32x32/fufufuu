@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from fufufuu.tag.enums import TagType
-from fufufuu.tag.views import TagListView, TagListGridView, TagAutocompleteView
+from fufufuu.tag.views import TagListView, TagListGridView, TagAutocompleteView, TagView
 
 
 urlpatterns = patterns('',
@@ -17,5 +17,7 @@ urlpatterns = patterns('',
     url(r'^magazines/$',            TagListView.as_view(tag_type=TagType.MAGAZINE), name='tag.list.magazine'),
     url(r'^parodies/$',             TagListView.as_view(tag_type=TagType.PARODY), name='tag.list.parody'),
     url(r'^scanlators/$',           TagListView.as_view(tag_type=TagType.SCANLATOR), name='tag.list.scanlator'),
+
+    url(r'^(?P<id>\d+)/(?P<slug>[\w-]+)/$',     TagView.as_view(), name='tag'),
 
 )

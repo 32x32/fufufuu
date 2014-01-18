@@ -1,5 +1,6 @@
 from collections import defaultdict
 from django.http.response import Http404
+from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
 from fufufuu.core.response import HttpResponseJson
 from fufufuu.core.utils import paginate
@@ -48,4 +49,15 @@ class TagListView(TemplateView):
         return self.render_to_response({
             'tag_list': tag_list,
             'title': TagType.plural[self.tag_type],
+        })
+
+
+class TagView(TemplateView):
+
+    template_name = 'tag/tag.html'
+
+    def get(self, request, id, slug):
+        tag = get_object_or_404(Tag, id=id)
+        return self.render_to_response({
+            'tag': tag,
         })

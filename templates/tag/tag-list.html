@@ -6,7 +6,7 @@
     <ul class="tl">
         {% for tag in tag_list %}
             <li class="tli">
-                <a href="#">
+                <a href="{{ url('tag', args=[tag.id, tag.slug]) }}">
                     <span class="badge right">{{ tag.manga_count }}</span>
                     <span>{{ tag.name }}</span>
                 </a>
