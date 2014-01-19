@@ -8,11 +8,12 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
+from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image
 from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
-from fufufuu.manga.models import Manga, MangaPage, MangaFavorite
+from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images
 
 
@@ -112,13 +113,27 @@ class MangaCommentsView(TemplateView):
 
 class MangaDownloadView(TemplateView):
 
-    template_name = 'manga/manga-download.html'
-
     def get(self, request, id, slug):
+        return HttpResponseNotAllowed(permitted_methods=['post'])
+
+    def post(self, request, id, slug):
         manga = get_object_or_404(Manga.published, id=id)
-        return self.render_to_response({
-            'manga': manga,
-        })
+        manga_archive = get_object_or_404(MangaArchive, manga=manga)
+
+        ip_address = request.META.get('REMOTE_ADDR', '')
+        ip_address = ip_address[:200]
+
+        link, created = DownloadLink.objects.get_or_create(
+            path=manga_archive.file.path,
+            ip_address=ip_address,
+            created_by=request.user if request.user.is_authenticated() else None,
+        )
+
+        if created:
+            manga_archive.downloads += 1
+            manga_archive.save()
+
+        return redirect('download', args=[link.key, manga_archive.name])
 
 
 class MangaReportView(TemplateView):

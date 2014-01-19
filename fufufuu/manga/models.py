@@ -109,6 +109,7 @@ class MangaPage(models.Model):
 class MangaArchive(models.Model):
 
     manga = models.ForeignKey(Manga, unique=True)
+    name = models.CharField(max_length=255)
     file = models.FileField(upload_to=manga_archive_upload_to)
     downloads = models.PositiveIntegerField(default=0)
 

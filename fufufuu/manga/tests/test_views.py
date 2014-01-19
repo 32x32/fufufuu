@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.core.utils import slugify
+from fufufuu.download.models import DownloadLink
 from fufufuu.manga.enums import MangaStatus, MangaCategory
 from fufufuu.manga.models import Manga, MangaFavorite
 
@@ -56,17 +57,26 @@ class MangaCommentsViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'manga/manga-comments.html')
 
 
-class MangaDownloadView(BaseTestCase):
+class MangaDownloadViewTests(BaseTestCase):
 
-    def test_manga_thumbnail_view_get(self):
+    def test_manga_download_view_get(self):
         response = self.client.get(reverse('manga.download', args=[self.manga.id, self.manga.slug]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'manga/manga-download.html')
+        self.assertEqual(response.status_code, 405)
+
+    def test_manga_download_view_post(self):
+        response = self.client.post(reverse('manga.download', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 302)
+        download_link = DownloadLink.objects.latest('created_on')
+        self.assertRedirects(response, reverse('download.link', args=[download_link.key, '']))
+
+    def test_manga_download_view_post_draft(self):
+        response = self.client.post(reverse('manga.download', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 404)
 
 
 class MangaReportViewTests(BaseTestCase):
 
-    def test_manga_thumbnail_view_get(self):
+    def test_manga_report_view_get(self):
         response = self.client.get(reverse('manga.report', args=[self.manga.id, self.manga.slug]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'manga/manga-report.html')

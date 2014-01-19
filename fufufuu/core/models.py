@@ -41,3 +41,6 @@ class DeletedFile(models.Model):
     delete_after = models.DateTimeField(default=default_delete_time)
 
     created_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'deleted_file'
