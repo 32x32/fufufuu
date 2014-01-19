@@ -1,5 +1,6 @@
 import os
 import shutil
+import tempfile
 from collections import namedtuple
 from io import BytesIO
 from PIL import Image
@@ -8,11 +9,13 @@ from django.db import connections
 from django.test.runner import DiscoverRunner
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
+from django.utils import timezone
 from fufufuu.account.models import User
+from fufufuu.core.models import DeletedFile
 from fufufuu.core.utils import slugify
 from fufufuu.datacreator import DataCreator
 from fufufuu.manga.models import Manga
-from settings import BASE_DIR
+from fufufuu.settings import BASE_DIR
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media-test')
@@ -76,3 +79,39 @@ class CoreUtilTests(BaseTestCase):
     def test_slugify(self):
         self.assertEqual(slugify('北京'), 'bei-jing')
         self.assertEqual(slugify('~'), '')
+
+
+class CoreManagementTests(BaseTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.file = tempfile.NamedTemporaryFile(delete=False)
+        self.deleted_file1 = DeletedFile.objects.create(
+            path='path-to-fake-file',
+            delete_after=timezone.now() - timezone.timedelta(hours=1),
+        )
+        self.deleted_file2 = DeletedFile.objects.create(
+            path='path-to-fake-file',
+            delete_after=timezone.now() + timezone.timedelta(hours=1),
+        )
+        self.deleted_file3 = DeletedFile.objects.create(
+            path=self.file.name,
+            delete_after=timezone.now() - timezone.timedelta(hours=1),
+        )
+
+
+    def tearDown(self):
+        super().tearDown()
+
+    def test_deleted_files_info(self):
+        call_command('deleted_files', 'info')
+
+    def test_deleted_files_clear(self):
+        self.assertTrue(os.path.exists(self.file.name))
+
+        call_command('deleted_files', 'clear')
+        self.assertFalse(DeletedFile.objects.filter(id=self.deleted_file1.id).exists())
+        self.assertFalse(DeletedFile.objects.filter(id=self.deleted_file3.id).exists())
+        self.assertTrue(DeletedFile.objects.filter(id=self.deleted_file2.id).exists())
+
+        self.assertFalse(os.path.exists(self.file.name))

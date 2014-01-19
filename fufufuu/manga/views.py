@@ -8,12 +8,12 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
+from fufufuu.image.enums import ImageKeyType
+from fufufuu.image.filters import image
 from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite
 from fufufuu.manga.utils import process_zipfile, process_images
-from image.enums import ImageKeyType
-from image.filters import image
 
 
 class MangaListView(TemplateView):

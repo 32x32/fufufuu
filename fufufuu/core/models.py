@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from fufufuu.account.models import User
 
 
@@ -18,3 +19,25 @@ class BaseAuditableModel(models.Model):
         if not self.created_by:
             self.created_by = updated_by
         super().save(*args, **kwargs)
+
+
+def default_delete_time():
+    return timezone.now() + timezone.timedelta(hours=24)
+
+
+class DeletedFile(models.Model):
+    """
+    This model is used to store file paths that should be not be deleted
+    immediately. The management command "clear_deleted_files" should be
+    used to remove the actual underlying files and database entries.
+
+    Files are marked safe to delete after 24 hours by default.
+
+    Note: delete signals are not used so we can properly catch and handle
+    any file deletion errors.
+    """
+
+    path = models.CharField(max_length=1024)
+    delete_after = models.DateTimeField(default=default_delete_time)
+
+    created_on = models.DateTimeField(auto_now_add=True)

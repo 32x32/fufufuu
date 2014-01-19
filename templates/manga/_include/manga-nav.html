@@ -54,7 +54,7 @@
                 <input type="hidden" name="next" value="{{ request.path }}" data-bind="value: next">
             </form>
             <a href="#" onclick="document.getElementById('manga-favorite-form').submit();">
-                {% if manga.favorited_by(user) %}
+                {% if manga.is_favorited_by(user) %}
                     <span class="icon icon-heart"></span>
                     <span class="min-xs">{% trans %}Favorited!{% endtrans %}</span>
                 {% else %}
