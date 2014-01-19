@@ -63,7 +63,7 @@ class Manga(BaseAuditableModel, MangaMixin):
             self.save(updated_by, *args, **kwargs)
 
     def favorited_by(self, user):
-        return MangaFavorite.objects.filter(manga=self, user=user).exists()
+        return user.is_authenticated() and MangaFavorite.objects.filter(manga=self, user=user).exists()
 
 
 

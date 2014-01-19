@@ -146,7 +146,7 @@ class MangaHistoryView(TemplateView):
 class MangaFavoriteView(ProtectedTemplateView):
 
     def get(self, request, id, slug):
-        return HttpResponseNotAllowed(permitted_methods=['post'])
+        return redirect(reverse('manga.info', args=[id, slug]))
 
     def post(self, request, id, slug):
         manga = get_object_or_404(Manga.published, id=id)

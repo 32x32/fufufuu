@@ -84,7 +84,7 @@ class MangaFavoriteViewTests(BaseTestCase):
 
     def test_manga_favorite_view_get(self):
         response = self.client.get(reverse('manga.favorite', args=[self.manga.id, self.manga.slug]))
-        self.assertEqual(response.status_code, 405)
+        self.assertRedirects(response, reverse('manga.info', args=[self.manga.id, self.manga.slug]))
 
     def test_manga_favorite_view_post(self):
         self.assertFalse(MangaFavorite.objects.filter(manga=self.manga, user=self.user).exists())
