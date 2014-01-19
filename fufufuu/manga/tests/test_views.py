@@ -7,7 +7,7 @@ from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.core.utils import slugify
 from fufufuu.manga.enums import MangaStatus, MangaCategory
-from fufufuu.manga.models import Manga
+from fufufuu.manga.models import Manga, MangaFavorite
 
 
 class MangaListViewTests(BaseTestCase):
@@ -78,6 +78,27 @@ class MangaHistoryViewTests(BaseTestCase):
         response = self.client.get(reverse('manga.history', args=[self.manga.id, self.manga.slug]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'manga/manga-history.html')
+
+
+class MangaFavoriteViewTests(BaseTestCase):
+
+    def test_manga_favorite_view_get(self):
+        response = self.client.get(reverse('manga.favorite', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_manga_favorite_view_post(self):
+        self.assertFalse(MangaFavorite.objects.filter(manga=self.manga, user=self.user).exists())
+
+        response = self.client.post(reverse('manga.favorite', args=[self.manga.id, self.manga.slug]))
+        self.assertRedirects(response, reverse('manga.info', args=[self.manga.id, self.manga.slug]))
+        self.assertTrue(MangaFavorite.objects.filter(manga=self.manga, user=self.user).exists())
+
+        response = self.client.post(reverse('manga.favorite', args=[self.manga.id, self.manga.slug]), {
+            'next': reverse('manga', args=[self.manga.id, self.manga.slug]),
+        })
+        self.assertRedirects(response, reverse('manga', args=[self.manga.id, self.manga.slug]))
+        self.assertFalse(MangaFavorite.objects.filter(manga=self.manga, user=self.user).exists())
+
 
 
 class MangaEditViewTests(BaseTestCase):

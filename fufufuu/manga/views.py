@@ -1,6 +1,7 @@
 import json
 import base64
 from django.contrib import messages
+from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
@@ -9,7 +10,7 @@ from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
-from fufufuu.manga.models import Manga, MangaPage
+from fufufuu.manga.models import Manga, MangaPage, MangaFavorite
 from fufufuu.manga.utils import process_zipfile, process_images
 from image.enums import ImageKeyType
 from image.filters import image
@@ -140,6 +141,22 @@ class MangaHistoryView(TemplateView):
         return self.render_to_response({
             'manga': manga,
         })
+
+
+class MangaFavoriteView(ProtectedTemplateView):
+
+    def get(self, request, id, slug):
+        return HttpResponseNotAllowed(permitted_methods=['post'])
+
+    def post(self, request, id, slug):
+        manga = get_object_or_404(Manga.published, id=id)
+        try:
+            mf = MangaFavorite.objects.get(user=request.user, manga=manga)
+            mf.delete()
+        except MangaFavorite.DoesNotExist:
+            MangaFavorite.objects.create(user=request.user, manga=manga)
+        next = request.POST.get('next') or reverse('manga.info', args=[id, slug])
+        return redirect(next)
 
 
 #-------------------------------------------------------------------------------

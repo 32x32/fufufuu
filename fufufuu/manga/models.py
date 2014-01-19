@@ -62,6 +62,10 @@ class Manga(BaseAuditableModel, MangaMixin):
             self.status = MangaStatus.DELETED
             self.save(updated_by, *args, **kwargs)
 
+    def favorited_by(self, user):
+        return MangaFavorite.objects.filter(manga=self, user=user).exists()
+
+
 
 class MangaHistory(models.Model, MangaMixin):
 

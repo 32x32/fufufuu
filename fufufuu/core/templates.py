@@ -57,7 +57,7 @@ TEMPLATE_SETTINGS = {
 TEMPLATE_ENV = Environment(**TEMPLATE_SETTINGS)
 TEMPLATE_ENV.install_gettext_callables(ugettext, ungettext)
 TEMPLATE_ENV.globals.update(**{
-    'url':          reverse,
+    'url':                  reverse,
 })
 TEMPLATE_ENV.filters.update(**{
     'getparams':            getparams,

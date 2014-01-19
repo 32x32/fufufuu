@@ -87,6 +87,7 @@
         self.page = ko.computed(function() {
           return pageList[self.pageNum() - 1];
         });
+        self.next = ko.observable(window.location.href);
         self.prevUrl = ko.computed(function() {
           if (prevChapter && self.prevNum() === self.pageNum()) {
             return "" + prevChapter + "#/page/100/";
@@ -127,6 +128,7 @@
         pageNum = getPageNum();
         mangaModelView.pageNum(pageNum);
         mangaModelView.preload();
+        mangaModelView.next(window.location.href);
         if (pageNum === 1) {
           scrollTop = 0;
         } else {

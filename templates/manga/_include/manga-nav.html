@@ -1,9 +1,12 @@
+{% import '_macros/forms.html' as forms %}
+
 {% if manga.status == 'PUBLISHED' %}
     {% set url_manga_info = url('manga.info', args=[manga.id, manga.slug]) %}
     {% set url_manga = url('manga', args=[manga.id, manga.slug]) %}
     {% set url_manga_thumbnails = url('manga.thumbnails', args=[manga.id, manga.slug]) %}
     {% set url_manga_comments = url('manga.comments', args=[manga.id, manga.slug]) %}
     {% set url_manga_download = url('manga.download', args=[manga.id, manga.slug]) %}
+    {% set url_manga_favorite = url('manga.favorite', args=[manga.id, manga.slug]) %}
     {% set url_manga_report = url('manga.report', args=[manga.id, manga.slug]) %}
 {% else %}
     {% set url_manga_info = '#' %}
@@ -11,6 +14,7 @@
     {% set url_manga_thumbnails = '#' %}
     {% set url_manga_comments = '#' %}
     {% set url_manga_download = '#' %}
+    {% set url_manga_favorite = '#' %}
     {% set url_manga_report = '#' %}
 {% endif %}
 
@@ -44,10 +48,26 @@
         {{ manga_nav_item(request, url_manga_info, 'icon-doc-text', gettext('Info')) }}
         {{ manga_nav_item(request, url_manga, 'icon-docs', gettext('Read')) }}
         {{ manga_nav_item(request, url_manga_thumbnails, 'icon-sweden', gettext('Thumbs')) }}
-        <a href="#" class="{% if request.path == url %} active{% endif %}{% if manga.status != 'PUBLISHED' %} disabled{% endif %}"{% if manga.status != 'PUBLISHED' %} title="{% trans %}This upload has not been published.{% endtrans %}"{% endif %}>
-            <span class="icon icon-heart-empty"></span>
-            <span class="min-xs">{% trans %}Favorite{% endtrans %}</span>
-        </a>
+        {% if manga.status == 'PUBLISHED' %}
+            <form action="{{ url_manga_favorite }}" method="post" class="none" id="manga-favorite-form">
+                {{ forms.csrf_token(csrf_token) }}
+                <input type="hidden" name="next" value="{{ request.path }}" data-bind="value: next">
+            </form>
+            <a href="#" onclick="document.getElementById('manga-favorite-form').submit();">
+                {% if manga.favorited_by(user) %}
+                    <span class="icon icon-heart"></span>
+                    <span class="min-xs">{% trans %}Favorited!{% endtrans %}</span>
+                {% else %}
+                    <span class="icon icon-heart-empty"></span>
+                    <span class="min-xs">{% trans %}Favorite{% endtrans %}</span>
+                {% endif %}
+            </a>
+        {% else %}
+            <a href="#" class="disabled"{% if manga.status != 'PUBLISHED' %} title="{% trans %}This upload has not been published.{% endtrans %}"{% endif %}>
+                <span class="icon icon-heart-empty"></span>
+                <span class="min-xs">{% trans %}Favorite{% endtrans %}</span>
+            </a>
+        {% endif %}
         {{ manga_nav_item(request, url_manga_report, 'icon-attention', gettext('Report')) }}
     </div>
 </div>
