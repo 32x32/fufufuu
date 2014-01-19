@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 import tempfile
 from collections import namedtuple
 from io import BytesIO
@@ -26,6 +27,16 @@ def fast_set_password(self, raw_password):
 
 def fast_check_password(self, raw_password):
     return self.password == raw_password
+
+
+def suppress_output(f):
+    def _suppress_output(*args, **kwargs):
+        devnull = open(os.devnull, 'w')
+        stdout, sys.stdout = sys.stdout, devnull
+        f(*args, **kwargs)
+        sys.stdout = stdout
+
+    return _suppress_output
 
 
 class FufufuuTestSuiteRunner(DiscoverRunner):
@@ -103,6 +114,7 @@ class CoreManagementTests(BaseTestCase):
     def tearDown(self):
         super().tearDown()
 
+    @suppress_output
     def test_deleted_files_info(self):
         call_command('deleted_files', 'info')
 
