@@ -24,8 +24,12 @@
             {% else %}
                 <img class="lazy-image" src="{{ STATIC_URL }}images/no-image.png" alt="{{ manga.title }}">
             {% endif %}
-            <strong>{% trans %}Read Online{% endtrans %}<span class="icon icon-right-open space-left"></span></strong>
+            <strong>{% trans %}Read Online{% endtrans %}<span class="icon icon-right-open space-left-5"></span></strong>
         </a>
+        <button class="btn btn-warning btn-block">
+            <strong>{% trans %}Download (26.2MB){% endtrans %}</strong>
+            <span class="icon icon-down-circled space-left"></span>
+        </button>
     </div>
     <div id="manga-info-tags" class="manga-info-section">
         <h2 id="tags">{% trans %}Tags{% endtrans %}</h2>
@@ -48,15 +52,19 @@
             {{ tag_widget(manga.tag_dictionary.EVENT, gettext('Event')) }}
             {{ tag_widget(manga.tag_dictionary.MAGAZINE, gettext('Magazine')) }}
             {{ tag_widget(manga.tag_dictionary.Parody, gettext('Parody')) }}
+{#            <div class="panel manga-info-panel">#}
+{#                <h5 class="panel-heading">{% trans %}Statistics{% endtrans %}</h5>#}
+{#                <div class="panel-body">#}
+{#                    <p class="space-bottom-0">{% trans %}32890 Downloads{% endtrans %}</p>#}
+{#                    <p class="space-bottom-0">{% trans %}719 Favorites{% endtrans %}</p>#}
+{#                    <p>{% trans %}513 Comments{% endtrans %}</p>#}
+{#                </div>#}
+{#            </div>#}
         </div>
     </div>
     <div id="manga-info-related" class="manga-info-section">
         <h2 id="related">{% trans %}Related{% endtrans %}</h2>
         <div data-section="related"></div>
-    </div>
-    <div id="manga-info-stats" class="manga-info-section">
-        <h2 id="stats">{% trans %}Stats{% endtrans %}</h2>
-        <div data-section="stats"></div>
     </div>
     <div id="manga-info-comments" class="manga-info-section">
         <h2 id="comments">{% trans %}Comments{% endtrans %}</h2>
