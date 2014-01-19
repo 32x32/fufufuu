@@ -1,18 +1,22 @@
 import os
 import shutil
-import sys
 from django.core.management.base import BaseCommand, CommandError
+from django.db.models.aggregates import Count
 from fufufuu.image.models import Image
 from fufufuu.settings import MEDIA_ROOT
 
 
 class Command(BaseCommand):
 
+    def info(self):
+        for d in Image.objects.values('key_type').annotate(count=Count('key_type')):
+            print('{} - {}'.format(d['key_type'].lower(), d['count']))
+
     def clear(self):
         count = Image.objects.all().count()
         Image.objects.all().delete()
         shutil.rmtree(os.path.join(MEDIA_ROOT, 'image'), ignore_errors=True)
-        sys.stdout.write('Removed {} images from cache.\n'.format(count))
+        print('Removed {} images from cache.\n'.format(count))
 
     def handle(self, *args, **options):
         if len(args) != 1:

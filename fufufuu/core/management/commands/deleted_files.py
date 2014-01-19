@@ -7,6 +7,10 @@ from fufufuu.core.models import DeletedFile
 
 class Command(BaseCommand):
 
+    def info(self):
+        print('{} files scheduled for deletion'.format(DeletedFile.objects.all().count()))
+        print('{} files can be deleted immediately'.format(DeletedFile.objects.filter(delete_after__lte=timezone.now()).count()))
+
     def clear(self):
         errors = []
         for deleted_file in DeletedFile.objects.filter(delete_after__lte=timezone.now()):
@@ -17,12 +21,7 @@ class Command(BaseCommand):
                     errors.append(traceback.format_exc())
                     continue
             deleted_file.delete()
-
         # TODO: email errors to admin
-
-    def info(self):
-        print('{} files scheduled for deletion'.format(DeletedFile.objects.all().count()))
-        print('{} files can be deleted immediately'.format(DeletedFile.objects.filter(delete_after__lte=timezone.now()).count()))
 
     def handle(self, *args, **options):
         if len(args) != 1:

@@ -20,6 +20,7 @@ SUPPORTED_IMAGE_FORMATS = ['JPEG', 'PNG']
 
 
 def process_images(manga, file_list, user):
+    # TODO: handle maximum total size
     errors, manga_page_list = [], []
     page_num = MangaPage.objects.filter(manga=manga).count()
 
@@ -111,6 +112,7 @@ def generate_manga_archive(manga):
     # manga_zip.writestr('info.txt', manga)
     manga_zip.close()
 
+    # TODO: fix manga_archive.name
     manga_archive.name = 'archive.zip'
     manga_archive.file = UploadedFile(manga_zip_file, 'archive.zip')
     manga_archive.save()
