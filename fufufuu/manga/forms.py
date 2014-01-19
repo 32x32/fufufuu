@@ -259,9 +259,10 @@ class MangaPageFormSet(BaseModelFormSet):
 
         return cd
 
-    def save(self, commit=True):
+    def save(self, manga, commit=True):
         getattr(self, self.data.get('action'))()
-        # TODO: generate_manga_archive(self.manga)
+        if manga.status == MangaStatus.PUBLISHED:
+            generate_manga_archive(manga)
 
     def reorder(self):
         for page, form in enumerate(self.ordered_forms, start=1):

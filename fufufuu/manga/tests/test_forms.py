@@ -173,7 +173,7 @@ class MangaPageFormsetTests(BaseTestCase):
             },
         )
         self.assertTrue(formset.is_valid())
-        formset.save()
+        formset.save(self.manga)
         self.assertEqual(MangaPage.objects.get(id=self.page1.id).page, 3)
         self.assertEqual(MangaPage.objects.get(id=self.page2.id).page, 1)
         self.assertEqual(MangaPage.objects.get(id=self.page3.id).page, 2)
@@ -221,7 +221,7 @@ class MangaPageFormsetTests(BaseTestCase):
             },
         )
         self.assertTrue(formset.is_valid())
-        formset.save()
+        formset.save(self.manga)
         self.assertEqual(MangaPage.objects.get(id=self.page1.id).page, 1)
         self.assertEqual(MangaPage.objects.get(id=self.page2.id).page, 2)
         self.assertEqual(MangaPage.objects.get(id=self.page3.id).page, 3)
@@ -291,7 +291,7 @@ class MangaPageFormsetTests(BaseTestCase):
             },
         )
         self.assertTrue(formset.is_valid())
-        formset.save()
+        formset.save(self.manga)
 
         self.assertEqual(MangaPage.objects.get(id=self.page1.id).page, 1)
         self.assertEqual(MangaPage.objects.get(id=self.page3.id).page, 2)

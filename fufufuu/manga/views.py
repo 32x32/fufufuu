@@ -246,7 +246,7 @@ class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
         )
 
         if formset.is_valid():
-            formset.save()
+            formset.save(manga=manga)
             for level, message in formset.messages:
                 getattr(messages, level)(request, message)
             return redirect('manga.edit.images', id=id, slug=manga.slug)
