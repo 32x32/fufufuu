@@ -14,7 +14,7 @@ from fufufuu.image.filters import image
 from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
-from fufufuu.manga.utils import process_zipfile, process_images
+from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive
 
 
 class MangaListView(TemplateView):
@@ -118,13 +118,16 @@ class MangaDownloadView(TemplateView):
 
     def post(self, request, id, slug):
         manga = get_object_or_404(Manga.published, id=id)
-        manga_archive = get_object_or_404(MangaArchive, manga=manga)
+        try:
+            manga_archive = MangaArchive.objects.get(manga=manga)
+        except MangaArchive.DoesNotExist:
+            manga_archive = generate_manga_archive(manga)
 
         ip_address = request.META.get('REMOTE_ADDR', '')
         ip_address = ip_address[:200]
 
         link, created = DownloadLink.objects.get_or_create(
-            path=manga_archive.file.path,
+            url=manga_archive.file.url,
             ip_address=ip_address,
             created_by=request.user if request.user.is_authenticated() else None,
         )
@@ -133,7 +136,7 @@ class MangaDownloadView(TemplateView):
             manga_archive.downloads += 1
             manga_archive.save()
 
-        return redirect('download', args=[link.key, manga_archive.name])
+        return redirect('download', key=link.key, filename=manga_archive.name)
 
 
 class MangaReportView(TemplateView):

@@ -1,6 +1,7 @@
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http.response import HttpResponse
+from fufufuu.settings import X_ACCEL
 
 
 class HttpResponseJson(HttpResponse):
@@ -14,29 +15,20 @@ class HttpResponseJson(HttpResponse):
         self.status_code = status_code
 
 
-# class HttpResponseXAccel(HttpResponse):
-#     """
-#     This is an Nginx specific response using header 'X-Accel-Redirect'. This
-#     response will serve static files that are normally protected.
-#
-#     The "file" parameter must implemented the url property:
-#
-#         "file.url"      --> returns the media url
-#
-#     Regular models.FileField fields will have the above automatically
-#     implemented.
-#     """
-#
-#     def __init__(self, file, content_type=None, attachment=False):
-#         super(HttpResponseXAccel, self).__init__(content_type=content_type)
-#
-#         if X_ACCEL:
-#             self['X-Accel-Redirect'] = file.url
-#         else:
-#             self.status_code = 302
-#             self['Location'] = file.url
-#
-#         if attachment:
-#             self['Content-Disposition'] = 'attachment;'
-#         else:
-#             self['Content-Disposition'] = 'inline;'
+class HttpResponseXAccel(HttpResponse):
+    """
+    This is an Nginx specific response using header 'X-Accel-Redirect'. This
+    response should be used to serve static files that are normally protected.
+    """
+
+    def __init__(self, url, filename, content_type):
+        super(HttpResponseXAccel, self).__init__(content_type=content_type)
+
+        if X_ACCEL:
+            self['X-Accel-Redirect'] = url
+            self['X-Accel-Limit-Rate'] = 1 * 1024 * 1024
+        else:
+            self.status_code = 302
+            self['Location'] = url
+
+        self['Content-Disposition'] = 'filename="{}"'.format(filename)

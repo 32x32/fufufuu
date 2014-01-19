@@ -93,10 +93,10 @@ def generate_manga_archive(manga):
         raise RuntimeError('generate_manga_archive should only be used with published manga')
 
     try:
-        ma = MangaArchive.objects.get(manga=manga)
-        DeletedFile.objects.create(path=ma.file.path)
+        manga_archive = MangaArchive.objects.get(manga=manga)
+        DeletedFile.objects.create(path=manga_archive.file.path)
     except MangaArchive.DoesNotExist:
-        ma = MangaArchive(manga=manga)
+        manga_archive = MangaArchive(manga=manga)
 
     manga_zip_file = BytesIO()
     manga_zip = zipfile.ZipFile(manga_zip_file, 'w')
@@ -111,7 +111,10 @@ def generate_manga_archive(manga):
     # manga_zip.writestr('info.txt', manga)
     manga_zip.close()
 
-    ma.file = UploadedFile(manga_zip_file, 'archive.zip')
-    ma.save()
+    manga_archive.name = 'archive.zip'
+    manga_archive.file = UploadedFile(manga_zip_file, 'archive.zip')
+    manga_archive.save()
 
     manga_zip_file.close()
+
+    return manga_archive
