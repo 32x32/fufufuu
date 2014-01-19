@@ -8,6 +8,10 @@ DEBUG = False
 DEBUG_TOOLBAR = False
 TEMPLATE_DEBUG = DEBUG
 
+ADMINS = (
+    ('Derek Kwok', 'derek.kai.chun.kwok@gmail.com'),
+)
+
 ALLOWED_HOSTS = []
 INTERNAL_IPS = ['127.0.0.1',]
 
