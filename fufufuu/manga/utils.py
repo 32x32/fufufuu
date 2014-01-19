@@ -1,10 +1,15 @@
 import os
 import tempfile
 import zipfile
+from io import BytesIO
 from django.core.files.base import File
+from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import ugettext as _
 from PIL import Image
-from fufufuu.manga.models import MangaPage
+from fufufuu.core.models import DeletedFile
+from fufufuu.core.utils import get_image_extension
+from fufufuu.manga.enums import MangaStatus
+from fufufuu.manga.models import MangaPage, MangaArchive
 
 
 MAX_TOTAL_SIZE          = 200 * 1024 * 1024
@@ -81,3 +86,32 @@ def process_zipfile(manga, file, user):
         errors.extend(process_images(manga, file_list, user))
 
     return errors
+
+
+def generate_manga_archive(manga):
+    if manga.status != MangaStatus.PUBLISHED:
+        raise RuntimeError('generate_manga_archive should only be used with published manga')
+
+    try:
+        ma = MangaArchive.objects.get(manga=manga)
+        DeletedFile.objects.create(path=ma.file.path)
+    except MangaArchive.DoesNotExist:
+        ma = MangaArchive(manga=manga)
+
+    manga_zip_file = BytesIO()
+    manga_zip = zipfile.ZipFile(manga_zip_file, 'w')
+
+    # write manga pages into zip file
+    for page in MangaPage.objects.filter(manga=manga).order_by('page'):
+        if not page.image: continue
+        extension = get_image_extension(page.image)
+        manga_zip.writestr('{:02d}.{}'.format(page.page, extension), page.image.read())
+
+    # TODO: write manga info into zip file
+    # manga_zip.writestr('info.txt', manga)
+    manga_zip.close()
+
+    ma.file = UploadedFile(manga_zip_file, 'archive.zip')
+    ma.save()
+
+    manga_zip_file.close()

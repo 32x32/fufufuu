@@ -1,9 +1,12 @@
+import os
 import zipfile
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
+from fufufuu.core.models import DeletedFile
 from fufufuu.core.tests import BaseTestCase
-from fufufuu.manga.models import MangaPage
-from fufufuu.manga.utils import process_images, process_zipfile, MANGA_PAGE_LIMIT, MAX_IMAGE_FILE_SIZE
+from fufufuu.manga.enums import MangaStatus
+from fufufuu.manga.models import MangaPage, MangaArchive
+from fufufuu.manga.utils import process_images, process_zipfile, MANGA_PAGE_LIMIT, MAX_IMAGE_FILE_SIZE, generate_manga_archive
 
 
 class MangaUtilTests(BaseTestCase):
@@ -92,3 +95,29 @@ class MangaUtilTests(BaseTestCase):
 
         actual_page_count = MangaPage.objects.filter(manga=self.manga).count()
         self.assertEqual(initial_page_count+2, actual_page_count)
+
+    def test_generate_manga_archive(self):
+        self.assertFalse(MangaArchive.objects.filter(manga=self.manga).exists())
+
+        generate_manga_archive(self.manga)
+        ma = MangaArchive.objects.get(manga=self.manga)
+        ma_path1 = ma.file.path
+        self.assertTrue(os.path.exists(ma_path1))
+
+        generate_manga_archive(self.manga)
+        ma = MangaArchive.objects.get(manga=self.manga)
+        ma_path2 = ma.file.path
+        self.assertTrue(os.path.exists(ma_path1))
+        self.assertTrue(os.path.exists(ma_path2))
+
+        self.assertTrue(DeletedFile.objects.filter(path=ma_path1).exists())
+
+    def test_generate_manga_archive_draft(self):
+        self.manga.status = MangaStatus.DRAFT
+        self.manga.save(updated_by=self.user)
+
+        try:
+            generate_manga_archive(self.manga)
+            self.fail('A RuntimeError should have been raised')
+        except RuntimeError:
+            pass

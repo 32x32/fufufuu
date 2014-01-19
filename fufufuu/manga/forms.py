@@ -7,6 +7,7 @@ from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus
 from fufufuu.manga.models import Manga, MangaPage
+from fufufuu.manga.utils import generate_manga_archive
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
 
@@ -195,6 +196,10 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
         manga.save(updated_by=self.request.user)
         self.save_tags(manga)
+
+        if manga.status == MangaStatus.PUBLISHED:
+            generate_manga_archive(manga)
+
         return manga
 
 
@@ -256,6 +261,7 @@ class MangaPageFormSet(BaseModelFormSet):
 
     def save(self, commit=True):
         getattr(self, self.data.get('action'))()
+        # TODO: generate_manga_archive(self.manga)
 
     def reorder(self):
         for page, form in enumerate(self.ordered_forms, start=1):
