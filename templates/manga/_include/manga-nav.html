@@ -1,4 +1,5 @@
 {% import '_macros/forms.html' as forms with context %}
+{% import '_macros/utils.html' as utils with context %}
 
 {% if manga.status == 'PUBLISHED' %}
     {% set url_manga_info = url('manga.info', args=[manga.id, manga.slug]) %}
@@ -31,15 +32,15 @@
 
 <div id="m-nav">
     <div class="right min-md">
-        <a href="{{ url_manga_history }}"{% if request.path == url_manga_history %} class="active"{% endif %}>
+        <a href="{{ url_manga_history }}" class="{{ utils.link_active(url_manga_history) }}">
             <span class="icon icon-back-in-time"></span>
             <span>{% trans %}History{% endtrans %}</span>
         </a>
-        <a href="{{ url_manga_edit }}"{% if request.path == url_manga_edit %} class="active"{% endif %}>
+        <a href="{{ url_manga_edit }}" class="{{ utils.link_active(url_manga_edit) }}">
             <span class="icon icon-pencil"></span>
             <span>{% trans %}Edit{% endtrans %}</span>
         </a>
-        <a href="{{ url_manga_edit_images }}"{% if request.path == url_manga_edit_images %} class="active"{% endif %}>
+        <a href="{{ url_manga_edit_images }}" class="{{ utils.link_active(url_manga_edit_images) }}">
             <span class="icon icon-pencil"></span>
             <span>{% trans %}Edit Images{% endtrans %}</span>
         </a>
