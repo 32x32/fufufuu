@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% import '_macros/forms.html' as forms with context %}
-{% import '_macros/widgets.html' as widgets %}
+{% import '_macros/widgets.html' as widgets with context %}
 
 {% block title %}{% trans %}Uploads{% endtrans %}{% endblock %}
 
 {% block content %}
     <div class="container">
         <form class="right">
-            {{ widgets.pagination(manga_list, request) }}
+            {{ widgets.pagination(manga_list) }}
         </form>
         <form action="" method="post" target="_blank" class="min-md inline-block space-right-10">
             {{ forms.csrf_input() }}
@@ -48,7 +48,7 @@
             <hr>
             <div class="space-bottom-15">
                 <form class="right">
-                    {{ widgets.pagination(manga_list, request) }}
+                    {{ widgets.pagination(manga_list) }}
                 </form>
                 <div class="clear"></div>
             </div>

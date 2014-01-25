@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% import '_macros/widgets.html' as widgets %}
+{% import '_macros/widgets.html' as widgets with context %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
     <div class="ml-control-bar">
-        {{ widgets.pagination(tag_list, request) }}
+        {{ widgets.pagination(tag_list) }}
         <div class="clear"></div>
     </div>
     <ul class="ml">
@@ -25,7 +25,7 @@
         {% endfor %}
     </ul>
     <div class="ml-control-bar">
-        {{ widgets.pagination(tag_list, request) }}
+        {{ widgets.pagination(tag_list) }}
         <div class="clear"></div>
     </div>
 {% endblock %}

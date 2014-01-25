@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% import '_macros/widgets.html' as widgets %}
+{% import '_macros/widgets.html' as widgets with context %}
 
 {% block title %}{% trans %}Latest{% endtrans %}{% endblock %}
 
 {% block content %}
     <form class="ml-control-bar">
-        {{ widgets.pagination(manga_list, request) }}
+        {{ widgets.pagination(manga_list) }}
         <div class="ml-control-bar-cat-wrapper">
             <label class="ml-control-bar-cat manga-category-non_h">
                 <input type="checkbox" name="non_h"{% if request.GET.non_h %} checked{% endif %}{% if request.GET.non_h %} checked{% endif %}>
@@ -61,7 +61,7 @@
             {% endfor %}
         </ul>
         <div class="control-bar text-right">
-            {{ widgets.pagination(manga_list, request) }}
+            {{ widgets.pagination(manga_list) }}
         </div>
     {% else %}
         <p class="container">{% trans %}There is nothing here.{% endtrans %}</p>
