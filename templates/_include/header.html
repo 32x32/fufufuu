@@ -1,4 +1,4 @@
-{% import '_macros/forms.html' as forms %}
+{% import '_macros/forms.html' as forms with context %}
 {% set url_account_login = url('account.login') %}
 {% set url_account_register = url('account.register') %}
 {% set url_upload_list = url('upload.list') %}
@@ -22,5 +22,5 @@
     </form>
 </header>
 <form action="{{ url('account.logout') }}" method="post" class="none" id="account-logout-form">
-    {{ forms.csrf_token(csrf_token) }}
+    {{ forms.csrf_input() }}
 </form>

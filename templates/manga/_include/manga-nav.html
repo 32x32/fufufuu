@@ -1,4 +1,4 @@
-{% import '_macros/forms.html' as forms %}
+{% import '_macros/forms.html' as forms with context %}
 
 {% if manga.status == 'PUBLISHED' %}
     {% set url_manga_info = url('manga.info', args=[manga.id, manga.slug]) %}
@@ -50,7 +50,7 @@
         {{ manga_nav_item(request, url_manga_thumbnails, 'icon-sweden', gettext('Thumbs')) }}
         {% if manga.status == 'PUBLISHED' %}
             <form action="{{ url_manga_favorite }}" method="post" class="none" id="manga-favorite-form">
-                {{ forms.csrf_token(csrf_token) }}
+                {{ forms.csrf_input() }}
                 <input type="hidden" name="next" value="{{ request.path }}" data-bind="value: next">
             </form>
             <a href="#" onclick="document.getElementById('manga-favorite-form').submit();">

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% import '_macros/forms.html' as forms %}
+{% import '_macros/forms.html' as forms with context %}
 
 {% block title %}{% trans %}Create an Account{% endtrans %}{% endblock %}
 
@@ -11,7 +11,7 @@
                     <form action="" method="post" class="account-form panel">
                         <h4 class="panel-heading">{% trans %}Create an Account{% endtrans %}</h4>
                         <div class="panel-body">
-                            {{ forms.csrf_token(csrf_token) }}
+                            {{ forms.csrf_input() }}
                             {% if request.GET.next %}
                                 <input type="hidden" name="next" value="{{ request.GET.next }}">
                             {% endif %}

@@ -1,5 +1,5 @@
-{% macro csrf_token(token) %}
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ token }}" />
+{% macro csrf_input() %}
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 {% endmacro %}
 
 {% macro non_field_errors(form) %}

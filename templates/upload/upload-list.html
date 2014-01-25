@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% import '_macros/forms.html' as forms %}
+{% import '_macros/forms.html' as forms with context %}
 {% import '_macros/widgets.html' as widgets %}
 
 {% block title %}{% trans %}Uploads{% endtrans %}{% endblock %}
@@ -10,7 +10,7 @@
             {{ widgets.pagination(manga_list, request) }}
         </form>
         <form action="" method="post" target="_blank" class="min-md inline-block space-right-10">
-            {{ forms.csrf_token(csrf_token) }}
+            {{ forms.csrf_input() }}
             <button type="submit" class="btn btn-primary space-bottom"{% if upload_slots_used >= user.upload_limit %} disabled{% endif %}><span class="icon icon-up-circled space-right"></span>{% trans %}New Upload{% endtrans %}</button>
         </form>
         <span class="block-message {% if upload_slots_used >= user.upload_limit %}message-error{% else %}message-info{% endif %} min-md">Used {{ upload_slots_used }} / {{ user.upload_limit }} slots for drafts, and uploads in the past 24 hours</span>

@@ -6,7 +6,7 @@
 {% block content %}
     <form action="" method="post" enctype="multipart/form-data">
         <div class="container-fat manga-edit-main">
-            {{ forms.csrf_token(csrf_token) }}
+            {{ forms.csrf_input() }}
             {{ forms.non_field_errors(form) }}
             <div class="half-wrapper">
                 <div class="half half-md">

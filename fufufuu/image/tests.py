@@ -39,6 +39,7 @@ class ImageManagementTests(BaseTestCase):
     def test_image_cache_info(self):
         call_command('image_cache', 'info')
 
+    @suppress_output
     def test_image_cache_clear(self):
         image_file = self.create_test_image_file()
         image_file = SimpleUploadedFile('test.jpg', image_file.getvalue())
