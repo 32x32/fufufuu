@@ -5,7 +5,7 @@ import os
 import re
 import subprocess
 import time
-from watchdog.events import FileSystemEventHandler
+from watchdog.events import FileSystemEventHandler, FileSystemEvent
 from watchdog.observers import Observer
 
 #-------------------------------------------------------------------------------
@@ -42,6 +42,8 @@ class EventHandler(FileSystemEventHandler):
 
 
 if __name__ == '__main__':
+    EventHandler().dispatch(FileSystemEvent('initial compile', 'static/css-jinja/app.less'))
+
     observer = Observer()
     observer.schedule(EventHandler(), path=PATH, recursive=True)
     observer.start()

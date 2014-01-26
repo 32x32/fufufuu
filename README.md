@@ -17,6 +17,10 @@ Install the following brew packages
     > brew update
     > brew install libjpeg libpng postgresql python3
 
+Install the following npm packages
+
+    > sudo npm install -g coffee-script less
+
 Start by installing `pip`
 
     > sudo easy_install pip
