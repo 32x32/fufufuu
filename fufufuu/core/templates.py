@@ -7,7 +7,7 @@ from jinja2.environment import Environment
 from jinja2.ext import Extension
 from jinja2.loaders import FileSystemLoader
 from fufufuu.core.filters import getparams, startswith
-from fufufuu.image.filters import image
+from fufufuu.image.filters import image_resize
 from fufufuu.settings import TEMPLATE_DIRS, DEBUG
 
 #-------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ TEMPLATE_ENV.globals.update(**{
 })
 TEMPLATE_ENV.filters.update(**{
     'getparams':            getparams,
-    'image':                image,
+    'image_resize':         image_resize,
     'naturaltime':          naturaltime,
     'startswith':           startswith,
 })

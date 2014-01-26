@@ -4,7 +4,7 @@ from django.db.utils import IntegrityError
 from fufufuu.image.models import Image, get_cache_key
 
 
-def image(source, key_type, key_id):
+def image_resize(source, key_type, key_id):
     """
     key_type should be one of ImageKeyType.choices
     """

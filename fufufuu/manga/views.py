@@ -10,7 +10,7 @@ from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
-from fufufuu.image.filters import image
+from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
@@ -60,7 +60,7 @@ class MangaView(TemplateView):
             page_list.append({
                 'double': page.double,
                 'page': page.page,
-                'url': image(page.image, key_type, page.id),
+                'url': image_resize(page.image, key_type, page.id),
             })
 
         payload = json.dumps({'page_list': page_list})

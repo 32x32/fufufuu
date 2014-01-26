@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.utils.http import int_to_base36
 from fufufuu.core.tests import BaseTestCase, suppress_output
 from fufufuu.image.enums import ImageKeyType
-from fufufuu.image.filters import image
+from fufufuu.image.filters import image_resize
 from fufufuu.image.models import Image
 from fufufuu.manga.models import MangaPage
 
@@ -47,7 +47,7 @@ class ImageManagementTests(BaseTestCase):
         image_file = SimpleUploadedFile('test.jpg', image_file.getvalue())
         manga_page = MangaPage.objects.create(manga=self.manga, page=1, image=image_file)
 
-        image(manga_page.image, ImageKeyType.MANGA_COVER, self.manga.id)
+        image_resize(manga_page.image, ImageKeyType.MANGA_COVER, self.manga.id)
         self.assertTrue(Image.objects.all().count())
 
         call_command('image_cache', 'clear')
@@ -73,7 +73,7 @@ class ImageViewTests(BaseTestCase):
         image_file = SimpleUploadedFile('test.jpg', image_file.getvalue())
         manga_page = MangaPage.objects.create(manga=self.manga, page=1, image=image_file)
 
-        image(manga_page.image, ImageKeyType.MANGA_COVER, self.manga.id)
+        image_resize(manga_page.image, ImageKeyType.MANGA_COVER, self.manga.id)
         image_obj = Image.objects.get(key_type=ImageKeyType.MANGA_COVER, key_id=self.manga.id)
         original_path = image_obj.file.path
         os.remove(image_obj.file.path)
