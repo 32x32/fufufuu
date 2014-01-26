@@ -19,9 +19,6 @@ class ImageView(View):
     """
 
     def get(self, request, key_type, key_id):
-        cache_key = get_cache_key(key_type, key_id)
-        cache.delete(cache_key)
-
         key_type = key_type.upper()
         if key_type not in ImageKeyType.choices_dict.keys():
             raise Http404
@@ -34,9 +31,10 @@ class ImageView(View):
         image = get_object_or_404(Image, key_type=key_type, key_id=key_id)
         if not os.path.exists(image.file.path):
             image.regenerate()
+            cache_key = get_cache_key(key_type, key_id)
             cache.set(cache_key, image.file.url)
 
         if DEBUG:
-            return serve(request, request.path, document_root=BASE_DIR)
+            return serve(request, image.file.url, document_root=BASE_DIR)
 
         return redirect(image.file.url)
