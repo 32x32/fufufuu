@@ -15,7 +15,7 @@ class ImageView(View):
     This view should be used in conjunction with nginx's try_files.
 
     If nginx is unable to find the image file, this view can take care of
-    regenerating the lost imag efile.
+    regenerating the lost image file.
     """
 
     def get(self, request, key_type, key_id):

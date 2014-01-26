@@ -140,11 +140,13 @@
             <label>&nbsp;</label>
             <div class="well space-bottom-15">
                 <button type="submit" class="btn btn-primary" name="action" value="save">{% trans %}Save{% endtrans %}</button>
-                {% if manga.status == 'DRAFT' %}
-                    <button type="submit" class="btn btn-warning" name="action" value="publish">{% trans %}Save and Publish{% endtrans %}</button>
-                {% endif %}
             </div>
-            <div class="well space-top-15">
+            {% if manga.status == 'DRAFT' %}
+                <div class="well space-bottom-15">
+                    <button type="submit" class="btn btn-warning" name="action" value="publish">{% trans %}Save and Publish{% endtrans %}</button>
+                </div>
+            {% endif %}
+            <div class="well">
                 {% if user == manga.created_by %}
                     <button type="submit" class="btn btn-error" name="action" value="delete">{% trans %}Delete{% endtrans %}</button>
                 {% else %}

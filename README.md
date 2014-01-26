@@ -9,9 +9,13 @@ Development Environment Setup
 Developing for Fufufuu version 3 on OS X requires:
 
 * Xcode with GCC compiler installed
-* [Python 3.3+](http://www.python.org/)
+* [brew](http://brew.sh/)
 * [npm](https://npmjs.org/)
-* [less.app](http://incident57.com/less/)
+
+Install the following brew packages
+
+    > brew update
+    > brew install libjpeg libpng postgresql python3
 
 Start by installing `pip`
 
@@ -28,16 +32,16 @@ Restart your terminal, then create a new virtual environment. Check that the ins
 
     > mkvirtualenv --python=python3.3 fufufuu
     (fufufuu) > python --version
-    Python 3.3.2
+    Python 3.3.3
     (fufufuu) > pip --version
-    pip 1.4.1 from ... (python 3.3)
+    pip 1.5.1 from ... (python 3.3)
 
 The `(fufufuu)` prefix indicates the `fufufuu` virtual environment is active. To work a virtual environment
 
     > workon fufufuu
     (fufufuu) >
 
-Install the following brew packages
+There are two scripts that need to be run in the background:
 
-    > brew update
-    > brew install libjpeg libpng postgresql
+    > ./scripts/less.py         # compile less files
+    > ./scripts/coffee.sh       # compile coffee scripts
