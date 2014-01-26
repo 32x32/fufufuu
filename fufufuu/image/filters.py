@@ -1,7 +1,7 @@
 from django.core.cache import cache
 from django.core.files.base import File
 from django.db.utils import IntegrityError
-from fufufuu.image.models import Image
+from fufufuu.image.models import Image, get_cache_key
 
 
 def image(source, key_type, key_id):
@@ -14,7 +14,7 @@ def image(source, key_type, key_id):
 
     key_type = key_type.upper()
 
-    cache_key = 'image-{}-{}'.format(key_type.lower(), key_id)
+    cache_key = get_cache_key(key_type, key_id)
     url = cache.get(cache_key)
     if url: return url
 

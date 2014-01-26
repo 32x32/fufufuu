@@ -25,7 +25,7 @@ class TagType:
         (TANK,          _('Tank')),
     )
 
-    choices_dict = dict([(k,v) for (k,v) in choices])
+    choices_dict = dict(choices)
 
     plural = {
         AUTHOR:         _('Authors'),

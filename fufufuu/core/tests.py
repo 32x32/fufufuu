@@ -5,12 +5,14 @@ import tempfile
 from collections import namedtuple
 from io import BytesIO
 from PIL import Image
+from django.core.cache import cache
 from django.core.management import call_command
 from django.db import connections
 from django.test.runner import DiscoverRunner
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
+from fufufuu import settings
 from fufufuu.account.models import User
 from fufufuu.core.models import DeletedFile
 from fufufuu.core.utils import slugify
@@ -60,6 +62,9 @@ class FufufuuTestSuiteRunner(DiscoverRunner):
 class BaseTestCase(TestCase):
 
     def setUp(self):
+        cache.clear()
+        settings.DEBUG = False
+
         super().setUp()
 
         User.set_password = fast_set_password

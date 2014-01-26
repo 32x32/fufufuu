@@ -21,7 +21,7 @@ class MangaCategory:
         (OTHER,         _('Other')),
     )
 
-    choices_dict = dict([(k,v) for (k,v) in choices])
+    choices_dict = dict(choices)
 
 
 class MangaStatus:
@@ -38,7 +38,7 @@ class MangaStatus:
         (DELETED,       _('Deleted')),
     )
 
-    choices_dict = dict([(k,v) for (k,v) in choices])
+    choices_dict = dict(choices)
 
 
 class MangaAction:

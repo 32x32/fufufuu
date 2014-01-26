@@ -17,3 +17,5 @@ class ImageKeyType:
         (MANGA_PAGE,            MANGA_PAGE),
         (MANGA_PAGE_DOUBLE,     MANGA_PAGE_DOUBLE),
     )
+
+    choices_dict = dict(choices)

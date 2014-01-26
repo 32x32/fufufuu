@@ -36,3 +36,8 @@ The `(fufufuu)` prefix indicates the `fufufuu` virtual environment is active. To
 
     > workon fufufuu
     (fufufuu) >
+
+Install the following brew packages
+
+    > brew update
+    > brew install libjpeg libpng postgresql

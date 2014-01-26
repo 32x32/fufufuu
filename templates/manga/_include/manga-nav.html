@@ -24,7 +24,7 @@
 {% set url_manga_edit_images = url('manga.edit.images', args=[manga.id, manga.slug]) %}
 
 {% macro manga_nav_item(request, url, icon_class, name) %}
-    <a href="{{ url }}" class="{% if request.path == url %} active{% endif %}{% if manga.status != 'PUBLISHED' %} disabled{% endif %}"{% if manga.status != 'PUBLISHED' %} title="{% trans %}This upload has not been published.{% endtrans %}"{% endif %}>
+    <a href="{{ url }}" class="{{ utils.link_active(url) }}{% if manga.status != 'PUBLISHED' %} disabled{% endif %}"{% if manga.status != 'PUBLISHED' %} title="{% trans %}This upload has not been published.{% endtrans %}"{% endif %}>
         <span class="icon {{ icon_class }}"></span>
         <span class="min-xs">{{ name }}</span>
     </a>

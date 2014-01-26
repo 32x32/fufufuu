@@ -1,6 +1,5 @@
 from io import BytesIO
 from PIL import Image, ImageFile, ImageOps
-
 from fufufuu.image.transforms import specs
 
 

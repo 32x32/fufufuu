@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^download/',          include('fufufuu.download.urls')),
     url(r'^i18n/',              include('django.conf.urls.i18n')),
     url(r'^m/',                 include('fufufuu.manga.urls')),
+    url(r'^media/image/',       include('fufufuu.image.urls')),
     url(r'^tag/',               include('fufufuu.tag.urls')),
     url(r'^upload/',            include('fufufuu.upload.urls')),
 
