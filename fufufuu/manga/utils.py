@@ -112,8 +112,7 @@ def generate_manga_archive(manga):
     # manga_zip.writestr('info.txt', bytes('This is some text', encoding='utf-8'))
     manga_zip.close()
 
-    # TODO: fix manga_archive.name
-    manga_archive.name = 'archive.zip'
+    manga_archive.name = manga.archive_name
     manga_archive.file = UploadedFile(manga_zip_file, 'archive.zip')
     manga_archive.save()
 

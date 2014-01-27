@@ -47,5 +47,5 @@ The `(fufufuu)` prefix indicates the `fufufuu` virtual environment is active. To
 
 There are two scripts that need to be run in the background:
 
-    > ./scripts/less.py         # compile less files
-    > ./scripts/coffee.sh       # compile coffee scripts
+    (fufufuu) > ./scripts/less.py         # compile less files
+    (fufufuu) > ./scripts/coffee.sh       # compile coffee scripts

@@ -1,6 +1,7 @@
 from collections import defaultdict
 from fufufuu.core.languages import Language
 from fufufuu.manga.enums import MangaStatus, MangaCategory
+from fufufuu.tag.enums import TagType
 
 
 class MangaMixin:
@@ -23,3 +24,15 @@ class MangaMixin:
         for tag in self.tags.all():
             self._tag_dictionary[tag.tag_type].append(tag)
         return self._tag_dictionary
+
+    @property
+    def archive_name(self):
+        tag_dict = self.tag_dictionary
+        scanlators  = ', '.join([t.name for t in tag_dict[TagType.SCANLATOR]])
+
+        filename = []
+        if scanlators:
+            filename.append('[{}]'.format(scanlators))
+        filename.append('{}'.format(self.title))
+
+        return ' '.join(filename)[:196] + '.zip'

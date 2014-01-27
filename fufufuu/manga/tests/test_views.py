@@ -67,7 +67,7 @@ class MangaDownloadViewTests(BaseTestCase):
         response = self.client.post(reverse('manga.download', args=[self.manga.id, self.manga.slug]))
         self.assertEqual(response.status_code, 302)
         download_link = DownloadLink.objects.latest('created_on')
-        self.assertEqual(response['location'], 'http://testserver{}'.format(reverse('download', args=[download_link.key, 'archive.zip'])))
+        self.assertEqual(response['location'], 'http://testserver{}'.format(reverse('download', args=[download_link.key, self.manga.archive_name])))
 
     def test_manga_download_view_post_draft(self):
         self.manga.status = MangaStatus.DRAFT
