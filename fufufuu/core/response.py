@@ -1,4 +1,5 @@
 import json
+import mimetypes
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http.response import HttpResponse
 from fufufuu.settings import X_ACCEL
@@ -21,8 +22,8 @@ class HttpResponseXAccel(HttpResponse):
     response should be used to serve static files that are normally protected.
     """
 
-    def __init__(self, url, filename, content_type):
-        super(HttpResponseXAccel, self).__init__(content_type=content_type)
+    def __init__(self, url, filename, attachment=True):
+        super(HttpResponseXAccel, self).__init__(content_type=mimetypes.guess_type(url)[0])
 
         if X_ACCEL:
             self['X-Accel-Redirect'] = url
@@ -31,4 +32,7 @@ class HttpResponseXAccel(HttpResponse):
             self.status_code = 302
             self['Location'] = url
 
-        self['Content-Disposition'] = 'filename="{}"'.format(filename)
+        self['Content-Disposition'] = '{disposition}; filename="{filename}"'.format(
+            disposition='attachment' if attachment else 'inline',
+            filename=filename,
+        )

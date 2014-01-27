@@ -8,8 +8,4 @@ class DownloadView(TemplateView):
 
     def get(self, request, key, filename):
         download = get_object_or_404(DownloadLink, key=key)
-        return HttpResponseXAccel(
-            url=download.url,
-            filename='archive.zip',
-            content_type='application/zip',
-        )
+        return HttpResponseXAccel(url=download.url, filename=filename)

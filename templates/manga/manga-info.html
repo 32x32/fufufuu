@@ -1,4 +1,5 @@
 {% extends 'manga/manga-base.html' %}
+{% import '_macros/forms.html' as forms with context %}
 {% import '_macros/widgets.html' as widgets with context %}
 
 {% macro tag_widget(tag_list, title) %}
@@ -26,10 +27,13 @@
             {% endif %}
             <strong>{% trans %}Read Online{% endtrans %}<span class="icon icon-right-open space-left-5"></span></strong>
         </a>
-        <button class="btn btn-warning btn-block">
-            <strong>{% trans %}Download (26.2MB){% endtrans %}</strong>
-            <span class="icon icon-down-circled space-left"></span>
-        </button>
+        <form action="{{ url('manga.download', args=[manga.id, manga.slug]) }}" method="post">
+            {{ forms.csrf_input() }}
+            <button class="btn btn-warning btn-block">
+                <strong>{% trans %}Download (26.2MB){% endtrans %}</strong>
+                <span class="icon icon-down-circled space-left"></span>
+            </button>
+        </form>
     </div>
     <div id="manga-info-tags" class="manga-info-section">
         <h2 id="tags">{% trans %}Tags{% endtrans %}</h2>

@@ -106,10 +106,10 @@ def generate_manga_archive(manga):
     for page in MangaPage.objects.filter(manga=manga).order_by('page'):
         if not page.image: continue
         extension = get_image_extension(page.image)
-        manga_zip.writestr('{:02d}.{}'.format(page.page, extension), page.image.read())
+        manga_zip.write(page.image.path, '{:03d}.{}'.format(page.page, extension))
 
     # TODO: write manga info into zip file
-    # manga_zip.writestr('info.txt', manga)
+    # manga_zip.writestr('info.txt', bytes('This is some text', encoding='utf-8'))
     manga_zip.close()
 
     # TODO: fix manga_archive.name
