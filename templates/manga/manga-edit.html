@@ -40,7 +40,7 @@
                     </table>
                 </div>
                 <div class="half half-md">
-                    <div class="well space-bottom-10">
+                    <div class="well space-bottom-15">
                         <p class="help-block space-bottom-0">{% trans %}Tags should be entered as a <strong>comma</strong> separated list of text. Here's is an example list of authors:{% endtrans %}</p>
                         <p><strong>{% trans %}Panda Niku, Ookuma Nekosuke{% endtrans %}</strong></p>
                         <p class="help-block">{% trans %}"Panda Niku" and "Ookuma Nekosuke" will show up as two separate authors.{% endtrans %}</p>
@@ -141,11 +141,11 @@
             </div>
         </div>
         <div class="manga-edit-sidebar">
-            <div class="well space-bottom-10">
+            <div class="well space-bottom-15">
                 <button type="submit" class="btn btn-primary" name="action" value="save">{% trans %}Save{% endtrans %}</button>
             </div>
             {% if manga.status == 'DRAFT' %}
-                <div class="well space-bottom-10">
+                <div class="well space-bottom-15">
                     <button type="submit" class="btn btn-warning" name="action" value="publish">{% trans %}Save and Publish{% endtrans %}</button>
                 </div>
             {% endif %}
