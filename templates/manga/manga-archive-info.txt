@@ -1,0 +1,31 @@
+#-------------------------------------------------------------------------------
+# {{ manga.title }}
+#-------------------------------------------------------------------------------
+
+name: {{ manga.archive_name }}
+pages: {{ manga.mangapage_set.count() }}
+language: {{ manga.language_display }}
+
+{% if manga.description %}
+#-------------------------------------------------------------------------------
+
+{{ manga.description }}
+
+{% endif %}#-------------------------------------------------------------------------------
+{% set tag_dict=manga.tag_dictionary %}
+Scanlators:     {% for tag in tag_dict.SCANLATOR %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+Authors:        {% for tag in tag_dict.AUTHOR %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+Circles:        {% for tag in tag_dict.CIRCLE %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+Collection:     {% for tag in tag_dict.COLLECTION %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+Content:        {% for tag in tag_dict.CONTENT %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+Events:         {% for tag in tag_dict.EVENT %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+Magazines:      {% for tag in tag_dict.MAGAZINE %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+Parodies:       {% for tag in tag_dict.PARODY %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+Tank:            {% for tag in tag_dict.TANK %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+
+#-------------------------------------------------------------------------------
+
+Read this online at: http://fufufuu.net{{ url('manga.info', args=[manga.id, manga.slug]) }}
+
+The Fufufuu team
+Visit us at http://fufufuu.net

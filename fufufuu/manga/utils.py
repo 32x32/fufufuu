@@ -7,6 +7,7 @@ from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import ugettext as _
 from PIL import Image
 from fufufuu.core.models import DeletedFile
+from fufufuu.core.templates import TEMPLATE_ENV
 from fufufuu.core.utils import get_image_extension
 from fufufuu.manga.enums import MangaStatus
 from fufufuu.manga.models import MangaPage, MangaArchive
@@ -108,8 +109,9 @@ def generate_manga_archive(manga):
         extension = get_image_extension(page.image)
         manga_zip.write(page.image.path, '{:03d}.{}'.format(page.page, extension))
 
-    # TODO: write manga info into zip file
-    # manga_zip.writestr('info.txt', bytes('This is some text', encoding='utf-8'))
+    # write info.txt into zip file
+    info_text = TEMPLATE_ENV.get_template('manga/manga-archive-info.txt').render({'manga': manga})
+    manga_zip.writestr('info.txt', info_text)
     manga_zip.close()
 
     manga_archive.name = manga.archive_name
