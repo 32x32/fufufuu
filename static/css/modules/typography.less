@@ -17,7 +17,10 @@ h6 { font-size: @font-size-h6; }
 
 p { margin-bottom: 15px; }
 
-strong { font-weight: @font-weight-bold; }
+strong {
+    font-size: inherit;
+    font-weight: @font-weight-bold;
+}
 
 /* --------------------------------------------------
     typography classes
@@ -28,5 +31,7 @@ strong { font-weight: @font-weight-bold; }
 .text-right     { text-align: right; }
 
 .text-secondary { color: #999; }
-.text-small     { font-size: 14px; }
+
 .text-xsmall    { font-size: 13px; }
+.text-small     { font-size: 14px; }
+.text-medium    { font-size: 15px; }
