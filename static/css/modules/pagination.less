@@ -2,6 +2,8 @@
     pagination
 ---------------------------------------------------*/
 
+@pagination-height: 38px;
+
 .pagination {
     .border-radius(@border-radius);
     .inline-block();
@@ -12,21 +14,23 @@
 
 .pagination-control {
     .inline-block();
-    border-right: @pagination-border;
-    border-left: @pagination-border-alt;
-    padding: 0 10px;
 
     > input {
+        .border-radius(0);
         .inline-block();
 
+        border: none;
         line-height: 24px;
-        height: 30px;
-        margin: 4px 0;
-        padding: 3px;
+        height: @pagination-height;
+        margin-bottom: 0;
+        padding: (@pagination-height - 24px) / 2;
         width: 45px;
         text-align: center;
     }
-    > span { line-height: 38px; }
+    > span {
+        line-height: @pagination-height;
+        padding: 0 10px;
+    }
 }
 
 .pagination-prev, .pagination-next {
@@ -34,10 +38,21 @@
 
     border: none;
     cursor: pointer;
-    line-height: 38px;
+    line-height: @pagination-height;
     text-align: center;
-    width: 38px;
+    width: @pagination-height;
 }
 
 .pagination-prev { border-right: @pagination-border; }
-.pagination-next { border-left: @pagination-border-alt; }
+.pagination-next { border-left: @pagination-border; }
+
+@media screen and (min-width: @screen-xs) {
+    .pagination-control {
+        border-right: @pagination-border;
+        > input { border-right: @pagination-border; }
+    }
+
+    .pagination-next {
+        border-left: @pagination-border-alt;
+    }
+}

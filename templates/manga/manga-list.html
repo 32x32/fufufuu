@@ -1,43 +1,43 @@
 {% extends 'base.html' %}
-{% import '_macros/widgets.html' as widgets with context %}
 
 {% block title %}{% trans %}Latest{% endtrans %}{% endblock %}
 
 {% block content %}
-    <form class="ml-control-bar">
-        {{ widgets.pagination(manga_list) }}
-        <div class="ml-control-bar-cat-wrapper">
-            <label class="ml-control-bar-cat manga-category-non_h">
-                <input type="checkbox" name="non_h"{% if request.GET.non_h %} checked{% endif %}{% if request.GET.non_h %} checked{% endif %}>
-                <span>{% trans %}Non-H{% endtrans %}</span>
-            </label>
-            <label class="ml-control-bar-cat manga-category-ecchi">
-                <input type="checkbox" name="ecchi"{% if request.GET.ecchi %} checked{% endif %}>
-                <span>{% trans %}Ecchi{% endtrans %}</span>
-            </label>
-            <label class="ml-control-bar-cat manga-category-vanilla">
-                <input type="checkbox" name="vanilla"{% if request.GET.vanilla %} checked{% endif %}>
-                <span>{% trans %}Vanilla{% endtrans %}</span>
-            </label>
-            <label class="ml-control-bar-cat manga-category-alternative">
-                <input type="checkbox" name="alternative"{% if request.GET.alternative %} checked{% endif %}>
-                <span>{% trans %}Alternative{% endtrans %}</span>
-            </label>
-            <label class="ml-control-bar-cat manga-category-yaoi">
-                <input type="checkbox" name="yaoi"{% if request.GET.yaoi %} checked{% endif %}>
-                <span>{% trans %}Yaoi{% endtrans %}</span>
-            </label>
-            <label class="ml-control-bar-cat manga-category-yuri">
-                <input type="checkbox" name="yuri"{% if request.GET.yuri %} checked{% endif %}>
-                <span>{% trans %}Yuri{% endtrans %}</span>
-            </label>
-            <label class="ml-control-bar-cat manga-category-other">
-                <input type="checkbox" name="other"{% if request.GET.other %} checked{% endif %}>
-                <span>{% trans %}Other{% endtrans %}</span>
-            </label>
-            <button type="submit" class="btn btn-primary ml-control-bar-cat-button">{% trans %}Go{% endtrans %}</button>
-        </div>
-    </form>
+    {% include 'manga/_include/manga-list-filters.html' %}
+{#    <form class="ml-control-bar">#}
+{#        {{ widgets.pagination(manga_list) }}#}
+{#        <div class="ml-control-bar-cat-wrapper">#}
+{#            <label class="ml-control-bar-cat manga-category-non_h">#}
+{#                <input type="checkbox" name="non_h"{% if request.GET.non_h %} checked{% endif %}{% if request.GET.non_h %} checked{% endif %}>#}
+{#                <span>{% trans %}Non-H{% endtrans %}</span>#}
+{#            </label>#}
+{#            <label class="ml-control-bar-cat manga-category-ecchi">#}
+{#                <input type="checkbox" name="ecchi"{% if request.GET.ecchi %} checked{% endif %}>#}
+{#                <span>{% trans %}Ecchi{% endtrans %}</span>#}
+{#            </label>#}
+{#            <label class="ml-control-bar-cat manga-category-vanilla">#}
+{#                <input type="checkbox" name="vanilla"{% if request.GET.vanilla %} checked{% endif %}>#}
+{#                <span>{% trans %}Vanilla{% endtrans %}</span>#}
+{#            </label>#}
+{#            <label class="ml-control-bar-cat manga-category-alternative">#}
+{#                <input type="checkbox" name="alternative"{% if request.GET.alternative %} checked{% endif %}>#}
+{#                <span>{% trans %}Alternative{% endtrans %}</span>#}
+{#            </label>#}
+{#            <label class="ml-control-bar-cat manga-category-yaoi">#}
+{#                <input type="checkbox" name="yaoi"{% if request.GET.yaoi %} checked{% endif %}>#}
+{#                <span>{% trans %}Yaoi{% endtrans %}</span>#}
+{#            </label>#}
+{#            <label class="ml-control-bar-cat manga-category-yuri">#}
+{#                <input type="checkbox" name="yuri"{% if request.GET.yuri %} checked{% endif %}>#}
+{#                <span>{% trans %}Yuri{% endtrans %}</span>#}
+{#            </label>#}
+{#            <label class="ml-control-bar-cat manga-category-other">#}
+{#                <input type="checkbox" name="other"{% if request.GET.other %} checked{% endif %}>#}
+{#                <span>{% trans %}Other{% endtrans %}</span>#}
+{#            </label>#}
+{#            <button type="submit" class="btn btn-primary ml-control-bar-cat-button">{% trans %}Go{% endtrans %}</button>#}
+{#        </div>#}
+{#    </form>#}
     {% if manga_list %}
         <ul class="ml">
             {% for manga in manga_list %}
@@ -60,9 +60,6 @@
                 </li>
             {% endfor %}
         </ul>
-        <div class="control-bar text-right">
-            {{ widgets.pagination(manga_list) }}
-        </div>
     {% else %}
         <p class="container">{% trans %}There is nothing here.{% endtrans %}</p>
     {% endif %}
