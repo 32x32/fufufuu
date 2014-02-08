@@ -37,7 +37,6 @@ class EventHandler(FileSystemEventHandler):
 
             now = datetime.datetime.now().strftime('%H:%M:%S')
             file_path = event.src_path[event.src_path.rindex(PATH):]
-            print('{} - {} - {}'.format(now, event.event_type, file_path))
             print('{} - compiled {}'.format(now, output_path))
 
 

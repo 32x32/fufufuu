@@ -23,20 +23,6 @@ img {
 }
 
 /* --------------------------------------------------
-    list styling
----------------------------------------------------*/
-
-ul.bullet-list {
-    list-style-type: square;
-    margin: 0 0 15px;
-    padding: 0;
-
-    > li {
-        margin-left: 24px;
-    }
-}
-
-/* --------------------------------------------------
     absolute centering
 ---------------------------------------------------*/
 
@@ -66,108 +52,6 @@ ul.bullet-list {
 @media screen and (max-width: @screen-xs1) {
     .abs-center-cell { vertical-align: top; }
 }
-
-/* --------------------------------------------------
-    panels
----------------------------------------------------*/
-
-.panel {
-    .border-radius(@border-radius);
-
-    background-color: @panel-bg;
-    border: 1px solid @panel-border;
-    margin-bottom: 15px;
-
-    > .panel-heading {
-        background-color: @panel-bg-heading;
-        border-bottom: 1px solid @panel-border;
-        color: @panel-color;
-        font-weight: @font-weight-bold;
-        margin-bottom: 0;
-        padding: 15px;
-    }
-    > .panel-body {
-        padding: 15px;
-        > *:last-child { margin-bottom: 0; }
-    }
-
-    &.panel-primary {
-        border-color: @panel-primary-border;
-        > .panel-heading {
-            background-color: @panel-primary-border;
-            border-color: @panel-primary-border;
-            color: @panel-primary-color;
-        }
-    }
-    &.panel-info {}
-    &.panel-warning {}
-    &.panel-error {}
-}
-
-/* --------------------------------------------------
-    well styles
----------------------------------------------------*/
-
-@well-bg:       #eee;
-@well-border:   1px solid #ddd;
-
-.well {
-    .border-radius(@border-radius);
-
-    padding: 15px;
-    background-color: @well-bg;
-    border: @well-border;
-
-    > *:last-of-type { margin-bottom: 0; }
-}
-
-@media screen and (max-width: @screen-xs1) {
-    .well { padding: 10px; }
-}
-
-/* --------------------------------------------------
-    pagination
----------------------------------------------------*/
-
-.pagination {
-    .border-radius(@border-radius);
-    .inline-block();
-
-    background-color: @pagination-bg;
-    border: @pagination-border;
-}
-
-.pagination-control {
-    .inline-block();
-    border-right: @pagination-border;
-    border-left: @pagination-border-alt;
-    padding: 0 10px;
-
-    > input {
-        .inline-block();
-
-        line-height: 24px;
-        height: 30px;
-        margin: 4px 0;
-        padding: 3px;
-        width: 45px;
-        text-align: center;
-    }
-    > span { line-height: 38px; }
-}
-
-.pagination-prev, .pagination-next {
-    .inline-block();
-
-    border: none;
-    cursor: pointer;
-    line-height: 38px;
-    text-align: center;
-    width: 38px;
-}
-
-.pagination-prev { border-right: @pagination-border; }
-.pagination-next { border-left: @pagination-border-alt; }
 
 /* --------------------------------------------------
     small space adjustment
