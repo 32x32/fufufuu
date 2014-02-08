@@ -6,14 +6,15 @@
     padding: 5px;
 }
 
-h2 {
+.manga-info-header {
     border-bottom: 1px solid #ccc;
+    margin: 10px 0;
 }
 @media screen and (min-width: @screen-xs) {
-    h2 { display: none; }
+    .manga-info-header { display: none; }
 }
 @media screen and (max-width: @screen-xs1) {
-    h2 {
+    .manga-info-header {
         cursor: pointer;
         font-weight: @font-weight-base;
         &:after {
@@ -23,7 +24,7 @@ h2 {
             padding: 0 10px;
         }
     }
-    h2 + div {
+    .manga-info-header + div {
         height: 0;
         overflow: hidden;
         &.active { height: auto; }
@@ -34,6 +35,8 @@ h2 {
     margin-bottom: 10px;
     > .panel-heading { padding: 10px; }
     > .panel-body { padding: 10px; }
+
+    &:last-of-type { margin-bottom: 0; }
 }
 
 /* --------------------------------------------------
