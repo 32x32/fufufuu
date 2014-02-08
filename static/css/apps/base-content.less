@@ -3,9 +3,15 @@
 ---------------------------------------------------*/
 
 .content {
-    margin-top: 50px;
+    overflow: auto;
+
+    position: fixed;
+    top: 50px;
+    right: 0;
+    bottom: 0;
+    left: 0;
 }
 
 @media screen and (min-width: @screen-md) {
-    .content { margin-left: @nav-width; }
+    .content { left: @nav-width; }
 }
