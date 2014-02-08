@@ -44,3 +44,4 @@ $ ->
                     $(this).removeClass('lazy-image')
 
         $('.content').on 'load scroll resize', checkAndLoadImages
+        checkAndLoadImages()
