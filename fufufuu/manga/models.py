@@ -32,7 +32,7 @@ class Manga(BaseAuditableModel, MangaMixin):
     cover               = models.FileField(upload_to=manga_cover_upload_to, null=True)
     status              = models.CharField(max_length=20, choices=MangaStatus.choices, default=MangaStatus.DRAFT, db_index=True)
     category            = models.CharField(max_length=20, choices=MangaCategory.choices, default=MangaCategory.OTHER, db_index=True)
-    language            = models.CharField(max_length=20, choices=Language.choices, default=Language.ENGLISH)
+    language            = models.CharField(max_length=20, choices=Language.choices, default=Language.ENGLISH, db_index=True)
     uncensored          = models.BooleanField(default=False)
 
     tags                = models.ManyToManyField(Tag, blank=True)
