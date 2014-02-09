@@ -3,11 +3,16 @@
 
 {% block title %}{{ title }}{% endblock %}
 
-{% block content %}
-    <div class="ml-control-bar">
-        {{ widgets.pagination(tag_list) }}
+{% block content_upper %}
+    <div class="filter-bar">
+        <form action="" method="get" class="right">
+            {{ widgets.pagination(tag_list) }}
+        </form>
         <div class="clear"></div>
     </div>
+{% endblock %}
+
+{% block content %}
     <ul class="ml">
         {% for tag in tag_list %}
             <li class="mli">
@@ -24,8 +29,12 @@
             </li>
         {% endfor %}
     </ul>
-    <div class="ml-control-bar">
-        {{ widgets.pagination(tag_list) }}
-        <div class="clear"></div>
-    </div>
+    {% if tag_list and tag_list.paginator.num_pages > 1 %}
+        <div class="filter-bar filter-bar-bottom">
+            <form class="right">
+                {{ widgets.pagination(tag_list) }}
+            </form>
+            <div class="clear"></div>
+        </div>
+    {% endif %}
 {% endblock %}
