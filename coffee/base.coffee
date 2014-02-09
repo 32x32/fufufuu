@@ -61,3 +61,11 @@ $ ->
             self.text(text1)
             self.attr('data-toggle-text', text2)
             $el.toggle()
+
+    #---------------------------------------------------------------------------
+    # back to top
+    #---------------------------------------------------------------------------
+
+    $('.back-to-top').click ->
+        $('html, body').animate { 'scrollTop': 0 }, 'slow'
+        return false

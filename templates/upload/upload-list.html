@@ -14,6 +14,7 @@
             <button type="submit" class="btn btn-primary space-bottom-0"{% if upload_slots_used >= user.upload_limit %} disabled{% endif %}><span class="icon icon-up-circled space-right"></span>{% trans %}New Upload{% endtrans %}</button>
         </form>
         <span class="block-message {% if upload_slots_used >= user.upload_limit %}message-error{% else %}message-warning{% endif %} min-md">Using {{ upload_slots_used }} / {{ user.upload_limit }} slots for drafts, and uploads in the past 24 hours</span>
+        <div class="clear"></div>
     </div>
 {% endblock %}
 
@@ -55,6 +56,7 @@
             <form class="right">
                 {{ widgets.pagination(manga_list) }}
             </form>
+            <span class="btn back-to-top"><span class="icon icon-up-circled space-right"></span>{% trans %}Back to Top{% endtrans %}</span>
             <div class="clear"></div>
         </div>
     {% endif %}

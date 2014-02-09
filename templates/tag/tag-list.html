@@ -2,6 +2,12 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block content_upper %}
+    <div class="filter-bar">
+        <div class="clear"></div>
+    </div>
+{% endblock %}
+
 {% block content %}
     <ul class="tl">
         {% for tag in tag_list %}
