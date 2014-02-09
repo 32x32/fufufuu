@@ -45,3 +45,18 @@ $ ->
 
         $('.content').on 'load scroll resize', checkAndLoadImages
         checkAndLoadImages()
+
+    #---------------------------------------------------------------------------
+    # toggle switches
+    #---------------------------------------------------------------------------
+
+    $('.toggle-switch').each ->
+        self = $(this)
+        $el = $('#' + self.attr('data-toggle-id'))
+
+        self.click ->
+            text1 = self.attr('data-toggle-text')
+            text2 = self.text()
+            self.text(text1)
+            self.attr('data-toggle-text', text2)
+            $el.toggle()
