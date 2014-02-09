@@ -1,4 +1,5 @@
 import os
+from fufufuu.core.languages import Language
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -56,6 +57,7 @@ TIME_ZONE = 'UTC'
 USE_TZ = True
 
 LANGUAGE_CODE = 'en'
+LANGUAGES = Language.choices
 USE_I18N = True
 USE_L10N = True
 
