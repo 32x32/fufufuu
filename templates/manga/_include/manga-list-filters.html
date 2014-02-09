@@ -6,51 +6,50 @@
             <input type="hidden" name="{{ key }}" value="{{ val }}">
         {% endfor %}
     </form>
-    <form action="" method="get">
-        <span class="btn max-xs space-bottom-0 toggle-switch" data-toggle-id="manga-list-filters" data-toggle-text="{% trans %}Hide Filters{% endtrans %}">{% trans %}Show Filters{% endtrans %}</span>
-        <div id="manga-list-filters">
-            <div class="filter-content-section">
-                <h3 class="filter-content-header min-xs">{% trans %}Categories{% endtrans %}</h3>
-                <label class="ml-filter-bar-cat manga-category-non_h">
-                    <input type="checkbox" name="non_h"{% if request.GET.non_h %} checked{% endif %}{% if request.GET.non_h %} checked{% endif %}>
-                    <span class="space-left min-lg">{% trans %}Non-H{% endtrans %}</span>
-                </label>
-                <label class="ml-filter-bar-cat manga-category-ecchi">
-                    <input type="checkbox" name="ecchi"{% if request.GET.ecchi %} checked{% endif %}>
-                    <span class="space-left min-lg">{% trans %}Ecchi{% endtrans %}</span>
-                </label>
-                <label class="ml-filter-bar-cat manga-category-vanilla">
-                    <input type="checkbox" name="vanilla"{% if request.GET.vanilla %} checked{% endif %}>
-                    <span class="space-left min-lg">{% trans %}Vanilla{% endtrans %}</span>
-                </label>
-                <label class="ml-filter-bar-cat manga-category-alternative">
-                    <input type="checkbox" name="alternative"{% if request.GET.alternative %} checked{% endif %}>
-                    <span class="space-left min-lg">{% trans %}Alternative{% endtrans %}</span>
-                </label>
-                <label class="ml-filter-bar-cat manga-category-yaoi">
-                    <input type="checkbox" name="yaoi"{% if request.GET.yaoi %} checked{% endif %}>
-                    <span class="space-left min-lg">{% trans %}Yaoi{% endtrans %}</span>
-                </label>
-                <label class="ml-filter-bar-cat manga-category-yuri">
-                    <input type="checkbox" name="yuri"{% if request.GET.yuri %} checked{% endif %}>
-                    <span class="space-left min-lg">{% trans %}Yuri{% endtrans %}</span>
-                </label>
-                <label class="ml-filter-bar-cat manga-category-other">
-                    <input type="checkbox" name="other"{% if request.GET.other %} checked{% endif %}>
-                    <span class="space-left min-lg">{% trans %}Other{% endtrans %}</span>
-                </label>
-            </div>
-            <div class="filter-content-section">
-                <h3 class="filter-content-header min-xs">{% trans %}Languages{% endtrans %}</h3>
-                <select name="lang" class="space-right inline-block-middle">
-                    <option value="all">{% trans %}Show All Languages{% endtrans %}</option>
-                    {% for lang in LANGUAGES %}
-                        <option value="{{ lang.0 }}"{% if lang.0 == request.GET.lang %} selected{% endif %}>{{ lang.1 }}</option>
-                    {% endfor %}
-                </select>
-                <button class="btn btn-small inline-block-middle">+</button>
-            </div>
-        </div>
-    </form>
+    <span class="btn space-bottom-0 toggle-switch" data-toggle-id="manga-list-filters" data-toggle-text="{% trans %}Show Filters{% endtrans %}">{% trans %}Hide Filters{% endtrans %}</span>
+    <div class="clear"></div>
 </div>
+<form action="" method="get" id="manga-list-filters">
+    <div class="manga-filter-section">
+        <label class="ml-filter-bar-cat manga-category-non_h">
+            <input type="checkbox" name="non_h"{% if request.GET.non_h %} checked{% endif %}{% if request.GET.non_h %} checked{% endif %}>
+            <span class="space-left min-sm">{% trans %}Non-H{% endtrans %}</span>
+        </label>
+        <label class="ml-filter-bar-cat manga-category-ecchi">
+            <input type="checkbox" name="ecchi"{% if request.GET.ecchi %} checked{% endif %}>
+            <span class="space-left min-sm">{% trans %}Ecchi{% endtrans %}</span>
+        </label>
+        <label class="ml-filter-bar-cat manga-category-vanilla">
+            <input type="checkbox" name="vanilla"{% if request.GET.vanilla %} checked{% endif %}>
+            <span class="space-left min-sm">{% trans %}Vanilla{% endtrans %}</span>
+        </label>
+        <label class="ml-filter-bar-cat manga-category-alternative">
+            <input type="checkbox" name="alternative"{% if request.GET.alternative %} checked{% endif %}>
+            <span class="space-left min-sm">{% trans %}Alternative{% endtrans %}</span>
+        </label>
+        <label class="ml-filter-bar-cat manga-category-yaoi">
+            <input type="checkbox" name="yaoi"{% if request.GET.yaoi %} checked{% endif %}>
+            <span class="space-left min-sm">{% trans %}Yaoi{% endtrans %}</span>
+        </label>
+        <label class="ml-filter-bar-cat manga-category-yuri">
+            <input type="checkbox" name="yuri"{% if request.GET.yuri %} checked{% endif %}>
+            <span class="space-left min-sm">{% trans %}Yuri{% endtrans %}</span>
+        </label>
+        <label class="ml-filter-bar-cat manga-category-other">
+            <input type="checkbox" name="other"{% if request.GET.other %} checked{% endif %}>
+            <span class="space-left min-sm">{% trans %}Other{% endtrans %}</span>
+        </label>
+    </div>
+    <div class="manga-filter-section">
+        <select name="lang" class="space-right manga-list-language-filter">
+            <option value="all">{% trans %}Show All Languages{% endtrans %}</option>
+            {% for lang in LANGUAGES %}
+                <option value="{{ lang.0 }}"{% if lang.0 == request.GET.lang %} selected{% endif %}>{{ lang.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary space-right-10" form="manga-list-filters">{% trans %}Save{% endtrans %}</button>
+    </div>
+</form>
 

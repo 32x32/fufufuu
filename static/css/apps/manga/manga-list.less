@@ -81,13 +81,6 @@
     }
 }
 
-@media screen and (max-width: @screen-xs1) {
-    #manga-list-filters {
-        display: none;
-        margin-top: 10px;
-    }
-}
-
 /* --------------------------------------------------
     manga-status and manga-category styles
 ---------------------------------------------------*/
@@ -138,4 +131,42 @@
 .manga-content {
     border-top: 1px solid #fff;
     > #message-list { margin-top: -1px; }
+}
+
+/* --------------------------------------------------
+    manga list filter bar
+---------------------------------------------------*/
+
+#manga-list-filters {
+    background-color: @nav-bg;
+    border-top: @nav-border-alt;
+    border-bottom: @nav-border;
+    padding: 10px;
+}
+
+.manga-filter-section {
+    .inline-block();
+    line-height: 30px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+
+    &:last-of-type { margin-bottom: 0; }
+
+    > select {
+        vertical-align: top;
+        line-height: 30px;
+    }
+}
+
+@media screen and (max-width: @screen-xs1) {
+    .manga-filter-section {
+        display: block;
+        width: 100%;
+        .manga-list-language-filter {
+            width: 100%;
+        }
+    }
 }
