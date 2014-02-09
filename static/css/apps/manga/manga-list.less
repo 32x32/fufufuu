@@ -61,26 +61,6 @@
     display: block;
 }
 
-.ml-filter-bar-cat {
-    .inline-block();
-
-    border-left: none;
-    color: #fff;
-    line-height: 30px;
-    padding: 0 10px;
-
-    &:first-of-type { .border-radius(@border-radius 0 0 @border-radius); }
-    &:last-of-type  { .border-radius(0 @border-radius @border-radius 0); }
-
-    > input[type="checkbox"] {
-        display: inline-block;
-        margin-right: 0;
-        vertical-align: bottom;
-        position: relative;
-        top: -8px;
-    }
-}
-
 /* --------------------------------------------------
     manga-status and manga-category styles
 ---------------------------------------------------*/
@@ -137,13 +117,6 @@
     manga list filter bar
 ---------------------------------------------------*/
 
-#manga-list-filters {
-    background-color: @nav-bg;
-    border-top: @nav-border-alt;
-    border-bottom: @nav-border;
-    padding: 10px;
-}
-
 .manga-filter-section {
     .inline-block();
     line-height: 30px;
@@ -161,12 +134,53 @@
     }
 }
 
-@media screen and (max-width: @screen-xs1) {
+.ml-filter-bar-cat {
+    .inline-block();
+
+    border-left: none;
+    color: #fff;
+    line-height: 30px;
+    padding: 0 10px;
+
+    &:first-of-type { .border-radius(@border-radius 0 0 @border-radius); }
+    &:last-of-type  { .border-radius(0 @border-radius @border-radius 0); }
+
+    > input[type="checkbox"] {
+        display: inline-block;
+        margin-right: 0;
+        vertical-align: bottom;
+        position: relative;
+        top: -8px;
+    }
+}
+
+@media screen and (min-width: @screen-lg) {
     .manga-filter-section {
-        display: block;
-        width: 100%;
-        .manga-list-language-filter {
-            width: 100%;
+        line-height: 40px;
+        height: 40px;
+        margin-bottom: 0;
+
+        > select {
+            height: 40px;
+            padding: 7px;
         }
+    }
+    .ml-filter-bar-cat {
+        line-height: 40px;
+        > input[type="checkbox"] {
+            top: -13px;
+        }
+    }
+}
+
+@media screen and (max-width: @screen-lg1) {
+    #manga-filter-section-button {
+        display: block;
+    }
+}
+@media screen and (max-width: @screen-xs1) {
+    #manga-list-filters {
+        margin-top: 10px;
+        display: none;
     }
 }
