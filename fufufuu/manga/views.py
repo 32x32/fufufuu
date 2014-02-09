@@ -6,6 +6,7 @@ from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
+from fufufuu.core.languages import Language
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.download.models import DownloadLink
@@ -31,6 +32,9 @@ class MangaListView(TemplateView):
             filters['category__in'] = categories
 
         # filter by language
+        languages = list(filter(lambda l: l in Language.choices_dict, self.request.GET.getlist('lang')))
+        if languages:
+            filters['language__in'] = languages
 
         return filters
 

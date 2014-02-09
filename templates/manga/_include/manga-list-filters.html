@@ -42,7 +42,7 @@
     </div>
     <div class="manga-filter-section">
         <select name="lang" class="space-right manga-list-language-filter">
-            <option value="all">{% trans %}Show All Languages{% endtrans %}</option>
+            <option value="">{% trans %}Show All Languages{% endtrans %}</option>
             {% for lang in LANGUAGES %}
                 <option value="{{ lang.0 }}"{% if lang.0 == request.GET.lang %} selected{% endif %}>{{ lang.1 }}</option>
             {% endfor %}
