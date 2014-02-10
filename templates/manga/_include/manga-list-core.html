@@ -1,0 +1,35 @@
+{% import '_macros/widgets.html' as widgets with context %}
+{% if manga_list %}
+    <ul class="ml">
+        {% for manga in manga_list %}
+            {% set url_manga = url('manga.info', args=[manga.id, manga.slug]) %}
+            <li class="mli">
+                <div class="mli-core">
+                    <a href="{{ url_manga }}" target="_blank" title="{{ manga.title }}" class="mli-cover">
+                        {% if manga.cover %}
+                            <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ manga.cover|image_resize('manga_cover', manga.id) }}" alt="{{ manga.title }}">
+                        {% else %}
+                            <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ STATIC_URL }}images/no-image.png" alt="{{ manga.title }}">
+                        {% endif %}
+                    </a>
+                    <a href="{{ url_manga }}" target="_blank" class="block mli-title" title="{{ manga.title }}">{{ manga.title }}</a>
+                    <div class="mli-info">
+                        <span class="manga-category manga-category-{{ manga.category.lower() }} space-right">{{ manga.category_display }}</span>
+                        <span class="manga-category manga-category-other">{{ manga.language_display }}</span>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p class="container">{% trans %}There is nothing here.{% endtrans %}</p>
+{% endif %}
+{% if manga_list and manga_list.paginator.num_pages > 1 %}
+    <div class="filter-bar filter-bar-bottom">
+        <form class="right">
+            {{ widgets.pagination(manga_list) }}
+        </form>
+        <span class="btn back-to-top"><span class="icon icon-up-circled space-right"></span>{% trans %}Back to Top{% endtrans %}</span>
+        <div class="clear"></div>
+    </div>
+{% endif %}

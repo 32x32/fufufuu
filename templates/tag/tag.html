@@ -2,5 +2,27 @@
 
 {% block title %}{{ tag.name }}{% endblock %}
 
+{% block content_upper %}
+    <div class="tag-info-block">
+        <span class="btn right min-md">{% trans %}Edit Tag{% endtrans %}</span>
+        <select name="tag_lang" class="fat right space-right-10">
+            {% for lang in LANGUAGES %}
+                <option value="{{ lang.0 }}">{{ lang.1 }}</option>
+            {% endfor %}
+        </select>
+        <h2 class="tag-info-heading">{{ tag.name }}</h2>
+        <div class="tag-info-alias-list">
+            {% for tag_alias in tag_alias_list %}
+                <span class="text-xsmall space-right">{{ tag_alias.name }}{% if not loop.last %},{% endif %}</span>
+            {% endfor %}
+        </div>
+        <div>{{ tag_data.html|safe }}</div>
+        <div class="clear"></div>
+    </div>
+    <hr class="nav-sep nav-sep-spaceless">
+    {% include 'manga/_include/manga-list-filters.html' %}
+{% endblock %}
+
 {% block content %}
+    {% include 'manga/_include/manga-list-core.html' %}
 {% endblock %}
