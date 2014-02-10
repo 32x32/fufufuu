@@ -73,12 +73,21 @@ class MangaView(TemplateView):
         return payload.decode('utf-8')
 
     def get(self, request, id, slug):
+        context = {}
         manga = get_object_or_404(Manga.published, id=id)
         payload = self.get_payload(manga)
-        return self.render_to_response({
+
+        tank = manga.tank
+        if tank: context['chapter_list'] = tank.manga_set.order_by('tank_chapter')
+
+        collection = manga.collection
+        if collection: context['collection_list'] = collection.manga_set.order_by('collection_part')
+
+        context.update({
             'manga': manga,
             'payload': payload,
         })
+        return self.render_to_response(context)
 
 
 class MangaInfoView(TemplateView):

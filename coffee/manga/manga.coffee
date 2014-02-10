@@ -63,7 +63,7 @@ $ ->
                 return "#/page/#{self.nextNum()}/"
 
             self.jumpPage = ->
-                targetPage = $("#manga-page-jump").val()
+                targetPage = $("#m-page-jump").val()
                 window.location.hash = "#/page/#{targetPage}/"
 
             self.preload = ->
@@ -102,6 +102,14 @@ $ ->
             return
 
         $(window).bind 'hashchange', changePage
+
+        #---------------------------------------------------------------------------
+        # manga chapter-jump
+        #---------------------------------------------------------------------------
+
+        $('#m-chapter-jump').change ->
+            window.location.href = $(this).val()
+            return false
 
         #-----------------------------------------------------------------------
         # keyboard bindings

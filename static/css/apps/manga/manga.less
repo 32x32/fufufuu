@@ -10,18 +10,33 @@
     .manga-container { padding: 10px; }
 }
 
+@manga-width:           800px;
+@manga-width-double:    1200px;
+
+/* --------------------------------------------------
+    manga controls
+---------------------------------------------------*/
+
+.manga-controls {
+    background-color: @nav-bg;
+    border: @nav-border;
+    margin: 0 auto 10px;
+    max-width: @manga-width;
+    padding: 10px;
+}
+
 /* --------------------------------------------------
     manga main
 ---------------------------------------------------*/
 
 .manga-main {
     position: relative;
-    margin: -1px auto 0;
-    max-width: 802px;
+    margin: 0 auto;
+    max-width: @manga-width + 2px;
     text-align: center;
 
     &.double {
-        max-width: 1202px;
+        max-width: @manga-width-double + 2px;
     }
 
     > img {

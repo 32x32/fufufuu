@@ -5,6 +5,21 @@
 
 {% block content %}
     <div class="manga-container">
+        <div class="manga-controls">
+            {% if chapter_list %}
+                <select class="space-right" id="m-chapter-jump">
+                    {% for chapter in chapter_list %}
+                        <option value="{{ url('manga', args=[chapter.id, chapter.slug]) }}"{% if chapter.id == manga.id %} selected{% endif %}>{% trans chapter=chapter.tank_chapter %}Chapter {{ chapter }}{% endtrans %}</option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+            <select id="m-page-jump" class="right" data-bind="event: { change: jumpPage }, value: pageNum()">
+                {% for i in range(1, manga.mangapage_set.count()+1) %}
+                    <option value="{{ i }}">{% trans %}Page {{ i }}{% endtrans %}</option>
+                {% endfor %}
+            </select>
+            <div class="clear"></div>
+        </div>
         <div class="manga-main" data-bind="css: { double: double() }">
             <a id="manga-prev-page" data-bind="attr: { href: prevUrl() }"></a>
             <a id="manga-next-page" data-bind="attr: { href: nextUrl() }"></a>
