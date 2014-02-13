@@ -2,6 +2,7 @@ from collections import defaultdict
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
+from fufufuu.core.languages import Language
 from fufufuu.core.response import HttpResponseJson
 from fufufuu.core.utils import paginate, get_object_or_none
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
@@ -49,8 +50,8 @@ class TagListView(TemplateView):
     def get(self, request):
         filters = { 'tag__tag_type': self.tag_type }
 
-        tag_lang = request.GET.get('tag_lang')
-        if tag_lang: filters['language'] = tag_lang
+        lang = request.GET.get('lang')
+        if lang: filters['language'] = lang
 
         tag_alias_list = TagAlias.objects.filter(**filters).values('tag_id', 'name')
         tag_alias_dict = defaultdict(list)
@@ -62,9 +63,9 @@ class TagListView(TemplateView):
             tag['alias_list'] = tag_alias_dict.get(tag['id'])
 
         return self.render_to_response({
+            'lang': lang,
             'tag_list': tag_list,
             'title': TagType.plural[self.tag_type],
-            'tag_lang': tag_lang
         })
 
 
@@ -89,11 +90,12 @@ class TagView(MangaListView):
         manga_list = Manga.published.filter(**filters).order_by(order_by)
         manga_list = paginate(manga_list, self.page_size, request.GET.get('p'))
 
-        language = request.GET.get('tag_lang') or get_language()
+        lang = request.GET.get('lang', Language.ENGLISH)
 
         tag_alias_list = TagAlias.objects.filter(tag=tag).order_by('language', 'name')
-        tag_data = get_object_or_none(TagData, tag=tag, language=language)
+        tag_data = get_object_or_none(TagData, tag=tag, language=lang)
         return self.render_to_response({
+            'lang': lang,
             'manga_list': manga_list,
             'tag': tag,
             'tag_alias_list': tag_alias_list,

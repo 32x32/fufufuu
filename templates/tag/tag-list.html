@@ -5,14 +5,14 @@
 {% block content_upper %}
     <div class="filter-bar no-wrap">
         <span class="btn space-right-10 toggle-switch" data-toggle-class="tl-alias-list" data-toggle-text="{% trans %}Show Tag Aliases{% endtrans %}">{% trans %}Hide Tag Aliases{% endtrans %}</span>
-        {% for key, val in (request.GET|exclude_keys('tag_lang')).items() %}
+        {% for key, val in (request.GET|exclude_keys('lang')).items() %}
             <input type="hidden" name="{{ key }}" value="{{ val }}">
         {% endfor %}
         <form action="" method="get" class="auto-submit inline-block">
-            <select name="tag_lang" class="fat space-right-10">
+            <select name="lang" class="fat space-right-10">
                 <option value="">{% trans %}All <Alias></Alias> Languages{% endtrans %}&nbsp;&nbsp;</option>
-                {% for lang in LANGUAGES %}
-                    <option value="{{ lang.0 }}"{% if lang.0 == tag_lang %} selected{% endif %}>{{ lang.1 }}</option>
+                {% for language in LANGUAGES %}
+                    <option value="{{ language.0 }}"{% if language.0 == lang %} selected{% endif %}>{{ language.1 }}</option>
                 {% endfor %}
             </select>
         </form>
@@ -24,7 +24,7 @@
     <ul class="tl">
         {% for tag in tag_list %}
             <li class="tli">
-                <a href="{{ url('tag', args=[tag.id, tag.slug]) }}">
+                <a href="{{ url('tag', args=[tag.id, tag.slug]) }}{% if lang %}?lang={{ lang }}{% endif %}">
                     <span class="badge right">{{ tag.manga_count }}</span>
                     <span>{{ tag.name }}</span>
                     {% if tag.alias_list %}
