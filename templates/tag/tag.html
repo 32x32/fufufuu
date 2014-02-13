@@ -11,7 +11,7 @@
             {% endfor %}
             <select name="tag_lang" class="fat right space-right-10">
                 {% for lang in LANGUAGES %}
-                    <option value="{{ lang.0 }}"{% if request.GET.tag_lang == lang.0 %} selected{% endif %}>{{ lang.1 }}</option>
+                    <option value="{{ lang.0 }}"{% if lang.0 == tag_lang %} selected{% endif %}>{{ lang.1 }}</option>
                 {% endfor %}
             </select>
         </form>

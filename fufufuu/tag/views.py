@@ -47,10 +47,24 @@ class TagListView(TemplateView):
     template_name = 'tag/tag-list.html'
 
     def get(self, request):
-        tag_list = Tag.objects.filter(tag_type=self.tag_type).order_by('slug')
+        filters = { 'tag__tag_type': self.tag_type }
+
+        tag_lang = request.GET.get('tag_lang')
+        if tag_lang: filters['language'] = tag_lang
+
+        tag_alias_list = TagAlias.objects.filter(**filters).values('tag_id', 'name')
+        tag_alias_dict = defaultdict(list)
+        for tag_alias in tag_alias_list:
+            tag_alias_dict[tag_alias['tag_id']].append(tag_alias['name'])
+
+        tag_list = Tag.objects.filter(tag_type=self.tag_type).order_by('slug').values('id', 'slug', 'name')
+        for tag in tag_list:
+            tag['alias_list'] = tag_alias_dict.get(tag['id'])
+
         return self.render_to_response({
             'tag_list': tag_list,
             'title': TagType.plural[self.tag_type],
+            'tag_lang': tag_lang
         })
 
 

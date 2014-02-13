@@ -52,14 +52,16 @@ $ ->
 
     $('.toggle-switch').each ->
         self = $(this)
-        $el = $('#' + self.attr('data-toggle-id'))
+        $id = $('#' + self.attr('data-toggle-id'))
+        $class = $('.' + self.attr('data-toggle-class'))
 
         self.click ->
             text1 = self.attr('data-toggle-text')
             text2 = self.text()
             self.text(text1)
             self.attr('data-toggle-text', text2)
-            $el.toggle()
+            $id.toggle()
+            $class.toggle()
 
     #---------------------------------------------------------------------------
     # auto submit
