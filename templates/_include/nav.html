@@ -22,13 +22,13 @@
     <a href="{{ url_tag_list_collection }}" class="nav-link {{ utils.link_active(url_tag_list_collection) }}"><span class="icon icon-docs"></span>{% trans %}Collections{% endtrans %}</a>
     <a href="#" class="nav-link"><span class="icon icon-docs"></span>{% trans %}Originals{% endtrans %}</a>
     <hr class="nav-sep">
-    <a href="{{ url_tag_list_author }}{% if lang %}?lang={{ lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_author) }}"><span class="icon icon-tag"></span>{% trans %}Authors{% endtrans %}</a>
-    <a href="{{ url_tag_list_circle }}{% if lang %}?lang={{ lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_circle) }}"><span class="icon icon-tag"></span>{% trans %}Circles{% endtrans %}</a>
-    <a href="{{ url_tag_list_content }}{% if lang %}?lang={{ lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_content) }}"><span class="icon icon-tag"></span>{% trans %}Content{% endtrans %}</a>
-    <a href="{{ url_tag_list_event }}{% if lang %}?lang={{ lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_event) }}"><span class="icon icon-tag"></span>{% trans %}Events{% endtrans %}</a>
-    <a href="{{ url_tag_list_magazine }}{% if lang %}?lang={{ lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_magazine) }}"><span class="icon icon-tag"></span>{% trans %}Magazines{% endtrans %}</a>
-    <a href="{{ url_tag_list_parody }}{% if lang %}?lang={{ lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_parody) }}"><span class="icon icon-tag"></span>{% trans %}Parodies{% endtrans %}</a>
-    <a href="{{ url_tag_list_scanlator }}{% if lang %}?lang={{ lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_scanlator) }}"><span class="icon icon-tag"></span>{% trans %}Scanlators{% endtrans %}</a>
+    <a href="{{ url_tag_list_author }}{% if request.lang %}lang={{ request.lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_author) }}"><span class="icon icon-tag"></span>{% trans %}Authors{% endtrans %}</a>
+    <a href="{{ url_tag_list_circle }}{% if request.lang %}lang={{ request.lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_circle) }}"><span class="icon icon-tag"></span>{% trans %}Circles{% endtrans %}</a>
+    <a href="{{ url_tag_list_content }}{% if request.lang %}lang={{ request.lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_content) }}"><span class="icon icon-tag"></span>{% trans %}Content{% endtrans %}</a>
+    <a href="{{ url_tag_list_event }}{% if request.lang %}lang={{ request.lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_event) }}"><span class="icon icon-tag"></span>{% trans %}Events{% endtrans %}</a>
+    <a href="{{ url_tag_list_magazine }}{% if request.lang %}lang={{ request.lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_magazine) }}"><span class="icon icon-tag"></span>{% trans %}Magazines{% endtrans %}</a>
+    <a href="{{ url_tag_list_parody }}{% if request.lang %}lang={{ request.lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_parody) }}"><span class="icon icon-tag"></span>{% trans %}Parodies{% endtrans %}</a>
+    <a href="{{ url_tag_list_scanlator }}{% if request.lang %}lang={{ request.lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_scanlator) }}"><span class="icon icon-tag"></span>{% trans %}Scanlators{% endtrans %}</a>
     <hr class="nav-sep max-xs">
     {% if user.is_authenticated() %}
         <a href="#" class="max-xs nav-link"><span class="icon icon-cog"></span>{{ user.username }}</a>

@@ -90,7 +90,7 @@ class TagView(MangaListView):
         manga_list = Manga.published.filter(**filters).order_by(order_by)
         manga_list = paginate(manga_list, self.page_size, request.GET.get('p'))
 
-        lang = request.GET.get('lang', Language.ENGLISH)
+        lang = request.GET.get('lang' ) or Language.ENGLISH
 
         tag_alias_list = TagAlias.objects.filter(tag=tag).order_by('language', 'name')
         tag_data = get_object_or_none(TagData, tag=tag, language=lang)
