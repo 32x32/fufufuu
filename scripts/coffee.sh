@@ -4,4 +4,5 @@ coffee --join static/js/app.js --watch --compile \
     coffee/manga/manga-info.coffee \
     coffee/manga/manga-edit.coffee \
     coffee/manga/manga-edit-images.coffee \
-    coffee/manga/manga-thumbnails.coffee
+    coffee/manga/manga-thumbnails.coffee \
+    coffee/tag.coffee

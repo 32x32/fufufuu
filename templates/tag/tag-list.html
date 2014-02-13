@@ -4,7 +4,7 @@
 
 {% block content_upper %}
     <div class="filter-bar no-wrap">
-        <span class="btn space-right-10 toggle-switch" data-toggle-class="tl-alias-list" data-toggle-text="{% trans %}Show Tag Aliases{% endtrans %}">{% trans %}Hide Tag Aliases{% endtrans %}</span>
+        <input type="text" placeholder="{% trans %}Quick Filter{% endtrans %}" id="tl-quick-filter" class="filter-bar-text-input space-right-10" autofocus>
         {% for key, val in (request.GET|exclude_keys('lang')).items() %}
             <input type="hidden" name="{{ key }}" value="{{ val }}">
         {% endfor %}
@@ -25,12 +25,11 @@
         {% for tag in tag_list %}
             <li class="tli">
                 <a href="{{ url('tag', args=[tag.id, tag.slug]) }}{% if lang %}?lang={{ lang }}{% endif %}">
-                    <span class="badge right">{{ tag.manga_count }}</span>
-                    <span>{{ tag.name }}</span>
+                    <span class="tl-searchable">{{ tag.name }}</span>
                     {% if tag.alias_list %}
                         <ul class="tl-alias-list">
                             {% for tag_alias in tag.alias_list %}
-                                <li class="text-xsmall text-secondary">{{ tag_alias }}</li>
+                                <li class="text-xsmall text-secondary tl-searchable">{{ tag_alias }}</li>
                             {% endfor %}
                         </ul>
                     {% endif %}

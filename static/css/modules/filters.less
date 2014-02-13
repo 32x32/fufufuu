@@ -6,8 +6,18 @@
     background-color: @nav-bg;
     border-bottom: @nav-border;
     color: @nav-color;
+    overflow: auto;
     padding: 10px;
 }
 .filter-bar-bottom {
     border-top: @nav-border;
+}
+
+.filter-bar-text-input[type="text"] {
+    .inline-block();
+
+    border: @nav-border;
+    margin-bottom: 0;
+    padding: 7px 10px;
+    width: auto;
 }
