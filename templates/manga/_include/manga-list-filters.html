@@ -1,8 +1,8 @@
 {% import '_macros/widgets.html' as widgets with context %}
 <div class="filter-bar">
-    <form action="" method="post" class="right" id="manga-filter-pagination">
+    <form action="" method="get" class="right" id="manga-filter-pagination">
         {{ widgets.pagination(manga_list) }}
-        {% for key, val in request.GET.items() %}
+        {% for key, val in (request.GET|exclude_keys('p')).items() %}
             <input type="hidden" name="{{ key }}" value="{{ val }}">
         {% endfor %}
     </form>

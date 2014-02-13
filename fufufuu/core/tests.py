@@ -8,12 +8,14 @@ from PIL import Image
 from django.core.cache import cache
 from django.core.management import call_command
 from django.db import connections
+from django.http.request import QueryDict
 from django.test.runner import DiscoverRunner
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
 from fufufuu import settings
 from fufufuu.account.models import User
+from fufufuu.core.filters import exclude_keys
 from fufufuu.core.models import DeletedFile
 from fufufuu.core.utils import slugify
 from fufufuu.datacreator import DataCreator
@@ -132,3 +134,26 @@ class CoreManagementTests(BaseTestCase):
         self.assertTrue(DeletedFile.objects.filter(id=self.deleted_file2.id).exists())
 
         self.assertFalse(os.path.exists(self.file.name))
+
+
+class CoreFilterTests(BaseTestCase):
+
+    def test_exclude_keys(self):
+        qd = QueryDict('a=1&b=2')
+        self.assertEquals(exclude_keys(qd), QueryDict('a=1&b=2'))
+
+    def test_exclude_keys_single_exclude(self):
+        qd = QueryDict('a=1&b=2')
+        self.assertEquals(exclude_keys(qd, 'b'), QueryDict('a=1'))
+
+    def test_exclude_keys_multiple_excludes(self):
+        qd = QueryDict('a=1&b=2&c=3')
+        self.assertEquals(exclude_keys(qd, 'a', 'b'), QueryDict('c=3'))
+
+    def test_exclude_keys_bad_exclude(self):
+        qd = QueryDict('a=1&b=2')
+        self.assertEquals(exclude_keys(qd, 'c'), QueryDict('a=1&b=2'))
+
+    def test_exclude_keys_long_names(self):
+        qd = QueryDict('abc=1&page=2')
+        self.assertEquals(exclude_keys(qd, 'page'), QueryDict('abc=1'))

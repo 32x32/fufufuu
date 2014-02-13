@@ -6,7 +6,7 @@ from jinja2 import nodes
 from jinja2.environment import Environment
 from jinja2.ext import Extension
 from jinja2.loaders import FileSystemLoader
-from fufufuu.core.filters import getparams, startswith
+from fufufuu.core.filters import exclude_keys, startswith
 from fufufuu.image.filters import image_resize
 from fufufuu.settings import TEMPLATE_DIRS, DEBUG
 
@@ -60,7 +60,7 @@ TEMPLATE_ENV.globals.update(**{
     'url':                  reverse,
 })
 TEMPLATE_ENV.filters.update(**{
-    'getparams':            getparams,
+    'exclude_keys':         exclude_keys,
     'image_resize':         image_resize,
     'naturaltime':          naturaltime,
     'startswith':           startswith,

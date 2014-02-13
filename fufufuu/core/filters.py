@@ -1,26 +1,19 @@
 from django.http.request import QueryDict
 
 
-def getparams(value, exclude=None):
+def exclude_keys(value, *exclude):
     """
-    getparams returns the url get string for value (instance of QueryDict). E.g.
-
-        &p=1&authors=test-author
-
-    exclude should be comma separated names of parameters to exclude from
-    urlencode. E.g.
-
-        request.GET|getparams:"p"
-        request.GET|getparams:"p,q"
+    getquerydict returns a mutable copy of the querydict with exclude values
+    removed.
     """
 
     if not isinstance(value, QueryDict):
-        raise RuntimeError("getparams should be used on QueryDict only (e.g. request.GET)")
-    if exclude:
-        value = value.copy()
-        for key in exclude.split(','):
-            if key in value: del value[key]
-    return value.urlencode()
+        raise RuntimeError("getquerydict should be used with QueryDict instances only (e.g. request.GET)")
+
+    value = value.copy()
+    for key in exclude:
+        if key in value: del value[key]
+    return value
 
 
 def startswith(value, s):

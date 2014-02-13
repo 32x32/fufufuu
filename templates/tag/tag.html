@@ -5,11 +5,16 @@
 {% block content_upper %}
     <div class="tag-info-block">
         <span class="btn right min-md">{% trans %}Edit Tag{% endtrans %}</span>
-        <select name="tag_lang" class="fat right space-right-10">
-            {% for lang in LANGUAGES %}
-                <option value="{{ lang.0 }}">{{ lang.1 }}</option>
+        <form action="" method="get" id="" class="auto-submit">
+            {% for key, val in (request.GET|exclude_keys('tag_lang')).items() %}
+                <input type="hidden" name="{{ key }}" value="{{ val }}">
             {% endfor %}
-        </select>
+            <select name="tag_lang" class="fat right space-right-10">
+                {% for lang in LANGUAGES %}
+                    <option value="{{ lang.0 }}"{% if request.GET.tag_lang == lang.0 %} selected{% endif %}>{{ lang.1 }}</option>
+                {% endfor %}
+            </select>
+        </form>
         <h2 class="tag-info-heading">{{ tag.name }}</h2>
         <div class="tag-info-alias-list">
             {% for tag_alias in tag_alias_list %}
