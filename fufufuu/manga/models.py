@@ -36,8 +36,8 @@ class Manga(BaseAuditableModel, MangaMixin):
     uncensored          = models.BooleanField(default=False)
 
     tags                = models.ManyToManyField(Tag, blank=True)
-    tank                = models.ForeignKey(Tag, null=True, blank=True, related_name='+')
-    collection          = models.ForeignKey(Tag, null=True, blank=True, related_name='+')
+    tank                = models.ForeignKey(Tag, null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
+    collection          = models.ForeignKey(Tag, null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
     tank_chapter        = models.CharField(max_length=20, null=True, blank=True)
     collection_part     = models.CharField(max_length=20, null=True, blank=True)
     favorite_users      = models.ManyToManyField(User, related_name='manga_favorites', blank=True)
@@ -68,7 +68,7 @@ class Manga(BaseAuditableModel, MangaMixin):
 
 class MangaHistory(models.Model, MangaMixin):
 
-    manga               = models.ForeignKey(Manga)
+    manga               = models.ForeignKey(Manga, on_delete=models.CASCADE)
 
     title               = models.CharField(max_length=100, default='Untitled')
     slug                = models.SlugField(max_length=100)
@@ -81,12 +81,12 @@ class MangaHistory(models.Model, MangaMixin):
     uncensored          = models.BooleanField(default=False)
 
     tags                = models.ManyToManyField(Tag, blank=True)
-    tank                = models.ForeignKey(Tag, null=True, blank=True, related_name='+')
-    collection          = models.ForeignKey(Tag, null=True, blank=True, related_name='+')
+    tank                = models.ForeignKey(Tag, null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
+    collection          = models.ForeignKey(Tag, null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
     tank_chapter        = models.CharField(max_length=20, null=True, blank=True)
     collection_part     = models.CharField(max_length=20, null=True, blank=True)
 
-    created_by          = models.ForeignKey(User)
+    created_by          = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     created_on          = models.DateTimeField()
 
     class Meta:
@@ -95,7 +95,7 @@ class MangaHistory(models.Model, MangaMixin):
 
 class MangaPage(models.Model):
 
-    manga = models.ForeignKey(Manga)
+    manga = models.ForeignKey(Manga, on_delete=models.CASCADE)
     double = models.BooleanField(default=False)
     page = models.PositiveIntegerField()
     image = models.FileField(upload_to=manga_page_upload_to)
@@ -108,7 +108,7 @@ class MangaPage(models.Model):
 
 class MangaArchive(models.Model):
 
-    manga = models.ForeignKey(Manga, unique=True)
+    manga = models.ForeignKey(Manga, unique=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     file = models.FileField(upload_to=manga_archive_upload_to)
     downloads = models.PositiveIntegerField(default=0)

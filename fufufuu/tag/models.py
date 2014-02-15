@@ -26,7 +26,7 @@ class Tag(BaseAuditableModel):
 
 class TagHistory(models.Model):
 
-    tag = models.ForeignKey(Tag)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100)
 
@@ -39,7 +39,7 @@ class TagHistory(models.Model):
 
 class TagAlias(models.Model):
 
-    tag = models.ForeignKey(Tag)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     language = models.CharField(max_length=20, choices=Language.choices)
     name = models.CharField(max_length=100)
 

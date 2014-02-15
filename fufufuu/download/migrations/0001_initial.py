@@ -15,7 +15,7 @@ class Migration(SchemaMigration):
             ('url', self.gf('django.db.models.fields.CharField')(max_length=1024)),
             ('ip_address', self.gf('django.db.models.fields.CharField')(max_length=200, null=True)),
             ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['account.User'], null=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(on_delete=models.SET_NULL, null=True, to=orm['account.User'])),
         ))
         db.send_create_signal('download', ['DownloadLink'])
 
@@ -50,8 +50,8 @@ class Migration(SchemaMigration):
             'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
         },
         'download.downloadlink': {
-            'Meta': {'object_name': 'DownloadLink', 'index_together': "[('url', 'ip_address', 'created_by')]", 'db_table': "'download_link'"},
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['account.User']", 'null': 'True'}),
+            'Meta': {'index_together': "[('url', 'ip_address', 'created_by')]", 'object_name': 'DownloadLink', 'db_table': "'download_link'"},
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'to': "orm['account.User']"}),
             'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'ip_address': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True'}),

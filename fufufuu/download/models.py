@@ -11,7 +11,7 @@ class DownloadLink(models.Model):
     ip_address = models.CharField(max_length=200, null=True)
 
     created_on = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, null=True)
+    created_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     def save(self, *args, **kwargs):
         self.key = binascii.hexlify(os.urandom(32)).decode('utf-8')
