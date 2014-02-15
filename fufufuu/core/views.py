@@ -31,3 +31,26 @@ class ProtectedTemplateView(TemplateView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(ProtectedTemplateView, self).dispatch(request, *args, **kwargs)
+
+
+#-------------------------------------------------------------------------------
+
+
+class PageNotFoundView(TemplateView):
+
+    template_name = '404.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        response = self.render_to_response({})
+        response.status_code = 404
+        return response
+
+
+class ServerErrorView(TemplateView):
+
+    template_name = '500.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        response = self.render_to_response({})
+        response.status_code = 500
+        return response
