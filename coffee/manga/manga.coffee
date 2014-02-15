@@ -51,6 +51,7 @@ $ ->
             self.pageNum = ko.observable(getPageNum())
             self.page = ko.computed -> pageList[self.pageNum()-1]
             self.next = ko.observable(window.location.href)
+            self.image = ko.computed -> return "<img src=\"#{self.page().url}\" class=\"manga-image\">"
 
             self.prevUrl = ko.computed ->
                 if prevChapter and self.prevNum() == self.pageNum()

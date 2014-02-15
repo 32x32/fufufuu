@@ -23,7 +23,7 @@
         <div class="manga-main" data-bind="css: { double: double() }">
             <a id="manga-prev-page" data-bind="attr: { href: prevUrl() }"></a>
             <a id="manga-next-page" data-bind="attr: { href: nextUrl() }"></a>
-            <img id="manga-image" data-bind="attr: { src: page().url }">
+            <div data-bind="html: image()"></div>
         </div>
     </div>
     <div id="payload">{{ payload }}</div>
