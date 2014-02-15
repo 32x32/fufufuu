@@ -1,1 +1,2 @@
 {% macro link_active(path) %}{% if request.path == path %}active{% endif %}{% endmacro %}
+{% macro link_active_starts_with(path) %}{% if request.path|startswith(path) %}active{% endif %}{% endmacro %}

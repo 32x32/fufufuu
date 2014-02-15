@@ -49,7 +49,7 @@ class TagListViewTests(BaseTestCase):
     def test_tag_list_view_get_collections(self):
         response = self.client.get(reverse('tag.list.collection'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'tag/tag-list-grid.html')
+        self.assertTemplateUsed(response, 'tag/tag-list.html')
 
     def test_tag_list_view_get_content(self):
         response = self.client.get(reverse('tag.list.content'))
@@ -78,6 +78,16 @@ class TagListViewTests(BaseTestCase):
 
     def test_tag_list_view_get_tanks(self):
         response = self.client.get(reverse('tag.list.tank'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tag/tag-list.html')
+
+    def test_tag_list_grid_view_get_collections(self):
+        response = self.client.get(reverse('tag.list.grid.collection'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tag/tag-list-grid.html')
+
+    def test_tag_list_grid_view_get_tanks(self):
+        response = self.client.get(reverse('tag.list.grid.tank'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tag/tag-list-grid.html')
 

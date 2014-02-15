@@ -27,30 +27,10 @@ class TagAutocompleteView(ProtectedTemplateView):
         return HttpResponseJson(tag_dict)
 
 
-class TagListGridView(TemplateView):
+class TagAliasDictContext:
 
-    page_size = 120
-    tag_type = None
-    template_name = 'tag/tag-list-grid.html'
-
-    def get(self, request):
-        tag_list = Tag.objects.filter(tag_type=self.tag_type).order_by('slug')
-        tag_list = paginate(tag_list, self.page_size, request.GET.get('p'))
-        return self.render_to_response({
-            'tag_list': tag_list,
-            'title': TagType.plural[self.tag_type],
-        })
-
-
-class TagListView(TemplateView):
-
-    tag_type = None
-    template_name = 'tag/tag-list.html'
-
-    def get(self, request):
-        filters = { 'tag__tag_type': self.tag_type }
-
-        lang = request.GET.get('lang')
+    def get_tag_alias_dict(self, request, lang=None):
+        filters = {'tag__tag_type': self.tag_type}
         if lang: filters['language'] = lang
 
         tag_alias_list = TagAlias.objects.filter(**filters).values('tag_id', 'name')
@@ -58,6 +38,39 @@ class TagListView(TemplateView):
         for tag_alias in tag_alias_list:
             tag_alias_dict[tag_alias['tag_id']].append(tag_alias['name'])
 
+        return tag_alias_dict
+
+
+class TagListGridView(TagAliasDictContext, TemplateView):
+
+    page_size = 120
+    tag_type = None
+    template_name = 'tag/tag-list-grid.html'
+
+    def get(self, request):
+        lang = request.GET.get('lang')
+        tag_alias_dict = self.get_tag_alias_dict(request, lang)
+        tag_list = Tag.objects.filter(tag_type=self.tag_type).order_by('slug')
+        tag_list = paginate(tag_list, self.page_size, request.GET.get('p'))
+        for tag in tag_list:
+            tag.alias_list = tag_alias_dict.get(tag.id)
+
+        return self.render_to_response({
+            'lang': lang,
+            'tag_list': tag_list,
+            'tag_type': self.tag_type,
+            'title': TagType.plural[self.tag_type],
+        })
+
+
+class TagListView(TagAliasDictContext, TemplateView):
+
+    tag_type = None
+    template_name = 'tag/tag-list.html'
+
+    def get(self, request):
+        lang = request.GET.get('lang')
+        tag_alias_dict = self.get_tag_alias_dict(request, lang)
         tag_list = Tag.objects.filter(tag_type=self.tag_type).order_by('slug').values('id', 'slug', 'name')
         for tag in tag_list:
             tag['alias_list'] = tag_alias_dict.get(tag['id'])
@@ -65,6 +78,7 @@ class TagListView(TemplateView):
         return self.render_to_response({
             'lang': lang,
             'tag_list': tag_list,
+            'tag_type': self.tag_type,
             'title': TagType.plural[self.tag_type],
         })
 
