@@ -1,3 +1,4 @@
+from captcha.fields import CaptchaField
 from django import forms
 from django.contrib.auth import authenticate
 from django.utils.translation import ugettext as _
@@ -37,6 +38,8 @@ class AccountRegisterForm(BlankLabelSuffixMixin, forms.ModelForm):
             'required': 'required',
         }),
     )
+
+    captcha = CaptchaField()
 
     error_messages = {
         'duplicate_username': _('That username is already taken.'),

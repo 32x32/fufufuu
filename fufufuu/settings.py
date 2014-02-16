@@ -24,6 +24,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'captcha',
     'south',
 
     'fufufuu.account',
@@ -88,6 +89,9 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 DEFAULT_FILE_STORAGE = 'fufufuu.core.storage.FufufuuStorage'
 
 X_ACCEL = False
+
+CAPTCHA_FONT_SIZE = 30
+CAPTCHA_LENGTH = 7
 
 #-------------------------------------------------------------------------------
 # cache settings

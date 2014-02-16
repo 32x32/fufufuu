@@ -1,3 +1,5 @@
+from captcha.conf import settings
+from captcha.models import CaptchaStore
 from django.core.urlresolvers import reverse
 from fufufuu.account.models import User
 from fufufuu.core.tests import BaseTestCase
@@ -62,12 +64,17 @@ class AccountRegisterViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'account/account-register.html')
 
     def test_account_register_view_post(self):
+        challenge, response = settings.get_challenge()()
+        store = CaptchaStore.objects.create(challenge=challenge, response=response)
+
         self.client.logout()
         response = self.client.post(reverse('account.register'), {
             'username': 'newuser',
             'password1': 'password',
             'password2': 'password',
             'next': reverse('tag.list.author'),
+            'captcha_0': store.hashkey,
+            'captcha_1': store.response,
         })
         self.assertRedirects(response, reverse('tag.list.author'))
 

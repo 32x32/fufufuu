@@ -15,6 +15,7 @@ urlpatterns = patterns('',
 
     # apps
     url(r'^account/',           include('fufufuu.account.urls')),
+    url(r'^captcha/',           include('captcha.urls')),
     url(r'^download/',          include('fufufuu.download.urls')),
     url(r'^favorites/',         MangaListFavoritesView.as_view(), name='manga.list.favorites'),
     url(r'^i18n/',              include('django.conf.urls.i18n')),
