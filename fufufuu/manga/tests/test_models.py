@@ -3,6 +3,8 @@ from io import BytesIO
 from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 from fufufuu.core.tests import BaseTestCase
+from fufufuu.image.enums import ImageKeyType
+from fufufuu.image.models import Image
 from fufufuu.manga.enums import MangaStatus
 from fufufuu.manga.models import Manga, MangaPage, MangaArchive
 
@@ -78,3 +80,17 @@ class MangaModelTests(BaseTestCase):
         self.assert_manga_exists(Manga.all, MangaStatus.PUBLISHED, True)
         self.assert_manga_exists(Manga.all, MangaStatus.PENDING, True)
         self.assert_manga_exists(Manga.all, MangaStatus.DELETED, True)
+
+    def test_manga_post_save(self):
+        self.manga.cover = SimpleUploadedFile('test.png', self.create_test_image_file().getvalue())
+        self.manga.save(updated_by=self.user)
+
+        image1 = Image(key_type=ImageKeyType.MANGA_COVER, key_id=self.manga.id)
+        image1.save(self.manga.cover)
+        image2 = Image(key_type=ImageKeyType.MANGA_INFO_COVER, key_id=self.manga.id)
+        image2.save(self.manga.cover)
+
+        self.manga.save(updated_by=self.user)
+
+        self.assertFalse(Image.objects.filter(id=image1.id).exists())
+        self.assertFalse(Image.objects.filter(id=image2.id).exists())

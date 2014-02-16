@@ -1,11 +1,14 @@
+from django.core.cache import cache
 from django.db import models
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 from fufufuu.account.models import User
 from fufufuu.core.languages import Language
 from fufufuu.core.models import BaseAuditableModel
 from fufufuu.core.uploads import manga_cover_upload_to, manga_archive_upload_to, manga_page_upload_to
 from fufufuu.core.utils import slugify
+from fufufuu.image.enums import ImageKeyType
+from fufufuu.image.models import Image, get_cache_key
 from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.mixins import MangaMixin
 from fufufuu.tag.models import Tag
@@ -179,3 +182,11 @@ def manga_archive_post_delete(instance, **kwargs):
     for field in ['file']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)
+
+
+@receiver(post_save, sender=Manga)
+def manga_post_save(instance, **kwargs):
+    Image.objects.filter(key_type=ImageKeyType.MANGA_COVER, key_id=instance.id).delete()
+    cache.delete(get_cache_key(ImageKeyType.MANGA_COVER, instance.id))
+    Image.objects.filter(key_type=ImageKeyType.MANGA_INFO_COVER, key_id=instance.id).delete()
+    cache.delete(get_cache_key(ImageKeyType.MANGA_INFO_COVER, instance.id))
