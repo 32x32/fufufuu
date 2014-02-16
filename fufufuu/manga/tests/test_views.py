@@ -19,6 +19,22 @@ class MangaListViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'manga/manga-list.html')
 
 
+class MangaListFavoritesViewTests(BaseTestCase):
+
+    def test_manga_list_favorites_view_get(self):
+        response = self.client.get(reverse('manga.list.favorites'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-list-favorites.html')
+
+    def test_manga_list_favorites_view_get_anonymous(self):
+        self.client.logout()
+        response = self.client.get(reverse('manga.list.favorites'))
+        self.assertRedirects(response, '{}?next={}'.format(
+            reverse('account.login'),
+            reverse('manga.list.favorites')
+        ))
+
+
 class MangaViewTests(BaseTestCase):
 
     def test_manga_view_get(self):
@@ -111,7 +127,6 @@ class MangaFavoriteViewTests(BaseTestCase):
         })
         self.assertRedirects(response, reverse('manga', args=[self.manga.id, self.manga.slug]))
         self.assertFalse(MangaFavorite.objects.filter(manga=self.manga, user=self.user).exists())
-
 
 
 class MangaEditViewTests(BaseTestCase):

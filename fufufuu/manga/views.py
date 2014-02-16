@@ -18,7 +18,7 @@ from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive
 
 
-class MangaListView(TemplateView):
+class MangaListMixin:
 
     template_name = 'manga/manga-list.html'
     page_size = 120
@@ -38,8 +38,26 @@ class MangaListView(TemplateView):
 
         return filters
 
+
+class MangaListView(MangaListMixin, TemplateView):
+
     def get(self, request):
         manga_list = Manga.published.filter(**self.get_filters()).order_by('-published_on')
+        manga_list = paginate(manga_list, self.page_size, request.GET.get('p'))
+        return self.render_to_response({
+            'manga_list': manga_list,
+        })
+
+
+class MangaListFavoritesView(MangaListMixin, ProtectedTemplateView):
+
+    template_name = 'manga/manga-list-favorites.html'
+    page_size = 120
+
+    def get(self, request):
+        filters = self.get_filters()
+        filters['favorite_users'] = request.user
+        manga_list = Manga.published.filter(**filters).order_by('-published_on')
         manga_list = paginate(manga_list, self.page_size, request.GET.get('p'))
         return self.render_to_response({
             'manga_list': manga_list,

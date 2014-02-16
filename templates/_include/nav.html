@@ -3,6 +3,7 @@
 {% set url_account_login = url('account.login') %}
 {% set url_account_register = url('account.register') %}
 {% set url_manga_list = url('manga.list') %}
+{% set url_manga_list_favorites = url('manga.list.favorites') %}
 {% set url_tag_list_grid_collection = url('tag.list.grid.collection') %}
 {% set url_tag_list_grid_tank = url('tag.list.grid.tank') %}
 {% set url_tag_list_author = url('tag.list.author') %}
@@ -16,7 +17,7 @@
 
 <nav>
     <a href="{{ url_manga_list }}" class="nav-link {{ utils.link_active(url_manga_list) }}"><span class="icon icon-clock"></span>{% trans %}Latest{% endtrans %}</a>
-    <a href="#" class="nav-link"><span class="icon icon-heart"></span>{% trans %}Favorites{% endtrans %}</a>
+    <a href="{{ url_manga_list_favorites }}" class="nav-link {{ utils.link_active(url_manga_list_favorites) }}"><span class="icon icon-heart"></span>{% trans %}Favorites{% endtrans %}</a>
     <hr class="nav-sep">
     <a href="{{ url_tag_list_grid_tank }}" class="nav-link {{ utils.link_active_starts_with(url_tag_list_grid_tank) }}"><span class="icon icon-docs"></span>{% trans %}Tanks{% endtrans %}</a>
     <a href="{{ url_tag_list_grid_collection }}" class="nav-link {{ utils.link_active_starts_with(url_tag_list_grid_collection) }}"><span class="icon icon-docs"></span>{% trans %}Collections{% endtrans %}</a>

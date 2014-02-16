@@ -1,13 +1,15 @@
 from collections import defaultdict
+
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
+
 from fufufuu.core.languages import Language
 from fufufuu.core.response import HttpResponseJson
 from fufufuu.core.utils import paginate, get_object_or_none
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.manga.models import Manga
-from fufufuu.manga.views import MangaListView
+from fufufuu.manga.views import MangaListMixin
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag, TagAlias, TagData
 
@@ -83,7 +85,7 @@ class TagListView(TagAliasDictContext, TemplateView):
         })
 
 
-class TagView(MangaListView):
+class TagView(MangaListMixin, TemplateView):
 
     template_name = 'tag/tag.html'
 

@@ -21,8 +21,6 @@
             </li>
         {% endfor %}
     </ul>
-{% else %}
-    <p class="container">{% trans %}There is nothing here.{% endtrans %}</p>
 {% endif %}
 {% if manga_list and manga_list.paginator.num_pages > 1 %}
     <div class="filter-bar filter-bar-bottom">

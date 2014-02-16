@@ -48,7 +48,7 @@
             <hr class="min-lg">
         {% else %}
             <div class="panel">
-                <h5 class="panel-heading">{% trans %}Getting Started with Uploading{% endtrans %}</h5>
+                <h4 class="panel-heading">{% trans %}Getting Started with Uploading{% endtrans %}</h4>
                 <div class="panel-body">
                     <p>{% trans %}Please remember to check that you are not violiating any rules or uploading a duplicate.{% endtrans %}</p>
                     <h4 class="space-bottom-10">{% trans %}Upload Rules{% endtrans %}</h4>
@@ -77,7 +77,7 @@
             <div class="half half-sm">
                 <div class="panel panel">
                     {{ forms.csrf_input() }}
-                    <h5 class="panel-heading">{% trans %}Upload a Zip File{% endtrans %}</h5>
+                    <h4 class="panel-heading">{% trans %}Upload a Zip File{% endtrans %}</h4>
                     <div class="panel-body">
                         <input type="file" name="zipfile" id="id_zipfile">
                         <p class="help-block space-top-10 space-bottom-0">{% trans %}Maximum file size: 50MB{% endtrans %}</p>
@@ -88,7 +88,7 @@
             <div class="half half-sm">
                 <div class="panel">
                     {{ forms.csrf_input() }}
-                    <h5 class="panel-heading">{% trans %}Upload Image Files{% endtrans %}</h5>
+                    <h4 class="panel-heading">{% trans %}Upload Image Files{% endtrans %}</h4>
                     <div class="panel-body">
                         <input type="file" multiple="multiple" name="images" id="id_images">
                         <p class="help-block space-top-10 space-bottom-0">{% trans %}Note: hold ctrl/shift (command for Mac) to select multiple files{% endtrans %}</p>

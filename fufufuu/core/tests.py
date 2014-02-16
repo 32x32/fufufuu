@@ -140,20 +140,20 @@ class CoreFilterTests(BaseTestCase):
 
     def test_exclude_keys(self):
         qd = QueryDict('a=1&b=2')
-        self.assertEquals(exclude_keys(qd), QueryDict('a=1&b=2'))
+        self.assertEqual(exclude_keys(qd), QueryDict('a=1&b=2'))
 
     def test_exclude_keys_single_exclude(self):
         qd = QueryDict('a=1&b=2')
-        self.assertEquals(exclude_keys(qd, 'b'), QueryDict('a=1'))
+        self.assertEqual(exclude_keys(qd, 'b'), QueryDict('a=1'))
 
     def test_exclude_keys_multiple_excludes(self):
         qd = QueryDict('a=1&b=2&c=3')
-        self.assertEquals(exclude_keys(qd, 'a', 'b'), QueryDict('c=3'))
+        self.assertEqual(exclude_keys(qd, 'a', 'b'), QueryDict('c=3'))
 
     def test_exclude_keys_bad_exclude(self):
         qd = QueryDict('a=1&b=2')
-        self.assertEquals(exclude_keys(qd, 'c'), QueryDict('a=1&b=2'))
+        self.assertEqual(exclude_keys(qd, 'c'), QueryDict('a=1&b=2'))
 
     def test_exclude_keys_long_names(self):
         qd = QueryDict('abc=1&page=2')
-        self.assertEquals(exclude_keys(qd, 'page'), QueryDict('abc=1'))
+        self.assertEqual(exclude_keys(qd, 'page'), QueryDict('abc=1'))

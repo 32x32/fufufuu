@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from fufufuu.core.views import PageNotFoundView, ServerErrorView
-from fufufuu.manga.views import MangaListView
+from fufufuu.manga.views import MangaListView, MangaListFavoritesView
 from fufufuu.settings import DEBUG, MEDIA_ROOT
 
 admin.autodiscover()
@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     # apps
     url(r'^account/',           include('fufufuu.account.urls')),
     url(r'^download/',          include('fufufuu.download.urls')),
+    url(r'^favorites/',         MangaListFavoritesView.as_view(), name='manga.list.favorites'),
     url(r'^i18n/',              include('django.conf.urls.i18n')),
     url(r'^m/',                 include('fufufuu.manga.urls')),
     url(r'^media/image/',       include('fufufuu.image.urls')),
