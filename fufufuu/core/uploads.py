@@ -16,7 +16,7 @@ def user_avatar_upload_to(instance, filename):
 
 
 def manga_cover_upload_to(instance, filename):
-    filename = '{}.{}'.format(int_to_base36(instance.id), get_image_extension(instance.cover))
+    filename = '{}-{}.{}'.format(int_to_base36(instance.id), get_timestamp(), get_image_extension(instance.cover))
     dirs = int_to_base36(instance.id)[:-1]
     return os.sep.join(['manga-cover'] + list(dirs) + [filename])
 
@@ -29,13 +29,13 @@ def manga_archive_upload_to(instance, filename):
 
 
 def manga_page_upload_to(instance, filename):
-    filename = '{}.{}'.format(instance.page, get_image_extension(instance.image))
+    filename = '{}-{}.{}'.format(instance.page, get_timestamp(), get_image_extension(instance.image))
     dirs = int_to_base36(instance.manga.id)
     return os.sep.join(['manga-page'] + list(dirs) + [filename])
 
 
 def tag_cover_upload_to(instance, filename):
-    filename = '{}.{}'.format(int_to_base36(instance.id), get_image_extension(instance.cover))
+    filename = '{}-{}.{}'.format(int_to_base36(instance.id), get_timestamp(), get_image_extension(instance.cover))
     dirs = int_to_base36(instance.id)[:-1]
     return os.sep.join(['tag-cover'] + list(dirs) + [filename])
 
