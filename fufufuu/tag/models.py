@@ -24,19 +24,6 @@ class Tag(BaseAuditableModel):
         super().save(*args, **kwargs)
 
 
-class TagHistory(models.Model):
-
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100)
-
-    created_on = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, null=True, blank=True, related_name='+', on_delete=models.SET_NULL, db_index=True)
-
-    class Meta:
-        db_table = 'tag_history'
-
-
 class TagAlias(models.Model):
 
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
@@ -64,21 +51,6 @@ class TagData(BaseAuditableModel):
         unique_together = [('tag', 'language')]
 
 
-class TagDataHistory(models.Model):
-
-    tag_data = models.ForeignKey(TagData)
-    language = models.CharField(max_length=20, choices=Language.choices)
-    markdown = models.TextField(blank=True)
-    html = models.TextField(blank=True)
-    cover = models.FileField(upload_to=tag_cover_upload_to, null=True)
-
-    created_on = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, null=True, blank=True, related_name='+', on_delete=models.SET_NULL, db_index=True)
-
-    class Meta:
-        db_table = 'tag_data_history'
-
-
 #-------------------------------------------------------------------------------
 # signals
 #-------------------------------------------------------------------------------
@@ -86,13 +58,6 @@ class TagDataHistory(models.Model):
 
 @receiver(post_delete, sender=TagData)
 def tag_data_post_delete(instance, **kwargs):
-    for field in ['cover']:
-        field = getattr(instance, field)
-        if field: field.storage.delete(field.path)
-
-
-@receiver(post_delete, sender=TagDataHistory)
-def tag_data_history_post_delete(instance, **kwargs):
     for field in ['cover']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)

@@ -69,33 +69,6 @@ class Manga(BaseAuditableModel, MangaMixin):
         return user.is_authenticated() and MangaFavorite.objects.filter(manga=self, user=user).exists()
 
 
-class MangaHistory(models.Model, MangaMixin):
-
-    manga               = models.ForeignKey(Manga, on_delete=models.CASCADE)
-
-    title               = models.CharField(max_length=100, default='Untitled')
-    slug                = models.SlugField(max_length=100)
-    markdown            = models.TextField(blank=True)
-    html                = models.TextField(blank=True)
-    cover               = models.FileField(upload_to=manga_cover_upload_to, null=True)
-    category            = models.CharField(max_length=20, choices=MangaCategory.choices, default=MangaCategory.VANILLA, db_index=True)
-    status              = models.CharField(max_length=20, choices=MangaStatus.choices, default=MangaStatus.DRAFT, db_index=True)
-    language            = models.CharField(max_length=20, choices=Language.choices, default=Language.ENGLISH)
-    uncensored          = models.BooleanField(default=False)
-
-    tags                = models.ManyToManyField(Tag, blank=True)
-    tank                = models.ForeignKey(Tag, null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
-    collection          = models.ForeignKey(Tag, null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
-    tank_chapter        = models.CharField(max_length=20, null=True, blank=True)
-    collection_part     = models.CharField(max_length=20, null=True, blank=True)
-
-    created_by          = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    created_on          = models.DateTimeField()
-
-    class Meta:
-        db_table = 'manga_history'
-
-
 class MangaPage(models.Model):
 
     manga = models.ForeignKey(Manga, on_delete=models.CASCADE)
@@ -146,16 +119,6 @@ class MangaFavorite(models.Model):
     class Meta:
         managed = False
         db_table = 'manga_favorite_users'
-
-
-class MangaHistoryTag(models.Model):
-
-    mangahistory = models.ForeignKey(MangaHistory)
-    tag = models.ForeignKey(Tag)
-
-    class Meta:
-        managed = False
-        db_table = 'manga_history_tags'
 
 
 #-------------------------------------------------------------------------------
