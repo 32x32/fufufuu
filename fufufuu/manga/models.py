@@ -11,6 +11,7 @@ from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.models import Image, get_cache_key
 from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.mixins import MangaMixin
+from fufufuu.revision.models import Revision
 from fufufuu.tag.models import Tag
 
 
@@ -69,9 +70,25 @@ class Manga(BaseAuditableModel, MangaMixin):
     class Meta:
         db_table = 'manga'
 
-    def save(self, *args, **kwargs):
+    def save(self, updated_by, tag_list=None, *args, **kwargs):
         self.slug = slugify(self.title)[:100] or '-'
-        super().save(*args, **kwargs)
+
+        # store revisions of manga object
+        if self.id:
+            revision_fields = {
+                'old_instance': self.__class__.objects.get(id=self.id),
+                'new_instance': self,
+                'created_by': updated_by,
+            }
+            if tag_list is not None:
+                revision_fields['m2m_data'] = {'tags': [t.id for t in tag_list]}
+            Revision.create(**revision_fields)
+
+        super().save(updated_by, *args, **kwargs)
+
+        if tag_list is not None:
+            self.tags.clear()
+            self.tags.add(*tag_list)
 
     def delete(self, updated_by=None, force_delete=False, *args, **kwargs):
         if self.status == MangaStatus.DRAFT or force_delete:

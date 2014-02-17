@@ -2,5 +2,23 @@
 
 {% block title %}{% trans title=manga.title %}History - {{ title }}{% endtrans %}{% endblock %}
 
-{% block inner %}
+{% block content %}
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>{% trans %}Date{% endtrans %}</th>
+                    <th>{% trans %}Diff{% endtrans %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for revision in revision_list %}
+                    <tr>
+                        <td>{{ revision.created_on }}</td>
+                        <td>{{ revision.diff }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

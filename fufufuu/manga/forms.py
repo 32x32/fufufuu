@@ -163,15 +163,14 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
         return cd
 
-    def save_tags(self, manga):
-        manga.tags.clear()
+    def get_tag_list(self):
         tag_list = []
         for tag_type, name in self.tags:
             tag = get_or_create_tag_by_name_or_alias(tag_type, name, self.request.user)
             if tag.name != name:
                 self.messages.append(_('{} has been replaced with {}'.format(name, tag.name)))
             tag_list.append(tag)
-        manga.tags.add(*tag_list)
+        return tag_list
 
     def save(self):
         manga = super().save(commit=False)
@@ -194,8 +193,8 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
             manga.status = MangaStatus.PUBLISHED
             manga.published_on = timezone.now()
 
-        manga.save(updated_by=self.request.user)
-        self.save_tags(manga)
+        tag_list = self.get_tag_list()
+        manga.save(updated_by=self.request.user, tag_list=tag_list)
 
         if manga.status == MangaStatus.PUBLISHED:
             generate_manga_archive(manga)

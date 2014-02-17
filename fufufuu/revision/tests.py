@@ -59,8 +59,9 @@ class RevisionModelTests(BaseTestCase):
         tag_list = list(Tag.objects.all())
 
         import random
-        old_tags = random.sample(tag_list, 2)
-        new_tags = random.sample(tag_list, 2)
+        tag_list = random.sample(tag_list, 2)
+        old_tags = tag_list[:1]
+        new_tags = tag_list[1:]
 
         old_manga.tags.clear()
         old_manga.tags.add(*old_tags)
@@ -73,3 +74,27 @@ class RevisionModelTests(BaseTestCase):
             (set(actual_old_tags), set(actual_new_tags)),
             (set([t.id for t in old_tags]), set([t.id for t in new_tags])),
         )
+
+    def test_revision_create_m2m_identical(self):
+        old_manga = self.manga
+        new_manga = copy.deepcopy(self.manga)
+
+        tag_list = list(Tag.objects.all())
+
+        import random
+        old_tags = random.sample(tag_list, 1)
+
+        old_manga.tags.clear()
+        old_manga.tags.add(*old_tags)
+
+        revision = Revision.create(old_manga, new_manga, self.user, m2m_data={
+            'tags': [t.id for t in old_tags],
+        })
+        self.assertEquals(revision, None)
+
+    def test_revision_create_no_changes(self):
+        old_manga = self.manga
+        new_manga = copy.deepcopy(self.manga)
+
+        revision = Revision.create(old_manga, new_manga, self.user)
+        self.assertEqual(revision, None)

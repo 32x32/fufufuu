@@ -1,6 +1,7 @@
 import base64
 import json
 from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed
@@ -16,6 +17,7 @@ from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive
+from fufufuu.revision.models import Revision
 
 
 class MangaListMixin:
@@ -181,17 +183,6 @@ class MangaReportView(TemplateView):
         })
 
 
-class MangaHistoryView(TemplateView):
-
-    template_name = 'manga/manga-history.html'
-
-    def get(self, request, id, slug):
-        manga = get_object_or_404(Manga.published, id=id)
-        return self.render_to_response({
-            'manga': manga,
-        })
-
-
 class MangaFavoriteView(ProtectedTemplateView):
 
     def get(self, request, id, slug):
@@ -327,3 +318,23 @@ class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
             messages.error(request, '\n'.join(errors))
 
         return redirect('manga.edit.images', id=manga.id, slug=manga.slug)
+
+
+class MangaHistoryView(MangaEditMixin, TemplateView):
+
+    template_name = 'manga/manga-history.html'
+    page_size = 100
+
+    def get(self, request, id, slug):
+        manga = self.get_manga(id)
+        ct = ContentType.objects.get_for_model(manga)
+        revision_list = Revision.objects.filter(content_type__id=ct.id, object_id=manga.id).order_by('-created_on')
+        revision_list = paginate(revision_list, self.page_size, request.GET.get('p'))
+
+        for order, revision in enumerate(revision_list, start=1):
+            print(order, revision.diff)
+
+        return self.render_to_response({
+            'manga': manga,
+            'revision_list': revision_list,
+        })

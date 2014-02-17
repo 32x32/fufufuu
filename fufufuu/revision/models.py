@@ -64,7 +64,9 @@ class Revision(models.Model):
 
         for field, new_value in m2m_data.items():
             old_value = old_fields[field]
-            if old_value != new_value: diff_dict[field] = (old_value, new_value)
+            if set(old_value) != set(new_value): diff_dict[field] = (old_value, new_value)
+
+        if not diff_dict: return None
 
         revision = cls(content_object=new_instance, created_by=created_by)
         revision.diff = diff_dict
