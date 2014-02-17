@@ -10,9 +10,9 @@ from fufufuu.account.models import User
 from fufufuu.core.languages import Language
 from fufufuu.core.utils import slugify
 from fufufuu.manga.enums import MangaCategory, MangaStatus
-from fufufuu.manga.models import Manga, MangaTag, MangaHistory, MangaHistoryTag, MangaPage
+from fufufuu.manga.models import Manga, MangaTag, MangaPage
 from fufufuu.tag.enums import TagType
-from fufufuu.tag.models import Tag, TagData, TagDataHistory, TagHistory, TagAlias
+from fufufuu.tag.models import Tag, TagData, TagAlias
 
 #-------------------------------------------------------------------------------
 
@@ -78,17 +78,6 @@ class DataCreator:
         Tag.objects.bulk_create(tag_list)
 
     @timed
-    def create_tag_histories(self):
-        tag_history_list = []
-        for tag in Tag.objects.all():
-            i = 1
-            while random.random() < 0.5:
-                tag_history = TagHistory(tag=tag, name='{} - History {}'.format(tag.name, i))
-                tag_history_list.append(tag_history)
-                i += 1
-        TagHistory.objects.bulk_create(tag_history_list)
-
-    @timed
     def create_tag_aliases(self):
         tag_alias_list = []
         for tag in Tag.objects.all():
@@ -114,22 +103,6 @@ class DataCreator:
                     updated_by=self.user,
                 ))
             TagData.objects.bulk_create(tag_data_list)
-
-    @timed
-    def create_tag_data_histories(self):
-        tdh_list = []
-        for tag_data in TagData.objects.all():
-            i = 1
-            while random.random() < 0.3:
-                tdh_list.append(TagDataHistory(
-                    tag_data=tag_data,
-                    markdown='History {}'.format(i),
-                    html='History {}'.format(i),
-                    created_by=self.user,
-                    created_on=timezone.now(),
-                ))
-                i += 1
-        TagDataHistory.objects.bulk_create(tdh_list)
 
     @timed
     def create_manga(self):
@@ -189,42 +162,6 @@ class DataCreator:
             _create_manga_tags(Manga.objects.all()[i:i+CHUNK_SIZE])
 
     @timed
-    def create_manga_history(self):
-        manga_history_list = []
-        for manga in Manga.objects.all():
-            i = 1
-            while random.random() < 0.3:
-                manga_history_list.append(MangaHistory(
-                    manga=manga,
-                    title=manga.title,
-                    slug=manga.slug,
-                    markdown='History {}'.format(i),
-                    html='History {}'.format(i),
-                    created_by=self.user,
-                    created_on=timezone.now(),
-                ))
-                i += 1
-
-        MangaHistory.objects.bulk_create(manga_history_list)
-
-    @timed
-    def create_manga_history_tags(self):
-        tag_dict = defaultdict(list)
-        for tag in Tag.objects.all():
-            tag_dict[tag.tag_type].append(tag)
-
-        tag_content_count = len(tag_dict[TagType.CONTENT])
-
-        manga_history_tag_list = []
-        for manga_history in MangaHistory.objects.all():
-            tag_list = []
-            for tag_type in [TagType.AUTHOR, TagType.CIRCLE, TagType.EVENT, TagType.MAGAZINE, TagType.PARODY, TagType.SCANLATOR]:
-                if random.random() < 0.5: tag_list.append(random.choice(tag_dict[tag_type]))
-            tag_list.extend(random.sample(tag_dict[TagType.CONTENT], random.randint(1, min(10, tag_content_count))))
-            manga_history_tag_list.extend(map(lambda tag: MangaHistoryTag(mangahistory=manga_history, tag=tag), tag_list))
-
-        MangaHistoryTag.objects.bulk_create(manga_history_tag_list)
-
     def create_manga_pages(self):
         manga_page_list = []
         for manga in Manga.objects.all():
@@ -242,14 +179,10 @@ class DataCreator:
 
         self.create_users()
         self.create_tags()
-        self.create_tag_histories()
         self.create_tag_aliases()
         self.create_tag_data()
-        self.create_tag_data_histories()
         self.create_manga()
         self.create_manga_tags()
-        self.create_manga_history()
-        self.create_manga_history_tags()
         self.create_manga_pages()
 
         finish = datetime.datetime.now()

@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.tag.enums import TagType
-from fufufuu.tag.models import TagData, TagDataHistory, Tag, TagAlias
+from fufufuu.tag.models import TagData, Tag, TagAlias
 from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
 
 
@@ -20,17 +20,6 @@ class TagModelTests(BaseTestCase):
         self.assertTrue(os.path.exists(path))
 
         tag_data.delete()
-        self.assertFalse(os.path.exists(path))
-
-    def test_tag_data_history_delete(self):
-        tag_data_history = TagDataHistory.objects.all()[0]
-        tag_data_history.cover = SimpleUploadedFile('sample.jpg', self.create_test_image_file().getvalue())
-        tag_data_history.save()
-
-        path = tag_data_history.cover.path
-        self.assertTrue(os.path.exists(path))
-
-        tag_data_history.delete()
         self.assertFalse(os.path.exists(path))
 
 
