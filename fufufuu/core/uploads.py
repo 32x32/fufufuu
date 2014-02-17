@@ -6,6 +6,10 @@ from django.utils.http import int_to_base36
 from fufufuu.core.utils import get_image_extension
 
 
+def get_timestamp():
+    return timezone.now().strftime('%Y%m%d%H%M%S')
+
+
 def user_avatar_upload_to(instance, filename):
     filename = '{}.{}'.format(instance.username, get_image_extension(instance.avatar))
     return os.sep.join(['user-avatar', instance.username[0].lower(), filename])
@@ -19,8 +23,7 @@ def manga_cover_upload_to(instance, filename):
 
 def manga_archive_upload_to(instance, filename):
     manga = instance.manga
-    timestamp = timezone.now().strftime('%Y%m%d%H%M%S')
-    filename = '{}-{}.zip'.format(int_to_base36(manga.id), timestamp)
+    filename = '{}-{}.zip'.format(int_to_base36(manga.id), get_timestamp())
     dirs = int_to_base36(manga.id)[:-1]
     return os.sep.join(['manga-archive'] + list(dirs) + [filename])
 

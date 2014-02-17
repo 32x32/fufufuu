@@ -57,7 +57,10 @@ class FufufuuTestSuiteRunner(DiscoverRunner):
             self.create_testdb()
 
     def teardown_databases(self, old_config, **kwargs):
-        shutil.rmtree(MEDIA_ROOT)
+        try:
+            shutil.rmtree(MEDIA_ROOT)
+        except FileNotFoundError:
+            pass
 
 
 @override_settings(MEDIA_ROOT=MEDIA_ROOT)

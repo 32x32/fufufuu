@@ -30,9 +30,9 @@ INSTALLED_APPS = (
     'fufufuu.account',
     'fufufuu.core',
     'fufufuu.download',
-    'fufufuu.history',
     'fufufuu.image',
     'fufufuu.manga',
+    'fufufuu.revision',
     'fufufuu.tag',
 )
 

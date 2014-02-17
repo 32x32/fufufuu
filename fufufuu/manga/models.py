@@ -51,6 +51,21 @@ class Manga(BaseAuditableModel, MangaMixin):
     published           = MangaPublishedManager()
     all                 = models.Manager()
 
+    revision_field_list = [
+        'title',
+        'markdown',
+        'cover',
+        'status',
+        'category',
+        'language',
+        'uncensored',
+        'tags',
+        'tank',
+        'collection',
+        'tank_chapter',
+        'collection_part',
+    ]
+
     class Meta:
         db_table = 'manga'
 
