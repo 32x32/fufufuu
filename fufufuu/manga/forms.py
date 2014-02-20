@@ -189,15 +189,19 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
             manga.collection = None
             manga.collection_part = None
 
+        original_status = manga.status
         if self.cleaned_data.get('action') == MangaAction.PUBLISH:
             manga.status = MangaStatus.PUBLISHED
             manga.published_on = timezone.now()
 
         tag_list = self.get_tag_list()
-        manga.save(updated_by=self.request.user, tag_list=tag_list)
-
-        if manga.status == MangaStatus.PUBLISHED:
-            generate_manga_archive(manga)
+        if original_status == MangaStatus.DRAFT:
+            manga.save(self.request.user)
+            manga.tags.clear()
+            manga.tags.add(*tag_list)
+            if manga.status == MangaStatus.PUBLISHED: generate_manga_archive(manga)
+        else:
+            manga.create_revision(self.request.user, tag_list)
 
         return manga
 

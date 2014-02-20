@@ -11,7 +11,7 @@ Django==1.6.2
 django-debug-toolbar==1.0.1
 django-simple-captcha==0.4.1
 Jinja2==2.7.2
-Markdown==2.3.1
+Markdown==2.4
 Pillow==2.3.0
 pip==1.5.2
 py-bcrypt==0.4
@@ -26,5 +26,5 @@ watchdog==0.7.1
 # deployment
 #-------------------------------------------------------------------------------
 
-Fabric==1.8.1
+Fabric==1.8.2
 uWSGI==2.0.1
