@@ -11,6 +11,7 @@ from fufufuu.core.templates import TEMPLATE_ENV
 from fufufuu.core.utils import get_image_extension
 from fufufuu.manga.enums import MangaStatus
 from fufufuu.manga.models import MangaPage, MangaArchive
+from fufufuu.tag.models import Tag
 
 
 MAX_TOTAL_SIZE          = 200 * 1024 * 1024
@@ -121,3 +122,24 @@ def generate_manga_archive(manga):
     manga_zip_file.close()
 
     return manga_archive
+
+
+def set_revision_tags(revision_list):
+    """
+    sets the value of revision.tag to be (old_tags, new_tags) where
+    old_tags, new_tags are sets of tag object
+    """
+
+    tag_id_list = []
+    for revision in revision_list:
+        if 'tags' not in revision.diff: continue
+        ts1, ts2 = revision.diff['tags']
+        tag_id_list.extend(ts1)
+        tag_id_list.extend(ts2)
+
+    tag_list = Tag.objects.filter(id__in=tag_id_list).values('id', 'name', 'tag_type')
+    tag_dict = dict([(t['id'], (t['tag_type'], t['name'])) for t in tag_list])
+    for revision in revision_list:
+        if 'tags' not in revision.diff: continue
+        ts1, ts2 = revision.diff['tags']
+        revision.tags = (set([tag_dict[tid] for tid in ts1]), set([tag_dict[tid] for tid in ts2]))

@@ -16,7 +16,7 @@ from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
-from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive
+from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive, set_revision_tags
 from fufufuu.revision.models import Revision
 from fufufuu.tag.models import Tag
 
@@ -326,34 +326,13 @@ class MangaHistoryView(MangaEditMixin, TemplateView):
     template_name = 'manga/manga-history.html'
     page_size = 10
 
-    def set_revision_tags(self, revision_list):
-        """
-        sets the value of revision.tag to be (old_tags, new_tags) where
-        old_tags, new_tags are sets of tag object
-        """
-
-        tag_id_list = []
-        for revision in revision_list:
-            if 'tags' not in revision.diff: continue
-            ts1, ts2 = revision.diff['tags']
-            tag_id_list.extend(ts1)
-            tag_id_list.extend(ts2)
-
-        tag_list = Tag.objects.filter(id__in=tag_id_list).values('id', 'name', 'tag_type')
-        tag_dict = dict([(t['id'], (t['tag_type'], t['name'])) for t in tag_list])
-        for revision in revision_list:
-            if 'tags' in revision.diff:
-                ts1, ts2 = revision.diff['tags']
-                revision.tags = (set([tag_dict[tid] for tid in ts1]), set([tag_dict[tid] for tid in ts2]))
-
     def get(self, request, id, slug):
         manga = self.get_manga(id)
         ct = ContentType.objects.get_for_model(manga)
+
         revision_list = Revision.objects.filter(content_type__id=ct.id, object_id=manga.id).select_related('created_by').order_by('-created_on')
         revision_list = paginate(revision_list, self.page_size, request.GET.get('p'))
-
-        # convert revision_list's tags into tag names
-        self.set_revision_tags(revision_list)
+        set_revision_tags(revision_list)
 
         return self.render_to_response({
             'manga': manga,
