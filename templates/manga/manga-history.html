@@ -5,6 +5,9 @@
 
 {% block content %}
     <div class="container width-800">
+        <ul class="message-list space-bottom-10">
+            <li class="message message-info">{% trans %}This page lists the changes that were made to this manga/doujinshi.{% endtrans %}</li>
+        </ul>
         {% for revision in revision_list %}
             <div class="panel panel-thin">
                 <div class="panel-heading">
@@ -15,6 +18,13 @@
                 </div>
                 <div class="panel-body">
                     {{ revision.diff }}
+                </div>
+            </div>
+        {% else %}
+            <div class="panel">
+                <h4 class="panel-heading">{% trans %}No History{% endtrans %}</h4>
+                <div class="panel-body">
+                    <p>{% trans %}A new history entry will show up on this page when this manga or doujinshi has been updated by a user.{% endtrans %}</p>
                 </div>
             </div>
         {% endfor %}

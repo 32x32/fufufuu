@@ -15,8 +15,9 @@ $ ->
         self = $(this).parent()
         self.slideUp 200, ->
             self.remove()
-            if not $('#message-list li').length
-                $('#message-list').remove()
+            messageList = self.parent().parent()
+            if not messageList.length
+                messageList.remove()
 
     #---------------------------------------------------------------------------
     # lazy image loading
