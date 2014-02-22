@@ -1,10 +1,11 @@
 import os
+
 from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.management import call_command
 from django.core.urlresolvers import reverse
 from django.utils.http import int_to_base36
-from fufufuu.core.tests import BaseTestCase, suppress_output
+
+from fufufuu.core.tests import BaseTestCase
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.image.models import Image
@@ -33,25 +34,6 @@ class ImageModelTests(BaseTestCase):
 
         image.delete()
         self.assertFalse(os.path.exists(path))
-
-
-class ImageManagementTests(BaseTestCase):
-
-    @suppress_output
-    def test_image_cache_info(self):
-        call_command('image_cache', 'info')
-
-    @suppress_output
-    def test_image_cache_clear(self):
-        image_file = self.create_test_image_file()
-        image_file = SimpleUploadedFile('test.jpg', image_file.getvalue())
-        manga_page = MangaPage.objects.create(manga=self.manga, page=1, image=image_file)
-
-        image_resize(manga_page.image, ImageKeyType.MANGA_COVER, self.manga.id)
-        self.assertTrue(Image.objects.all().count())
-
-        call_command('image_cache', 'clear')
-        self.assertFalse(Image.objects.all().count())
 
 
 class ImageViewTests(BaseTestCase):
