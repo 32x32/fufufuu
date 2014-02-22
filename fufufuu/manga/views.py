@@ -18,6 +18,7 @@ from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive
 from fufufuu.revision.models import Revision
+from fufufuu.tag.models import Tag
 
 
 class MangaListMixin:
@@ -328,8 +329,27 @@ class MangaHistoryView(MangaEditMixin, TemplateView):
     def get(self, request, id, slug):
         manga = self.get_manga(id)
         ct = ContentType.objects.get_for_model(manga)
-        revision_list = Revision.objects.filter(content_type__id=ct.id, object_id=manga.id).order_by('-created_on')
+        revision_list = Revision.objects.filter(content_type__id=ct.id, object_id=manga.id).select_related('created_by').order_by('-created_on')
         revision_list = paginate(revision_list, self.page_size, request.GET.get('p'))
+
+        # convert revision_list's tags into tag names
+        tag_id_list = []
+        for revision in revision_list:
+            if 'tags' in revision.diff:
+                ts1, ts2 = revision.diff['tags']
+                tag_id_list.extend(ts1)
+                tag_id_list.extend(ts2)
+
+        tag_list = Tag.objects.filter(id__in=tag_id_list).values('id', 'name', 'tag_type')
+        tag_dict = dict([(t['id'], (t['tag_type'], t['name'])) for t in tag_list])
+        for revision in revision_list:
+            if 'tags' in revision.diff:
+                ts1, ts2 = revision.diff['tags']
+                revision.tags = (
+                    set(map(lambda t: tag_dict[t], ts1)),
+                    set(map(lambda t: tag_dict[t], ts2))
+                )
+
         return self.render_to_response({
             'manga': manga,
             'revision_list': revision_list,

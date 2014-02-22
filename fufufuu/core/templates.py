@@ -9,6 +9,7 @@ from jinja2.loaders import FileSystemLoader
 from fufufuu.core.filters import exclude_keys, startswith
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.filters import manga_category_display, manga_status_display
+from fufufuu.tag.filters import tag_type_display
 from fufufuu.settings import TEMPLATE_DIRS, DEBUG
 
 #-------------------------------------------------------------------------------
@@ -68,4 +69,5 @@ TEMPLATE_ENV.filters.update(**{
     'naturaltime':              naturaltime,
     'set':                      set,
     'startswith':               startswith,
+    'tag_type_display':         tag_type_display,
 })

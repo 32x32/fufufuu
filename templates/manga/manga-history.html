@@ -11,6 +11,16 @@
     {% endif %}
 {% endmacro %}
 
+{% macro revision_tags(tag_set, icon_class) %}
+    {% for tag_type, name in tag_set %}
+        <div class="{% if not loop.last %}space-bottom{% endif %}">
+            <span class="icon icon-{{ icon_class }}"></span>
+            <span class="space-right-10">{{ tag_type|tag_type_display }}</span>
+            <span class="manga-tag">{{ name }}</span>
+        </div>
+    {% endfor %}
+{% endmacro %}
+
 {% block title %}{% trans title=manga.title %}History - {{ title }}{% endtrans %}{% endblock %}
 
 {% block content %}
@@ -30,11 +40,16 @@
                     <table class="panel-table">
                         {% for field, values in revision.diff.items() %}
                             <tr>
-                                <td width="100"><label>{{ field }}</label></td>
+                                <td width="100"><label class="label-normalized">{{ field }}</label></td>
                                 <td>
-                                    {{ process_value(field, values[0]) }}
-                                    <span class="icon icon-right-thin space-left-10 space-right-10"></span>
-                                    {{ process_value(field, values[1]) }}
+                                    {% if field == 'tags' %}
+                                        {{ revision_tags(revision.tags[0]-revision.tags[1], 'minus') }}
+                                        {{ revision_tags(revision.tags[1]-revision.tags[0], 'plus') }}
+                                    {% else %}
+                                        {{ process_value(field, values[0]) }}
+                                        <span class="icon icon-right-thin space-left-10 space-right-10"></span>
+                                        {{ process_value(field, values[1]) }}
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
