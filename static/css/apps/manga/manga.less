@@ -38,22 +38,15 @@
     &.double {
         max-width: @manga-width-double + 2px;
     }
-
-    > img {
-        .inline-block();
-        border: 1px solid #ddd
-    }
-}
-
-@media screen and (min-width: @screen-md) {
-    .manga-main > img { border: 1px solid #ddd; }
 }
 
 /* --------------------------------------------------
     manga image
 ---------------------------------------------------*/
 
-#manga-image {
+.manga-image {
+    .inline-block();
+    border: 1px solid #ddd;
     width: auto;
 }
 

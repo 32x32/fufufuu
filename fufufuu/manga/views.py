@@ -323,17 +323,13 @@ class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
 class MangaHistoryView(MangaEditMixin, TemplateView):
 
     template_name = 'manga/manga-history.html'
-    page_size = 100
+    page_size = 10
 
     def get(self, request, id, slug):
         manga = self.get_manga(id)
         ct = ContentType.objects.get_for_model(manga)
         revision_list = Revision.objects.filter(content_type__id=ct.id, object_id=manga.id).order_by('-created_on')
         revision_list = paginate(revision_list, self.page_size, request.GET.get('p'))
-
-        for order, revision in enumerate(revision_list, start=1):
-            print(order, revision.diff)
-
         return self.render_to_response({
             'manga': manga,
             'revision_list': revision_list,
