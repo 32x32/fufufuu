@@ -8,6 +8,7 @@ from jinja2.ext import Extension
 from jinja2.loaders import FileSystemLoader
 from fufufuu.core.filters import exclude_keys, startswith
 from fufufuu.image.filters import image_resize
+from fufufuu.manga.filters import manga_category_display, manga_status_display
 from fufufuu.settings import TEMPLATE_DIRS, DEBUG
 
 #-------------------------------------------------------------------------------
@@ -57,11 +58,14 @@ TEMPLATE_SETTINGS = {
 TEMPLATE_ENV = Environment(**TEMPLATE_SETTINGS)
 TEMPLATE_ENV.install_gettext_callables(ugettext, ungettext)
 TEMPLATE_ENV.globals.update(**{
-    'url':                  reverse,
+    'url':                      reverse,
 })
 TEMPLATE_ENV.filters.update(**{
-    'exclude_keys':         exclude_keys,
-    'image_resize':         image_resize,
-    'naturaltime':          naturaltime,
-    'startswith':           startswith,
+    'exclude_keys':             exclude_keys,
+    'image_resize':             image_resize,
+    'manga_category_display':   manga_category_display,
+    'manga_status_display':     manga_status_display,
+    'naturaltime':              naturaltime,
+    'set':                      set,
+    'startswith':               startswith,
 })

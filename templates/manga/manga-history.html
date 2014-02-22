@@ -1,6 +1,16 @@
 {% extends 'manga/manga-base.html' %}
 {% import '_macros/widgets.html' as widgets with context %}
 
+{% macro process_value(field, value) %}
+    {% if field == 'category' %}
+        <span class="manga-category manga-category-{{ value.lower() }}">{{ value|manga_category_display }}</span>
+    {% elif field == 'status' %}
+        <span class="manga-status manga-status-{{ value.lower() }}">{{ value|manga_status_display }}</span>
+    {% else %}
+        <span>{{ value }}</span>
+    {% endif %}
+{% endmacro %}
+
 {% block title %}{% trans title=manga.title %}History - {{ title }}{% endtrans %}{% endblock %}
 
 {% block content %}
@@ -16,8 +26,19 @@
                     <p class="text-secondary text-xsmall space-bottom-0">{% trans date=revision.created_on|naturaltime %}Edited {{ date }}{% endtrans %}</p>
                     <div class="clear"></div>
                 </div>
-                <div class="panel-body">
-                    {{ revision.diff }}
+                <div class="panel-body panel-body-no-padding">
+                    <table class="panel-table">
+                        {% for field, values in revision.diff.items() %}
+                            <tr>
+                                <td width="100"><label>{{ field }}</label></td>
+                                <td>
+                                    {{ process_value(field, values[0]) }}
+                                    <span class="icon icon-right-thin space-left-10 space-right-10"></span>
+                                    {{ process_value(field, values[1]) }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
                 </div>
             </div>
         {% else %}
