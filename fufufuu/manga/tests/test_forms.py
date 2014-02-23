@@ -1,5 +1,7 @@
 import os
+
 from django.core.files.uploadedfile import SimpleUploadedFile
+
 from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.manga.enums import MangaCategory, MangaStatus
@@ -170,6 +172,25 @@ class MangaEditFormTests(BaseTestCase):
         manga = Manga.objects.get(id=self.manga.id)
         new_cover_path = manga.cover.path
         self.assertNotEqual(old_cover_path, new_cover_path)
+
+    def test_manga_edit_form_no_changes(self):
+        data = {
+            'title':        self.manga.title,
+            'category':     self.manga.category,
+            'language':     self.manga.language,
+            'markdown':     self.manga.markdown,
+            'authors':      ', '.join([t.name for t in self.manga.tag_dictionary[TagType.AUTHOR]]),
+            'circles':      ', '.join([t.name for t in self.manga.tag_dictionary[TagType.CIRCLE]]),
+            'content':      ', '.join([t.name for t in self.manga.tag_dictionary[TagType.CONTENT]]),
+            'events':       ', '.join([t.name for t in self.manga.tag_dictionary[TagType.EVENT]]),
+            'magazines':    ', '.join([t.name for t in self.manga.tag_dictionary[TagType.MAGAZINE]]),
+            'parodies':     ', '.join([t.name for t in self.manga.tag_dictionary[TagType.PARODY]]),
+            'scanlators':   ', '.join([t.name for t in self.manga.tag_dictionary[TagType.SCANLATOR]]),
+            'action':       'save',
+        }
+        form = MangaEditForm(request=self.request, instance=self.manga, data=data)
+        self.assertTrue(form.is_valid())
+        form.save()
 
 
 class MangaPageFormsetTests(BaseTestCase):
