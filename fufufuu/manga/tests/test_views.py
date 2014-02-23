@@ -101,12 +101,12 @@ class MangaReportViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'manga/manga-report.html')
 
 
-class MangaHistoryViewTests(BaseTestCase):
+class MangaRevisionsViewTests(BaseTestCase):
 
-    def test_manga_history_view_get(self):
-        response = self.client.get(reverse('manga.history', args=[self.manga.id, self.manga.slug]))
+    def test_manga_revisions_view_get(self):
+        response = self.client.get(reverse('manga.revisions', args=[self.manga.id, self.manga.slug]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'manga/manga-history.html')
+        self.assertTemplateUsed(response, 'manga/manga-revisions.html')
 
 
 class MangaFavoriteViewTests(BaseTestCase):
