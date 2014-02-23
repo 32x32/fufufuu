@@ -3,6 +3,7 @@ import copy
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from fufufuu.core.tests import BaseTestCase
+from fufufuu.manga.models import Manga
 from fufufuu.revision.models import Revision
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
@@ -59,9 +60,9 @@ class RevisionModelTests(BaseTestCase):
         tag_list = list(Tag.objects.all())
 
         import random
-        tag_list = random.sample(tag_list, 2)
-        old_tags = tag_list[:1]
-        new_tags = tag_list[1:]
+        tag_list = random.sample(tag_list, 4)
+        old_tags = tag_list[:2]
+        new_tags = tag_list[2:]
 
         old_manga.tags.clear()
         old_manga.tags.add(*old_tags)
@@ -90,7 +91,7 @@ class RevisionModelTests(BaseTestCase):
         revision = Revision.create(old_manga, new_manga, self.user, m2m_data={
             'tags': [t.id for t in old_tags],
         })
-        self.assertEquals(revision, None)
+        self.assertEqual(revision, None)
 
     def test_revision_create_no_changes(self):
         old_manga = self.manga
@@ -98,3 +99,80 @@ class RevisionModelTests(BaseTestCase):
 
         revision = Revision.create(old_manga, new_manga, self.user)
         self.assertEqual(revision, None)
+
+
+class RevisionEventModelTests(BaseTestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        self.old_manga = self.manga
+        self.new_manga = copy.deepcopy(self.manga)
+
+        self.old_manga.cover = None
+        self.new_manga.cover = SimpleUploadedFile('test.png', self.create_test_image_file().getvalue())
+        self.new_manga.save(updated_by=self.user)
+
+        self.old_manga.title = 'Old Title'
+        self.new_manga.title = 'New Title'
+        self.old_manga.uncensored = False
+        self.new_manga.uncensored = True
+
+        self.tank = Tag.objects.filter(tag_type=TagType.TANK)[0]
+        self.old_manga.tank = self.tank
+        self.new_manga.tank = None
+
+        self.collection = Tag.objects.filter(tag_type=TagType.COLLECTION)[0]
+        self.old_manga.collection = None
+        self.new_manga.collection = self.collection
+
+        import random
+        tag_list = list(Tag.objects.all())
+        tag_list = random.sample(tag_list, 4)
+        self.old_tags = tag_list[:2]
+        self.new_tags = tag_list[2:]
+
+        self.old_manga.tags.clear()
+        self.old_manga.tags.add(*self.old_tags)
+
+        self.revision = Revision.create(self.old_manga, self.new_manga, self.user, m2m_data={
+            'tags': [t.id for t in self.new_tags],
+        })
+
+    def test_revision_revert(self):
+        self.new_manga.save(self.user)
+        self.new_manga.tags.clear()
+        self.new_manga.tags.add(*self.new_tags)
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(set(manga.tags.all()), set(self.new_tags))
+
+        self.revision.revert(self.user)
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(manga.title, 'Old Title')
+        self.assertEqual(manga.slug, 'old-title')
+        self.assertFalse(manga.uncensored)
+        self.assertFalse(manga.cover)
+        self.assertEqual(set(manga.tags.all()), set(self.old_tags))
+        self.assertEqual(manga.collection, None)
+        self.assertEqual(manga.tank, self.tank)
+
+    def test_revision_apply(self):
+        self.old_manga.save(self.user)
+        self.old_manga.tags.clear()
+        self.old_manga.tags.add(*self.old_tags)
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(set(manga.tags.all()), set(self.old_tags))
+
+        self.revision.apply(self.user)
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(manga.title, 'New Title')
+        self.assertEqual(manga.slug, 'new-title')
+        self.assertTrue(manga.uncensored)
+        self.assertTrue(manga.cover)
+        self.assertEqual(set(manga.tags.all()), set(self.new_tags))
+        self.assertEqual(manga.collection, self.collection)
+        self.assertEqual(manga.tank, None)

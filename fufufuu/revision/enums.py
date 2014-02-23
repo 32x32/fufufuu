@@ -8,9 +8,9 @@ class RevisionStatus:
     REJECTED            = 'REJECTED'
 
     choices = (
-        (PENDING, _('Pending')),
-        (APPROVED, _('Approved')),
-        (REJECTED, _('Rejected')),
+        (PENDING,       _('Pending')),
+        (APPROVED,      _('Approved')),
+        (REJECTED,      _('Rejected')),
     )
 
     choices_dict = dict(choices)
@@ -19,15 +19,11 @@ class RevisionStatus:
 class RevisionAction:
 
     APPLY               = 'APPLY'
-    RE_APPLY            = 'RE_APPLY'
     REVERT              = 'REVERT'
-    RE_REVERT           = 'RE_REVERT'
 
     choices = (
-        (APPLY, _('Apply')),
-        (RE_APPLY, _('Re-apply')),
-        (REVERT, _('Revert')),
-        (RE_REVERT, _('Re-revert')),
+        (APPLY,         _('Apply')),
+        (REVERT,        _('Revert')),
     )
 
     choices_dict = dict(choices)

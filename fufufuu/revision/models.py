@@ -78,11 +78,21 @@ class Revision(models.Model):
 
         return revision
 
-    def revert(self):
-        pass
+    def revert(self, *args, **kwargs):
+        obj = self.content_object
+        for field, (old_value, new_value) in self.diff.items():
+            if type(obj._meta.get_field(field)) == models.ForeignKey:
+                field += '_id'
+            setattr(obj, field, old_value)
+        obj.save(*args, **kwargs)
 
-    def apply(self):
-        pass
+    def apply(self, *args, **kwargs):
+        obj = self.content_object
+        for field, (old_value, new_value) in self.diff.items():
+            if type(obj._meta.get_field(field)) == models.ForeignKey:
+                field += '_id'
+            setattr(obj, field, new_value)
+        obj.save(*args, **kwargs)
 
 
 class RevisionEvent(models.Model):
