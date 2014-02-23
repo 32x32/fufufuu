@@ -90,18 +90,86 @@ class MangaEditFormTests(BaseTestCase):
             'authors': ', '.join(['Author {}'.format(i) for i in range(100)]),
             'action': 'save',
         })
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['__all__'], ['Exceeded maximum number of allowed tags that can be assigned.'])
 
     def test_manga_edit_form_tank_and_collection(self):
-        pass
+        tank = Tag.objects.filter(tag_type=TagType.TANK)[0]
+        collection = Tag.objects.filter(tag_type=TagType.COLLECTION)[0]
+        form = MangaEditForm(request=self.request, instance=self.manga, data={
+            'title': 'Test Manga Title',
+            'category': MangaCategory.VANILLA,
+            'language': Language.ENGLISH,
+            'tank': tank.name,
+            'tank_chapter': '2',
+            'collection': collection.name,
+            'collection_part': '3',
+            'action': 'save',
+        })
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(manga.tank, tank)
+        self.assertEqual(manga.tank_chapter, '2')
+        self.assertEqual(manga.collection, collection)
+        self.assertEqual(manga.collection_part, '3')
 
     def test_manga_edit_form_tags(self):
-        pass
+        authors = Tag.objects.filter(tag_type=TagType.AUTHOR)
+        circles = Tag.objects.filter(tag_type=TagType.CIRCLE)
+        content = Tag.objects.filter(tag_type=TagType.CONTENT)
+        events = Tag.objects.filter(tag_type=TagType.EVENT)
+        magazines = Tag.objects.filter(tag_type=TagType.MAGAZINE)
+        parodies = Tag.objects.filter(tag_type=TagType.PARODY)
+        scanlators = Tag.objects.filter(tag_type=TagType.SCANLATOR)
 
-    def test_manga_edit_form_cover_required(self):
-        pass
+        form = MangaEditForm(request=self.request, instance=self.manga, data={
+            'title': 'Test Manga Title',
+            'category': MangaCategory.VANILLA,
+            'language': Language.ENGLISH,
+            'authors': ', '.join([t.name for t in authors]),
+            'circles': ', '.join([t.name for t in circles]),
+            'content': ', '.join([t.name for t in content]),
+            'events': ', '.join([t.name for t in events]),
+            'magazines': ', '.join([t.name for t in magazines]),
+            'parodies': ', '.join([t.name for t in parodies]),
+            'scanlators': ', '.join([t.name for t in scanlators]),
+            'action': 'save',
+        })
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        manga = Manga.objects.get(id=self.manga.id)
+        tag_dictionary = manga.tag_dictionary
+
+        self.assertEqual(set(tag_dictionary[TagType.AUTHOR]), set(authors))
+        self.assertEqual(set(tag_dictionary[TagType.CIRCLE]), set(circles))
+        self.assertEqual(set(tag_dictionary[TagType.CONTENT]), set(content))
+        self.assertEqual(set(tag_dictionary[TagType.EVENT]), set(events))
+        self.assertEqual(set(tag_dictionary[TagType.MAGAZINE]), set(magazines))
+        self.assertEqual(set(tag_dictionary[TagType.PARODY]), set(parodies))
+        self.assertEqual(set(tag_dictionary[TagType.SCANLATOR]), set(scanlators))
 
     def test_manga_edit_form_cover_update(self):
-        pass
+        self.manga.cover = SimpleUploadedFile('test1.jpg', self.create_test_image_file().getvalue())
+        self.manga.save(self.user)
+        old_cover_path = self.manga.cover.path
+
+        form = MangaEditForm(request=self.request, instance=self.manga, data={
+            'title': 'Test Manga Title',
+            'category': MangaCategory.VANILLA,
+            'language': Language.ENGLISH,
+            'action': 'save',
+        }, files={
+            'cover': SimpleUploadedFile('test2.jpg', self.create_test_image_file().getvalue())
+        })
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        manga = Manga.objects.get(id=self.manga.id)
+        new_cover_path = manga.cover.path
+        self.assertNotEqual(old_cover_path, new_cover_path)
 
 
 class MangaPageFormsetTests(BaseTestCase):
