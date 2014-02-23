@@ -19,9 +19,9 @@ class Migration(SchemaMigration):
             ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
             ('diff_raw', self.gf('django.db.models.fields.TextField')()),
             ('messsage', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('status', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=20)),
+            ('status', self.gf('django.db.models.fields.CharField')(db_index=True, default='PENDING', max_length=20)),
             ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['account.User'], blank=True, on_delete=models.SET_NULL)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, on_delete=models.SET_NULL, to=orm['account.User'], blank=True)),
         ))
         db.send_create_signal('revision', ['Revision'])
 
@@ -37,7 +37,7 @@ class Migration(SchemaMigration):
             ('new_status', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('message', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['account.User'], blank=True, on_delete=models.SET_NULL)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, on_delete=models.SET_NULL, to=orm['account.User'], blank=True)),
         ))
         db.send_create_signal('revision', ['RevisionEvent'])
 
@@ -56,7 +56,7 @@ class Migration(SchemaMigration):
     models = {
         'account.user': {
             'Meta': {'db_table': "'user'", 'object_name': 'User'},
-            'avatar': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'max_length': '100', 'blank': 'True'}),
+            'avatar': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'blank': 'True', 'max_length': '100'}),
             'comment_limit': ('django.db.models.fields.IntegerField', [], {'default': '100'}),
             'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '254', 'blank': 'True'}),
@@ -69,30 +69,30 @@ class Migration(SchemaMigration):
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'upload_limit': ('django.db.models.fields.IntegerField', [], {'default': '10'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
+            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
         },
         'contenttypes.contenttype': {
-            'Meta': {'db_table': "'django_content_type'", 'object_name': 'ContentType', 'unique_together': "(('app_label', 'model'),)", 'ordering': "('name',)"},
+            'Meta': {'ordering': "('name',)", 'db_table': "'django_content_type'", 'object_name': 'ContentType', 'unique_together': "(('app_label', 'model'),)"},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'revision.revision': {
-            'Meta': {'db_table': "'revision'", 'index_together': "[('content_type', 'object_id')]", 'object_name': 'Revision'},
+            'Meta': {'db_table': "'revision'", 'object_name': 'Revision', 'index_together': "[('content_type', 'object_id')]"},
             'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'to': "orm['account.User']", 'blank': 'True', 'on_delete': 'models.SET_NULL'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['account.User']", 'blank': 'True'}),
             'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'diff_raw': ('django.db.models.fields.TextField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'messsage': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
-            'status': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '20'})
+            'status': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'default': "'PENDING'", 'max_length': '20'})
         },
         'revision.revisionevent': {
             'Meta': {'db_table': "'revision_event'", 'object_name': 'RevisionEvent'},
             'action': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'to': "orm['account.User']", 'blank': 'True', 'on_delete': 'models.SET_NULL'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['account.User']", 'blank': 'True'}),
             'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'message': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),

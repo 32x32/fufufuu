@@ -8,6 +8,7 @@ from fufufuu.core.languages import Language
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus
 from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import generate_manga_archive
+from fufufuu.revision.enums import RevisionStatus
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
 
@@ -204,6 +205,8 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
             revision = manga.create_revision(self.request.user, tag_list)
             if self.request.user == manga.created_by or self.request.user.is_staff:
                 revision.apply(self.request.user)
+                revision.status = RevisionStatus.APPROVED
+                revision.save()
 
         return manga
 

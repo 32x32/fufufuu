@@ -27,7 +27,7 @@ class Revision(models.Model):
     diff_raw = models.TextField()
 
     messsage = models.TextField(blank=True, null=True)
-    status = models.CharField(max_length=20, choices=RevisionStatus.choices, db_index=True)
+    status = models.CharField(max_length=20, choices=RevisionStatus.choices, default=RevisionStatus.PENDING, db_index=True)
 
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
