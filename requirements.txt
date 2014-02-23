@@ -13,7 +13,7 @@ django-simple-captcha==0.4.1
 Jinja2==2.7.2
 Markdown==2.4
 Pillow==2.3.0
-pip==1.5.2
+pip==1.5.4
 py-bcrypt==0.4
 psycopg2==2.5.2
 pytz==2013.9

@@ -29,7 +29,7 @@ class MangaPublishedManager(models.Manager):
 
 class Manga(BaseAuditableModel, MangaMixin):
 
-    title               = models.CharField(max_length=100, default='Untitled')
+    title               = models.CharField(max_length=100, default='Untitled', db_index=True)
     slug                = models.SlugField(max_length=100)
     markdown            = models.TextField(blank=True)
     html                = models.TextField(blank=True)
