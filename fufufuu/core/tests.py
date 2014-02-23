@@ -94,6 +94,12 @@ class BaseTestCase(TestCase):
         img.save(image_file, format=format)
         return image_file
 
+    def create_test_user(self, username):
+        user = User(username=username)
+        user.set_password('password')
+        user.save()
+        return user
+
 
 class CoreUtilTests(BaseTestCase):
 

@@ -1,8 +1,10 @@
 from collections import defaultdict
+
 from django import forms
 from django.forms.models import BaseModelFormSet
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus
@@ -10,6 +12,7 @@ from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import generate_manga_archive
 from fufufuu.revision.enums import RevisionStatus
 from fufufuu.tag.enums import TagType
+from fufufuu.tag.models import Tag
 from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
 
 
@@ -81,7 +84,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         model = Manga
         fields = ('title', 'markdown', 'cover', 'category', 'language', 'uncensored')
 
-    def __init__(self, request, *args, **kwargs):
+    def __init__(self, request, tag_id_list=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.messages = []
         self.request = request
@@ -96,10 +99,14 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         self.fields['cover'].required = bool(manga.cover)
 
         if 'data' not in kwargs:
-            self.initialize_tag_fields(manga)
+            self.initialize_tag_fields(manga, tag_id_list)
 
-    def initialize_tag_fields(self, manga):
-        tag_list = manga.tags.all()
+    def initialize_tag_fields(self, manga, tag_id_list):
+        if tag_id_list:
+            tag_list = Tag.objects.filter(id__in=tag_id_list)
+        else:
+            tag_list = manga.tags.all()
+
         tag_dict = defaultdict(list)
         for tag in tag_list: tag_dict[tag.tag_type].append(tag.name)
 
@@ -204,8 +211,9 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         else:
             revision = manga.create_revision(self.request.user, tag_list)
             if self.request.user == manga.created_by or self.request.user.is_staff:
-                manga = revision.apply()
+                manga, m2m = revision.apply()
                 manga.save(self.request.user)
+                if 'tags' in m2m: manga.tags = m2m['tags']
                 revision.status = RevisionStatus.APPROVED
                 revision.save()
 

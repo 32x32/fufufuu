@@ -1,15 +1,20 @@
 import zipfile
 from io import BytesIO
+
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
-from fufufuu.account.models import User
+
 from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.core.utils import slugify
 from fufufuu.download.models import DownloadLink
 from fufufuu.manga.enums import MangaStatus, MangaCategory
 from fufufuu.manga.models import Manga, MangaFavorite
+from fufufuu.revision.enums import RevisionStatus
+from fufufuu.revision.models import Revision
+from fufufuu.tag.models import Tag
 
 
 class MangaListViewTests(BaseTestCase):
@@ -194,6 +199,45 @@ class MangaEditViewTests(BaseTestCase):
         self.assertRedirects(response, reverse('upload.list'))
         self.assertFalse(Manga.objects.filter(id=self.manga.id).exists())
 
+    def test_manga_edit_view_get_with_revision(self):
+        self.manga.status = MangaStatus.PUBLISHED
+        self.manga.save(self.user)
+
+        user = self.create_test_user('testuser2')
+        self.client.login(username='testuser2', password='password')
+
+        self.manga.title = 'Revision Title'
+        self.manga.create_revision(user, Tag.objects.all()[:1])
+
+        response = self.client.get(reverse('manga.edit', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-edit.html')
+
+    def test_manga_edit_view_post_with_revision(self):
+        self.manga.status = MangaStatus.PUBLISHED
+        self.manga.save(self.user)
+
+        user = self.create_test_user('testuser2')
+        self.client.login(username='testuser2', password='password')
+
+        self.manga.title = 'Revision Title'
+        response = self.client.post(reverse('manga.edit', args=[self.manga.id, self.manga.slug]), {
+            'title': 'Revision Title 2',
+            'category': MangaCategory.VANILLA,
+            'language': Language.ENGLISH,
+            'action': 'save',
+        })
+        self.assertRedirects(response, reverse('manga.edit', args=[self.manga.id, self.manga.slug]))
+
+        ct = ContentType.objects.get_for_model(self.manga)
+        new_revision = Revision.objects.get(
+            content_type__id=ct.id,
+            object_id=self.manga.id,
+            status=RevisionStatus.PENDING,
+            created_by=user
+        )
+        self.assertEqual(new_revision.diff['title'], ('Test Manga 1', 'Revision Title 2'))
+
 
 class MangaEditImagesViewTests(BaseTestCase):
 
@@ -203,10 +247,7 @@ class MangaEditImagesViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'manga/manga-edit-images.html')
 
     def test_manga_edit_images_view_get_moderator(self):
-        user = User(username='testuser2')
-        user.set_password('password')
-        user.save()
-
+        user = self.create_test_user('testuser2')
         self.manga.created_by = user
         self.manga.save(user)
 
@@ -215,10 +256,7 @@ class MangaEditImagesViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'manga/manga-edit-images.html')
 
     def test_manga_edit_images_view_get_not_allowed(self):
-        user = User(username='testuser2')
-        user.set_password('password')
-        user.save()
-
+        user = self.create_test_user('testuser2')
         self.manga.created_by = user
         self.manga.save(user)
 

@@ -19,6 +19,7 @@ from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive, attach_revision_tags
+from fufufuu.revision.enums import RevisionStatus
 from fufufuu.revision.models import Revision
 
 
@@ -228,11 +229,32 @@ class MangaEditView(MangaEditMixin, ProtectedTemplateView):
 
     template_name = 'manga/manga-edit.html'
 
+    def get_revision(self, manga, request):
+        ct = ContentType.objects.get_for_model(manga)
+        try:
+            revision = Revision.objects.get(
+                content_type__id=ct.id,
+                object_id=manga.id,
+                status=RevisionStatus.PENDING,
+                created_by=request.user,
+            )
+        except Revision.DoesNotExist:
+            revision = None
+        return revision
+
     def get(self, request, id, slug):
         manga = self.get_manga(id)
+
+        revision = self.get_revision(manga, request)
+        if revision:
+            manga, m2m = revision.apply()
+            messages.info(request, _('The current changes are only visible to you. When a moderator or the uploader approves your changes, they will become visible to everyone.'))
+        else:
+            m2m = {}
+
         return self.render_to_response({
             'manga': manga,
-            'form': MangaEditForm(request=request, instance=manga),
+            'form': MangaEditForm(request=request, tag_id_list=m2m.get('tags'), instance=manga),
         })
 
     def post(self, request, id, slug):
@@ -244,6 +266,9 @@ class MangaEditView(MangaEditMixin, ProtectedTemplateView):
 
         form = MangaEditForm(request=request, instance=manga, data=request.POST, files=request.FILES)
         if form.is_valid():
+            revision = self.get_revision(manga, request)
+            if revision: revision.delete()
+
             manga = form.save()
             messages.success(request, _('{} has been updated').format(manga.title))
             for message in form.messages:

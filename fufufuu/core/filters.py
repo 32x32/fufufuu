@@ -1,4 +1,5 @@
 from django.http.request import QueryDict
+from fufufuu.core.languages import Language
 
 
 def exclude_keys(value, *exclude):
@@ -23,3 +24,7 @@ def startswith(value, s):
 
     if not value: return False
     return value.find(s) == 0
+
+
+def language_display(lang):
+    return Language.choices_dict[lang]

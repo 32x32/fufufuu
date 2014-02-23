@@ -79,20 +79,23 @@ class Revision(models.Model):
         return revision
 
     def revert(self):
-        obj = self.content_object
-        for field, (old_value, new_value) in self.diff.items():
-            if type(obj._meta.get_field(field)) == models.ForeignKey:
-                field += '_id'
-            setattr(obj, field, old_value)
-        return obj
+        return self._update(0)
 
     def apply(self):
+        return self._update(1)
+
+    def _update(self, pos):
+        m2m_data = {}
         obj = self.content_object
-        for field, (old_value, new_value) in self.diff.items():
-            if type(obj._meta.get_field(field)) == models.ForeignKey:
-                field += '_id'
-            setattr(obj, field, new_value)
-        return obj
+        for field, values in self.diff.items():
+            field_type = type(obj._meta.get_field(field))
+            if field_type == models.ForeignKey:
+                setattr(obj, field+'_id', values[pos])
+            elif field_type == models.ManyToManyField:
+                m2m_data[field] = values[pos]
+            else:
+                setattr(obj, field, values[pos])
+        return obj, m2m_data
 
 
 class RevisionEvent(models.Model):

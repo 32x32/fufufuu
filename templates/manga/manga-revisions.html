@@ -6,6 +6,8 @@
         <span class="manga-category manga-category-{{ value.lower() }}">{{ value|manga_category_display }}</span>
     {% elif field == 'status' %}
         <span class="manga-status manga-status-{{ value.lower() }}">{{ value|manga_status_display }}</span>
+    {% elif field == 'language' %}
+        <span class="manga-category manga-category-other">{{ value|language_display }}</span>
     {% else %}
         <span>{{ value }}</span>
     {% endif %}
@@ -38,7 +40,7 @@
                 </div>
                 <div class="panel-body panel-body-no-padding">
                     <table class="panel-table">
-                        {% for field, values in revision.diff.items() %}
+                        {% for field, values in revision.diff.items()|sort %}
                             <tr>
                                 <td width="100"><label class="label-normalized">{{ field }}</label></td>
                                 <td>
@@ -46,8 +48,10 @@
                                         {{ revision_tags(revision.tags[0]-revision.tags[1], 'minus') }}
                                         {{ revision_tags(revision.tags[1]-revision.tags[0], 'plus') }}
                                     {% else %}
-                                        {{ process_value(field, values[0]) }}
-                                        <span class="icon icon-right-thin space-left-10 space-right-10"></span>
+                                        {% if values[0] %}
+                                            {{ process_value(field, values[0]) }}
+                                            <span class="icon icon-right-thin space-left-10 space-right-10"></span>
+                                        {% endif %}
                                         {{ process_value(field, values[1]) }}
                                     {% endif %}
                                 </td>
