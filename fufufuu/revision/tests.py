@@ -147,11 +147,9 @@ class RevisionEventModelTests(BaseTestCase):
         manga = Manga.objects.get(id=self.manga.id)
         self.assertEqual(set(manga.tags.all()), set(self.new_tags))
 
-        self.revision.revert(self.user)
-
-        manga = Manga.objects.get(id=self.manga.id)
+        manga = self.revision.revert()
         self.assertEqual(manga.title, 'Old Title')
-        self.assertEqual(manga.slug, 'old-title')
+        self.assertEqual(manga.slug, 'new-title')
         self.assertFalse(manga.uncensored)
         self.assertFalse(manga.cover)
         self.assertEqual(set(manga.tags.all()), set(self.old_tags))
@@ -166,11 +164,9 @@ class RevisionEventModelTests(BaseTestCase):
         manga = Manga.objects.get(id=self.manga.id)
         self.assertEqual(set(manga.tags.all()), set(self.old_tags))
 
-        self.revision.apply(self.user)
-
-        manga = Manga.objects.get(id=self.manga.id)
+        manga = self.revision.apply()
         self.assertEqual(manga.title, 'New Title')
-        self.assertEqual(manga.slug, 'new-title')
+        self.assertEqual(manga.slug, 'old-title')
         self.assertTrue(manga.uncensored)
         self.assertTrue(manga.cover)
         self.assertEqual(set(manga.tags.all()), set(self.new_tags))

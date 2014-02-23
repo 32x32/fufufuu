@@ -32,7 +32,7 @@
             <div class="panel panel-thin">
                 <div class="panel-heading">
                     <span class="left space-right-10">{{ widgets.user_avatar(revision.created_by) }}</span>
-                    <strong>{{ manga.created_by }}</strong>
+                    <strong>{{ revision.created_by.username }}</strong>
                     <p class="text-secondary text-xsmall space-bottom-0">{% trans date=revision.created_on|naturaltime %}Edited {{ date }}{% endtrans %}</p>
                     <div class="clear"></div>
                 </div>

@@ -204,7 +204,8 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         else:
             revision = manga.create_revision(self.request.user, tag_list)
             if self.request.user == manga.created_by or self.request.user.is_staff:
-                revision.apply(self.request.user)
+                manga = revision.apply()
+                manga.save(self.request.user)
                 revision.status = RevisionStatus.APPROVED
                 revision.save()
 
