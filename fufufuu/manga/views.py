@@ -308,7 +308,10 @@ class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
         return HttpResponseNotAllowed(permitted_methods=['post'])
 
     def post(self, request, id, slug):
-        manga = self.get_manga(id)
+        if request.user.is_staff:
+            manga = get_object_or_404(Manga.objects, id=id)
+        else:
+            manga = get_object_or_404(Manga.objects, id=id, created_by=request.user)
         if 'zipfile' in request.FILES:
             errors = process_zipfile(manga, request.FILES.get('zipfile'), request.user)
         elif 'images' in request.FILES:

@@ -3,6 +3,7 @@ from io import BytesIO
 from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
+from fufufuu.account.models import User
 from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.core.utils import slugify
@@ -197,6 +198,38 @@ class MangaEditViewTests(BaseTestCase):
 class MangaEditImagesViewTests(BaseTestCase):
 
     def test_manga_edit_images_view_get(self):
+        response = self.client.get(reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-edit-images.html')
+
+    def test_manga_edit_images_view_get_moderator(self):
+        user = User(username='testuser2')
+        user.set_password('password')
+        user.save()
+
+        self.manga.created_by = user
+        self.manga.save(user)
+
+        response = self.client.get(reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-edit-images.html')
+
+    def test_manga_edit_images_view_get_not_allowed(self):
+        user = User(username='testuser2')
+        user.set_password('password')
+        user.save()
+
+        self.manga.created_by = user
+        self.manga.save(user)
+
+        self.user.is_staff = False
+        self.user.save()
+
+        response = self.client.get(reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+
+        self.client.login(username='testuser2', password='password')
+
         response = self.client.get(reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'manga/manga-edit-images.html')
