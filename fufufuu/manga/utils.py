@@ -124,7 +124,7 @@ def generate_manga_archive(manga):
     return manga_archive
 
 
-def set_revision_tags(revision_list):
+def attach_revision_tags(revision_list):
     """
     sets the value of revision.tag to be (old_tags, new_tags) where
     old_tags, new_tags are sets of tag object

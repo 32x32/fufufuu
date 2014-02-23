@@ -1,5 +1,6 @@
 import base64
 import json
+
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
@@ -7,6 +8,7 @@ from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
+
 from fufufuu.core.languages import Language
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
@@ -16,9 +18,8 @@ from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
-from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive, set_revision_tags
+from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive, attach_revision_tags
 from fufufuu.revision.models import Revision
-from fufufuu.tag.models import Tag
 
 
 class MangaListMixin:
@@ -332,7 +333,7 @@ class MangaHistoryView(MangaEditMixin, TemplateView):
 
         revision_list = Revision.objects.filter(content_type__id=ct.id, object_id=manga.id).select_related('created_by').order_by('-created_on')
         revision_list = paginate(revision_list, self.page_size, request.GET.get('p'))
-        set_revision_tags(revision_list)
+        attach_revision_tags(revision_list)
 
         return self.render_to_response({
             'manga': manga,

@@ -5,6 +5,7 @@ from django.contrib.contenttypes import generic
 from django.db import models
 from django.forms.models import model_to_dict
 from fufufuu.account.models import User
+from fufufuu.revision.enums import RevisionStatus, RevisionAction
 
 
 class Revision(models.Model):
@@ -24,6 +25,9 @@ class Revision(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     diff_raw = models.TextField()
+
+    messsage = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=RevisionStatus.choices, db_index=True)
 
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
@@ -79,3 +83,19 @@ class Revision(models.Model):
 
     def apply(self):
         pass
+
+
+class RevisionEvent(models.Model):
+
+    revision = models.ForeignKey(Revision)
+
+    action = models.CharField(max_length=20, choices=RevisionAction.choices)
+    old_status = models.CharField(max_length=20, choices=RevisionStatus.choices)
+    new_status = models.CharField(max_length=20, choices=RevisionStatus.choices)
+    message = models.TextField(blank=True, null=True)
+
+    created_on = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        db_table = 'revision_event'

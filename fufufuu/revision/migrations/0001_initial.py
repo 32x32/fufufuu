@@ -18,13 +18,28 @@ class Migration(SchemaMigration):
             ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
             ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
             ('diff_raw', self.gf('django.db.models.fields.TextField')()),
+            ('messsage', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('status', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=20)),
             ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['account.User'], on_delete=models.SET_NULL, blank=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['account.User'], blank=True, on_delete=models.SET_NULL)),
         ))
         db.send_create_signal('revision', ['Revision'])
 
         # Adding index on 'Revision', fields ['content_type', 'object_id']
         db.create_index('revision', ['content_type_id', 'object_id'])
+
+        # Adding model 'RevisionEvent'
+        db.create_table('revision_event', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('revision', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['revision.Revision'])),
+            ('action', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('old_status', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('new_status', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('message', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['account.User'], blank=True, on_delete=models.SET_NULL)),
+        ))
+        db.send_create_signal('revision', ['RevisionEvent'])
 
 
     def backwards(self, orm):
@@ -34,11 +49,14 @@ class Migration(SchemaMigration):
         # Deleting model 'Revision'
         db.delete_table('revision')
 
+        # Deleting model 'RevisionEvent'
+        db.delete_table('revision_event')
+
 
     models = {
         'account.user': {
-            'Meta': {'object_name': 'User', 'db_table': "'user'"},
-            'avatar': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'blank': 'True', 'max_length': '100'}),
+            'Meta': {'db_table': "'user'", 'object_name': 'User'},
+            'avatar': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'max_length': '100', 'blank': 'True'}),
             'comment_limit': ('django.db.models.fields.IntegerField', [], {'default': '100'}),
             'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '254', 'blank': 'True'}),
@@ -54,20 +72,33 @@ class Migration(SchemaMigration):
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         'contenttypes.contenttype': {
-            'Meta': {'object_name': 'ContentType', 'db_table': "'django_content_type'", 'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)"},
+            'Meta': {'db_table': "'django_content_type'", 'object_name': 'ContentType', 'unique_together': "(('app_label', 'model'),)", 'ordering': "('name',)"},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'revision.revision': {
-            'Meta': {'object_name': 'Revision', 'db_table': "'revision'", 'index_together': "[('content_type', 'object_id')]"},
+            'Meta': {'db_table': "'revision'", 'index_together': "[('content_type', 'object_id')]", 'object_name': 'Revision'},
             'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'to': "orm['account.User']", 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'to': "orm['account.User']", 'blank': 'True', 'on_delete': 'models.SET_NULL'}),
             'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'diff_raw': ('django.db.models.fields.TextField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {})
+            'messsage': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
+            'status': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '20'})
+        },
+        'revision.revisionevent': {
+            'Meta': {'db_table': "'revision_event'", 'object_name': 'RevisionEvent'},
+            'action': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'to': "orm['account.User']", 'blank': 'True', 'on_delete': 'models.SET_NULL'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'message': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'new_status': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'old_status': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'revision': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['revision.Revision']"})
         }
     }
 
