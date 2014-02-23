@@ -21,7 +21,7 @@
     {% endfor %}
 {% endmacro %}
 
-{% block title %}{% trans title=manga.title %}History - {{ title }}{% endtrans %}{% endblock %}
+{% block title %}{% trans title=manga.title %}Revisions - {{ title }}{% endtrans %}{% endblock %}
 
 {% block content %}
     <div class="container width-800">
@@ -58,9 +58,9 @@
             </div>
         {% else %}
             <div class="panel">
-                <h4 class="panel-heading">{% trans %}No History{% endtrans %}</h4>
+                <h4 class="panel-heading">{% trans %}No Revisions Recorded{% endtrans %}</h4>
                 <div class="panel-body">
-                    <p>{% trans %}A new history entry will show up on this page when this manga or doujinshi has been updated by a user.{% endtrans %}</p>
+                    <p>{% trans %}A new revision entry will show up on this page when this manga or doujinshi has been updated.{% endtrans %}</p>
                 </div>
             </div>
         {% endfor %}

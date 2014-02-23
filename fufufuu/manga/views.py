@@ -322,9 +322,9 @@ class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
         return redirect('manga.edit.images', id=manga.id, slug=manga.slug)
 
 
-class MangaHistoryView(MangaEditMixin, TemplateView):
+class MangaRevisionsView(MangaEditMixin, TemplateView):
 
-    template_name = 'manga/manga-history.html'
+    template_name = 'manga/manga-revisions.html'
     page_size = 10
 
     def get(self, request, id, slug):
