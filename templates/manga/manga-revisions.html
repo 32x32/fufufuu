@@ -1,4 +1,5 @@
 {% extends 'manga/manga-base.html' %}
+{% import '_macros/forms.html' as forms with context %}
 {% import '_macros/widgets.html' as widgets with context %}
 
 {% macro process_value(field, value) %}
@@ -31,12 +32,38 @@
             <li class="message message-info">{% trans %}This page lists the changes that were made to this manga/doujinshi.{% endtrans %}</li>
         </ul>
         {% for revision in revision_list %}
-            <div class="panel panel-thin">
+            <div class="panel panel-thin panel-revision-{{ revision.status|lower }}">
                 <div class="panel-heading">
                     <span class="left space-right-10">{{ widgets.user_avatar(revision.created_by) }}</span>
                     <strong>{{ revision.created_by.username }}</strong>
                     <p class="text-secondary text-xsmall space-bottom-0">{% trans date=revision.created_on|naturaltime %}Edited {{ date }}{% endtrans %}</p>
                     <div class="clear"></div>
+                    {% if revision.status == 'PENDING' %}
+                        <p class="space-bottom-0 space-top-10 help-block">{% trans %}This revision is pending approval. The changes will be visible to everyone once this revision is approved.{% endtrans %}</p>
+                    {% elif revision.status == 'APPROVED' %}
+                        <p class="space-bottom-0 space-top-10 help-block">{% trans %}This revision was approved.{% endtrans %}</p>
+                    {% elif revision.status == 'REJECTED' %}
+                        <p class="space-bottom-0 space-top-10 help-block">{% trans %}This revision was rejected.{% endtrans %}</p>
+                    {% endif %}
+                    {% if user == revision.created_by and revision.status == 'PENDING' %}
+                        <form action="" method="post" class="space-top-10">
+                            {{ forms.csrf_input }}
+                            <button class="btn btn-error">{% trans %}Withdraw Revision{% endtrans %}</button>
+                        </form>
+                    {% endif %}
+                    {% if user == manga.created_by or user.is_staff %}
+                        <form action="" method="post" class="space-top-10">
+                            {{ forms.csrf_input() }}
+                            <input type="hidden" name="revision_id" value="{{ revision.id }}">
+                            {% if revision.status == 'PENDING' %}
+                                <button class="btn btn-primary space-right-10">{% trans %}Approve Revision{% endtrans %}</button>
+                                <button class="btn btn-error">{% trans %}Reject Revision{% endtrans %}</button>
+                            {% else %}
+                                <button class="btn btn-primary space-right-10">{% trans %}Re-apply Revision{% endtrans %}</button>
+                                <button class="btn btn-error">{% trans %}Revert Revision{% endtrans %}</button>
+                            {% endif %}
+                        </form>
+                    {% endif %}
                 </div>
                 <div class="panel-body panel-body-no-padding">
                     <table class="panel-table">
