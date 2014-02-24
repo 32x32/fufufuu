@@ -93,6 +93,7 @@ DEFAULT_FILE_STORAGE = 'fufufuu.core.storage.FufufuuStorage'
 # miscellaneous settings
 #-------------------------------------------------------------------------------
 
+RESOURCE_VERSION = 'development'
 X_ACCEL = False
 MD2HTML = '/usr/local/bin/md2html'
 
@@ -130,7 +131,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.core.context_processors.csrf',
-    'django.contrib.messages.context_processors.messages'
+    'django.contrib.messages.context_processors.messages',
+    'fufufuu.core.context_processors.resource_version',
 )
 
 #-------------------------------------------------------------------------------
