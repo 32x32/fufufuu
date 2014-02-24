@@ -15,7 +15,7 @@ from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
-from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
+from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction, MANGA_FIELDNAME_MAP
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive, attach_revision_tags
@@ -365,5 +365,6 @@ class MangaRevisionsView(MangaEditMixin, TemplateView):
 
         return self.render_to_response({
             'manga': manga,
+            'MANGA_FIELDNAME_MAP': MANGA_FIELDNAME_MAP,
             'revision_list': revision_list,
         })

@@ -19,7 +19,7 @@ Install the following brew packages
 
 Install the following npm packages
 
-    > sudo npm install -g coffee-script less
+    > sudo npm install -g coffee-script less markdown
 
 Start by installing `pip`
 
@@ -44,6 +44,10 @@ The `(fufufuu)` prefix indicates the `fufufuu` virtual environment is active. To
 
     > workon fufufuu
     (fufufuu) >
+
+Install the required python packages
+
+    (fufufuu) > pip install -r requirements.txt
 
 There are two scripts that need to be run in the background:
 

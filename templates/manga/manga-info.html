@@ -36,19 +36,32 @@
         </form>
     </div>
     <div id="manga-info-tags" class="manga-info-section">
+        <h2 id="tags" class="manga-info-header">{% trans %}Info{% endtrans %}</h2>
+        <div class="panel panel-thin">
+            <h5 class="panel-heading">{% trans %}Uploader{% endtrans %}</h5>
+            <div class="panel-body">
+                <a href="#">
+                    <span class="left space-right-10">{{ widgets.user_avatar(manga.created_by) }}</span>
+                    <strong>{{ manga.created_by }}</strong>
+                    <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
+                    <div class="clear"></div>
+                </a>
+            </div>
+        </div>
+        <div class="panel panel-thin">
+            <h5 class="panel-heading">{% trans %}Description{% endtrans %}</h5>
+            <div class="panel-body markdown">
+                {% if manga.html %}
+                    {{ manga.html }}
+                {% else %}
+                    <p>{% trans %}No Description Available{% endtrans %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div id="manga-info-tags" class="manga-info-section">
         <h2 id="tags" class="manga-info-header">{% trans %}Tags{% endtrans %}</h2>
         <div data-section="tags">
-            <div class="panel panel-thin">
-                <h5 class="panel-heading">{% trans %}Uploader{% endtrans %}</h5>
-                <div class="panel-body">
-                    <a href="#">
-                        <span class="left space-right-10">{{ widgets.user_avatar(manga.created_by) }}</span>
-                        <strong>{{ manga.created_by }}</strong>
-                        <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
-                        <div class="clear"></div>
-                    </a>
-                </div>
-            </div>
             {{ tag_widget(manga.tag_dictionary.SCANLATOR, gettext('Scanlators')) }}
             {{ tag_widget(manga.tag_dictionary.AUTHOR, gettext('Authors')) }}
             {{ tag_widget(manga.tag_dictionary.CIRCLE, gettext('Circles')) }}
@@ -57,7 +70,7 @@
             {{ tag_widget(manga.tag_dictionary.MAGAZINE, gettext('Magazine')) }}
             {{ tag_widget(manga.tag_dictionary.Parody, gettext('Parody')) }}
 {#            <div class="panel panel-thin">#}
-{#                <h5 class="panel-heading">{% trans %}Statistics{% endtrans %}</h5>#}
+{#                <h5 class="panel-heading">{% trans %}Metrics{% endtrans %}</h5>#}
 {#                <div class="panel-body">#}
 {#                    <p class="space-bottom-0">{% trans %}32890 Downloads{% endtrans %}</p>#}
 {#                    <p class="space-bottom-0">{% trans %}719 Favorites{% endtrans %}</p>#}

@@ -192,6 +192,20 @@ class MangaEditFormTests(BaseTestCase):
         self.assertTrue(form.is_valid())
         form.save()
 
+    def test_manga_edit_form_markdown_utf8(self):
+        form = MangaEditForm(request=self.request, instance=self.manga, data={
+            'title': self.manga.title,
+            'category': self.manga.category,
+            'language': self.manga.language,
+            'markdown': '北京',
+            'action': 'save',
+        })
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(manga.markdown, '北京')
+
 
 class MangaPageFormsetTests(BaseTestCase):
 

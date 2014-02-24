@@ -12,6 +12,7 @@
                 <div class="half half-md">
                     {{ forms.field(form.title) }}
                     {{ forms.field(form.markdown) }}
+                    <div class="markdown markdown-preview" data-for="id_markdown"></div>
                     <table class="table-full-border space-top-15">
                         <tr>
                             <td width="120"><label>{% trans %}Current{% endtrans %}</label></td>
@@ -40,7 +41,7 @@
                     </table>
                 </div>
                 <div class="half half-md">
-                    {% if manga.title == 'Untitled' %}
+                    {% if manga.title == 'Untitled' and manga.status == 'DRAFT' %}
                         <div class="well space-bottom-15">
                             <p class="help-block space-bottom-0">{% trans %}Tags should be entered as a <strong>comma</strong> separated list of text. Here's is an example list of authors:{% endtrans %}</p>
                             <p><strong>{% trans %}Panda Niku, Ookuma Nekosuke{% endtrans %}</strong></p>
@@ -165,4 +166,8 @@
             {% endif %}
         </div>
     </form>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/markdown.min.js?version={{ RESOURCE_VERSION }}"></script>
 {% endblock %}

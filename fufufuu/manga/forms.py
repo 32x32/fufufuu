@@ -1,3 +1,4 @@
+import subprocess
 from collections import defaultdict
 
 from django import forms
@@ -7,10 +8,11 @@ from django.utils.translation import ugettext as _
 
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
-from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus
+from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_FIELDNAME_MAP
 from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import generate_manga_archive
 from fufufuu.revision.enums import RevisionStatus
+from fufufuu.settings import MD2HTML
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
@@ -19,7 +21,7 @@ from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
 class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     title = forms.CharField(
-        label=_('Title'),
+        label=MANGA_FIELDNAME_MAP['title'],
         max_length=100,
         help_text=_('Please do not include [Circle], (Author) or other tag-related information in the title. Use the tags section for this information.'),
         widget=forms.TextInput(attrs={
@@ -29,35 +31,35 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     )
 
     markdown = forms.CharField(
-        label=_('Description'),
+        label=MANGA_FIELDNAME_MAP['markdown'],
         required=False,
-        max_length=5000,
+        max_length=1000,
         widget=forms.Textarea(attrs={
-            'maxlength': '5000',
+            'maxlength': '1000',
             'rows': '6'
         })
     )
 
     cover = forms.FileField(
         required=False,
-        label=_('Cover'),
+        label=MANGA_FIELDNAME_MAP['cover'],
         widget=forms.FileInput(),
     )
 
-    tank = forms.CharField(required=False, label=_('Tank'))
+    tank = forms.CharField(required=False, label=MANGA_FIELDNAME_MAP['tank'])
     tank_chapter = forms.CharField(
         required=False,
-        label=_('Chapter'),
+        label=MANGA_FIELDNAME_MAP['tank_chapter'],
         max_length=5,
         widget=forms.TextInput(attrs={
             'maxlength': '5',
         })
     )
 
-    collection = forms.CharField(required=False, label=_('Collection'))
+    collection = forms.CharField(required=False, label=MANGA_FIELDNAME_MAP['collection'])
     collection_part = forms.CharField(
         required=False,
-        label=_('Part'),
+        label=MANGA_FIELDNAME_MAP['collection_part'],
         max_length=5,
         widget=forms.TextInput(attrs={
             'maxlength': '5',
@@ -72,9 +74,9 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     parodies = forms.CharField(required=False, label=_('Parodies'))
     scanlators = forms.CharField(required=False, label=_('Scanlators'))
 
-    category = forms.ChoiceField(label=_('Category'), choices=MangaCategory.choices)
-    language = forms.ChoiceField(label=_('Language'), choices=Language.choices)
-    uncensored = forms.BooleanField(required=False, label=_('Uncensored'))
+    category = forms.ChoiceField(label=MANGA_FIELDNAME_MAP['category'], choices=MangaCategory.choices)
+    language = forms.ChoiceField(label=MANGA_FIELDNAME_MAP['language'], choices=Language.choices)
+    uncensored = forms.BooleanField(label=MANGA_FIELDNAME_MAP['uncensored'], required=False)
 
     action = forms.ChoiceField(choices=MangaAction.choices)
 
@@ -91,6 +93,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         self.tags = []
         self.collection_obj = None
         self.tank_obj = None
+        self.html = None
 
         if 'instance' not in kwargs:
             raise RuntimeError('MangaEditForm must be used with an existing Manga instance.')
@@ -148,6 +151,20 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
                 raise forms.ValidationError(_('This upload cannot be published.'))
         return action
 
+    def clean_markdown(self):
+        markdown = self.cleaned_data.get('markdown')
+        try:
+            p = subprocess.Popen([MD2HTML], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            out, err = p.communicate(markdown.encode('utf-8'), timeout=1)
+            if err is not None:
+                raise forms.ValidationError(_('An error occurred while processing the description.'))
+            self.html = out.decode('utf-8')
+        except subprocess.TimeoutExpired:
+            raise forms.ValidationError(_('Timeout while processing the description.'))
+        except Exception:
+            raise forms.ValidationError(_('An unknown error occurred while processing the description.'))
+        return markdown
+
     def clean(self):
         cd = self.cleaned_data
         if len(self.tags) > self.TAG_LIMIT:
@@ -182,6 +199,9 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     def save(self):
         manga = super().save(commit=False)
+
+        if self.html:
+            manga.html = self.html
 
         if self.tank_obj:
             manga.tank = self.tank_obj

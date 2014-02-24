@@ -55,6 +55,7 @@ class Manga(BaseAuditableModel, MangaMixin):
     revision_field_list = [
         'title',
         'markdown',
+        'html',
         'cover',
         'status',
         'category',
