@@ -89,8 +89,3 @@ $ ->
         input = $('#' + preview.attr('data-for'))
         input.on 'keyup', -> preview.html(markdown.toHTML(input.val()))
         preview.html(markdown.toHTML(input.val()))
-
-    $('.markdown').each ->
-        self = $(this)
-        markdownRaw = self.text()
-        self.html(markdown.toHTML(markdownRaw))

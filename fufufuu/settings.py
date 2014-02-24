@@ -89,7 +89,12 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 DEFAULT_FILE_STORAGE = 'fufufuu.core.storage.FufufuuStorage'
 
+#-------------------------------------------------------------------------------
+# miscellaneous settings
+#-------------------------------------------------------------------------------
+
 X_ACCEL = False
+MD2HTML = '/usr/local/bin/md2html'
 
 #-------------------------------------------------------------------------------
 # captcha settings

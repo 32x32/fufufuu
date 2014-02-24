@@ -1,3 +1,4 @@
+import subprocess
 from collections import defaultdict
 
 from django import forms
@@ -11,6 +12,7 @@ from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_F
 from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import generate_manga_archive
 from fufufuu.revision.enums import RevisionStatus
+from fufufuu.settings import MD2HTML
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
@@ -91,6 +93,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         self.tags = []
         self.collection_obj = None
         self.tank_obj = None
+        self.html = None
 
         if 'instance' not in kwargs:
             raise RuntimeError('MangaEditForm must be used with an existing Manga instance.')
@@ -148,6 +151,20 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
                 raise forms.ValidationError(_('This upload cannot be published.'))
         return action
 
+    def clean_markdown(self):
+        markdown = self.cleaned_data.get('markdown')
+        try:
+            p = subprocess.Popen([MD2HTML], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            out, err = p.communicate(markdown.encode('utf-8'), timeout=1)
+            if err is not None:
+                raise forms.ValidationError(_('An error occurred while processing the description.'))
+            self.html = out
+        except subprocess.TimeoutExpired:
+            raise forms.ValidationError(_('Timeout while processing the description.'))
+        except Exception:
+            raise forms.ValidationError(_('An unknown error occurred while processing the description.'))
+        return markdown
+
     def clean(self):
         cd = self.cleaned_data
         if len(self.tags) > self.TAG_LIMIT:
@@ -182,6 +199,9 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     def save(self):
         manga = super().save(commit=False)
+
+        if self.html:
+            manga.html = self.html
 
         if self.tank_obj:
             manga.tank = self.tank_obj

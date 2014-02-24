@@ -51,41 +51,39 @@
                             <button class="btn btn-error">{% trans %}Withdraw Revision{% endtrans %}</button>
                         </form>
                     {% endif %}
-                    {% if user == manga.created_by or user.is_staff %}
+                    {% if revision.status == 'PENDING' and (user == manga.created_by or user.is_staff) %}
                         <form action="" method="post" class="space-top-10">
                             {{ forms.csrf_input() }}
                             <input type="hidden" name="revision_id" value="{{ revision.id }}">
-                            {% if revision.status == 'PENDING' %}
-                                <button class="btn btn-primary space-right-10">{% trans %}Approve Revision{% endtrans %}</button>
-                                <button class="btn btn-error">{% trans %}Reject Revision{% endtrans %}</button>
-                            {% else %}
-                                <button class="btn btn-primary space-right-10">{% trans %}Re-apply Revision{% endtrans %}</button>
-                                <button class="btn btn-error">{% trans %}Revert Revision{% endtrans %}</button>
-                            {% endif %}
+                            <button class="btn btn-primary space-right-10">{% trans %}Approve Revision{% endtrans %}</button>
+                            <button class="btn btn-error">{% trans %}Reject Revision{% endtrans %}</button>
                         </form>
                     {% endif %}
                 </div>
                 <div class="panel-body panel-body-no-padding">
                     <table class="panel-table">
                         {% for field, values in revision.diff.items()|sort %}
-                            <tr>
-                                <td width="100"><label class="label-normalized">{{ MANGA_FIELDNAME_MAP[field] }}</label></td>
-                                <td>
-                                    {% if field == 'tags' %}
-                                        {{ revision_tags(revision.tags[0]-revision.tags[1], 'minus') }}
-                                        {{ revision_tags(revision.tags[1]-revision.tags[0], 'plus') }}
-                                    {% elif field == 'markdown' %}
-                                        <button class="btn btn-small toggle-switch" data-toggle-class="field_{{ field }}" data-toggle-text="{% trans %}Hide{% endtrans %}">{% trans %}Show{% endtrans %}</button>
-                                        <div class="markdown none field_{{ field }}">{{ values[1] }}</div>
-                                    {% else %}
-                                        {% if values[0] %}
-                                            {{ process_value(field, values[0]) }}
-                                            <span class="icon icon-right-thin space-left-10 space-right-10"></span>
+                            {% if field == 'markdown' %}
+                            {% else %}
+                                <tr>
+                                    <td width="100"><label class="label-normalized">{{ MANGA_FIELDNAME_MAP[field] }}</label></td>
+                                    <td>
+                                        {% if field == 'tags' %}
+                                            {{ revision_tags(revision.tags[0]-revision.tags[1], 'minus') }}
+                                            {{ revision_tags(revision.tags[1]-revision.tags[0], 'plus') }}
+                                        {% elif field == 'html' %}
+                                            <button class="btn btn-small toggle-switch" data-toggle-class="field_{{ revision.id }}_{{ field }}" data-toggle-text="{% trans %}Hide{% endtrans %}">{% trans %}Show{% endtrans %}</button>
+                                            <div class="none field_{{ revision.id }}_{{ field }} space-top-10">{{ values[1] }}</div>
+                                        {% else %}
+                                            {% if values[0] %}
+                                                {{ process_value(field, values[0]) }}
+                                                <span class="icon icon-right-thin space-left-10 space-right-10"></span>
+                                            {% endif %}
+                                            {{ process_value(field, values[1]) }}
                                         {% endif %}
-                                        {{ process_value(field, values[1]) }}
-                                    {% endif %}
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
+                            {% endif %}
                         {% endfor %}
                     </table>
                 </div>

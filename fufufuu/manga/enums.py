@@ -57,6 +57,7 @@ class MangaAction:
 MANGA_FIELDNAME_MAP = {
     'title':            _('Title'),
     'markdown':         _('Description'),
+    'html':             _('Description'),
     'cover':            _('Cover'),
     'status':           _('Status'),
     'category':         _('Category'),
