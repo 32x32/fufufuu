@@ -69,11 +69,14 @@
                     <table class="panel-table">
                         {% for field, values in revision.diff.items()|sort %}
                             <tr>
-                                <td width="100"><label class="label-normalized">{{ field }}</label></td>
+                                <td width="100"><label class="label-normalized">{{ MANGA_FIELDNAME_MAP[field] }}</label></td>
                                 <td>
                                     {% if field == 'tags' %}
                                         {{ revision_tags(revision.tags[0]-revision.tags[1], 'minus') }}
                                         {{ revision_tags(revision.tags[1]-revision.tags[0], 'plus') }}
+                                    {% elif field == 'markdown' %}
+                                        <button class="btn btn-small toggle-switch" data-toggle-class="field_{{ field }}" data-toggle-text="{% trans %}Hide{% endtrans %}">{% trans %}Show{% endtrans %}</button>
+                                        <div class="markdown none field_{{ field }}">{{ values[1] }}</div>
                                     {% else %}
                                         {% if values[0] %}
                                             {{ process_value(field, values[0]) }}
@@ -96,4 +99,8 @@
             </div>
         {% endfor %}
     </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/markdown.min.js?version={{ RESOURCE_VERSION }}"></script>
 {% endblock %}

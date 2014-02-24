@@ -7,7 +7,7 @@ from django.utils.translation import ugettext as _
 
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
-from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus
+from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_FIELDNAME_MAP
 from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import generate_manga_archive
 from fufufuu.revision.enums import RevisionStatus
@@ -19,7 +19,7 @@ from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
 class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     title = forms.CharField(
-        label=_('Title'),
+        label=MANGA_FIELDNAME_MAP['title'],
         max_length=100,
         help_text=_('Please do not include [Circle], (Author) or other tag-related information in the title. Use the tags section for this information.'),
         widget=forms.TextInput(attrs={
@@ -29,7 +29,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     )
 
     markdown = forms.CharField(
-        label=_('Description'),
+        label=MANGA_FIELDNAME_MAP['markdown'],
         required=False,
         max_length=1000,
         widget=forms.Textarea(attrs={
@@ -40,24 +40,24 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     cover = forms.FileField(
         required=False,
-        label=_('Cover'),
+        label=MANGA_FIELDNAME_MAP['cover'],
         widget=forms.FileInput(),
     )
 
-    tank = forms.CharField(required=False, label=_('Tank'))
+    tank = forms.CharField(required=False, label=MANGA_FIELDNAME_MAP['tank'])
     tank_chapter = forms.CharField(
         required=False,
-        label=_('Chapter'),
+        label=MANGA_FIELDNAME_MAP['tank_chapter'],
         max_length=5,
         widget=forms.TextInput(attrs={
             'maxlength': '5',
         })
     )
 
-    collection = forms.CharField(required=False, label=_('Collection'))
+    collection = forms.CharField(required=False, label=MANGA_FIELDNAME_MAP['collection'])
     collection_part = forms.CharField(
         required=False,
-        label=_('Part'),
+        label=MANGA_FIELDNAME_MAP['collection_part'],
         max_length=5,
         widget=forms.TextInput(attrs={
             'maxlength': '5',
@@ -72,9 +72,9 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     parodies = forms.CharField(required=False, label=_('Parodies'))
     scanlators = forms.CharField(required=False, label=_('Scanlators'))
 
-    category = forms.ChoiceField(label=_('Category'), choices=MangaCategory.choices)
-    language = forms.ChoiceField(label=_('Language'), choices=Language.choices)
-    uncensored = forms.BooleanField(required=False, label=_('Uncensored'))
+    category = forms.ChoiceField(label=MANGA_FIELDNAME_MAP['category'], choices=MangaCategory.choices)
+    language = forms.ChoiceField(label=MANGA_FIELDNAME_MAP['language'], choices=Language.choices)
+    uncensored = forms.BooleanField(label=MANGA_FIELDNAME_MAP['uncensored'], required=False)
 
     action = forms.ChoiceField(choices=MangaAction.choices)
 
