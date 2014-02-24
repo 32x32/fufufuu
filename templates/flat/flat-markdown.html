@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}{% trans %}Markdown Playground{% endtrans %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="panel">
+            <h4 class="panel-heading">{% trans %}Markdown Playground{% endtrans %}</h4>
+            <div class="panel-body">
+                <p>{% trans %}Welcome to the markdown playground. Try out what you can do with markdown here!{% endtrans %}</p>
+            </div>
+        </div>
+        <hr>
+        <div class="half-wrapper">
+            <div class="half half-sm">
+                <label>{% trans %}Input{% endtrans %}</label>
+                <textarea id="markdown-playground" rows="40">みなさん、こんにちは
+
+# H1 Heading
+## H2 Heading
+### H3 Heading
+#### H4 Heading
+##### H5 Heading
+###### H6 Heading
+
+---
+
+[Link to Fufufuu](https://www.wikipedia.org/)
+
+![Picture of a cat giving thumbs up!](/static/images/test.jpg)
+
+This is a simple paragraph.
+
+* List Item 1
+* List Item 2
+* List Item 3
+
+> Block Quote 1
+> Block Quote 2
+
+1. Ordered List Item 1
+1. Ordered List Item 2
+1. Ordered List Item 3
+
+Below is a code block:
+
+    This is a simple code block.
+
+**Bolded Text**
+
+*Italicized Text*
+
+<script type="text/javascript">alert('hello world!');</script></textarea>
+            </div>
+            <div class="half half-sm">
+                <label>{% trans %}Output{% endtrans %}</label>
+                <div class="markdown markdown-preview" data-for="markdown-playground"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/markdown.min.js?version={{ RESOURCE_VERSION }}"></script>
+{% endblock %}

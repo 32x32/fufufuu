@@ -37,7 +37,8 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         widget=forms.Textarea(attrs={
             'maxlength': '1000',
             'rows': '6'
-        })
+        }),
+        help_text=_('Use the description to add a link to your blog or website! <a href="/f/markdown/" class="text-xsmall" target="_blank">This field uses markdown for formatting.</a>')
     )
 
     cover = forms.FileField(

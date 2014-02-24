@@ -51,7 +51,7 @@
         <div class="panel panel-thin">
             <h5 class="panel-heading">{% trans %}Description{% endtrans %}</h5>
             <div class="panel-body markdown">
-                {% if manga.html %}
+                {% if manga.markdown %}
                     {{ manga.html }}
                 {% else %}
                     <p>{% trans %}No Description Available{% endtrans %}</p>

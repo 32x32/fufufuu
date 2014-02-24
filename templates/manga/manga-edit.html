@@ -11,8 +11,6 @@
             <div class="half-wrapper">
                 <div class="half half-md">
                     {{ forms.field(form.title) }}
-                    {{ forms.field(form.markdown) }}
-                    <div class="markdown markdown-preview" data-for="id_markdown"></div>
                     <table class="table-full-border space-top-15">
                         <tr>
                             <td width="120"><label>{% trans %}Current{% endtrans %}</label></td>
@@ -29,7 +27,7 @@
                             <td>{{ form.cover }}</td>
                         </tr>
                     </table>
-                    <table class="table-full-border space-top-15">
+                    <table class="table-full-border space-top-15 space-bottom-15">
                         <tr>
                             <td width="120">{{ form.language.label_tag() }}</td>
                             <td>{{ form.language }}</td>
@@ -39,6 +37,8 @@
                             <td>{{ form.uncensored }}</td>
                         </tr>
                     </table>
+                    {{ forms.field(form.markdown) }}
+                    <div class="markdown markdown-preview" data-for="id_markdown"></div>
                 </div>
                 <div class="half half-md">
                     {% if manga.title == 'Untitled' and manga.status == 'DRAFT' %}
