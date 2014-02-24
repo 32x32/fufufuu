@@ -5,7 +5,9 @@
 .markdown-preview {
     border: 1px dashed #999;
     padding: 10px;
+}
 
+.markdown {
     > *:last-child { margin-bottom: 0; }
 
     h1 {}
@@ -15,21 +17,38 @@
     h5 {}
     h6 {}
 
-    p {}
+    p {
+        margin-bottom: 10px;
+    }
 
-    pre {}
+    pre, code {
+        font-family: @font-family-monospace;
+    }
 
     strong {}
     em {}
 
-    ul {}
-    ol {}
+    ul, ol {
+        margin-bottom: 10px;
+        > li { margin-left: 30px; }
+    }
 
     a {}
 
-    img {}
+    img {
+        border: 1px solid #ccc;
+        max-width: 100%;
+        width: auto;
+    }
 
-    hr {}
+    hr {
+        border-top: @hr-top;
+        border-bottom: none;
+    }
 
-    blockquote {}
+    blockquote {
+        padding-left: 10px;
+        border-left: 3px solid #999;
+        white-space: pre;
+    }
 }

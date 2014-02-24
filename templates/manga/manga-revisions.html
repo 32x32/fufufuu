@@ -73,7 +73,7 @@
                                             {{ revision_tags(revision.tags[1]-revision.tags[0], 'plus') }}
                                         {% elif field == 'html' %}
                                             <button class="btn btn-small toggle-switch" data-toggle-class="field_{{ revision.id }}_{{ field }}" data-toggle-text="{% trans %}Hide{% endtrans %}">{% trans %}Show{% endtrans %}</button>
-                                            <div class="none field_{{ revision.id }}_{{ field }} space-top-10">{{ values[1] }}</div>
+                                            <div class="none markdown field_{{ revision.id }}_{{ field }} space-top-10">{{ values[1] }}</div>
                                         {% else %}
                                             {% if values[0] %}
                                                 {{ process_value(field, values[0]) }}

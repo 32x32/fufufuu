@@ -158,7 +158,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
             out, err = p.communicate(markdown.encode('utf-8'), timeout=1)
             if err is not None:
                 raise forms.ValidationError(_('An error occurred while processing the description.'))
-            self.html = out
+            self.html = out.decode('utf-8')
         except subprocess.TimeoutExpired:
             raise forms.ValidationError(_('Timeout while processing the description.'))
         except Exception:
