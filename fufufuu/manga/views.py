@@ -9,14 +9,13 @@ from django.http.response import Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 
-from fufufuu.core.languages import Language
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction, MANGA_FIELDNAME_MAP
-from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet
+from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet, MangaListFilterForm
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive, attach_revision_tags
 from fufufuu.revision.enums import RevisionStatus
@@ -29,24 +28,30 @@ class MangaListMixin:
     page_size = 120
 
     def get_filters(self):
+        session_filters = self.request.session.get('manga_list_filters', {})
+
         filters = {}
 
         # filter by category
-        categories = list(filter(lambda c: self.request.GET.get(c.lower()), list(MangaCategory.choices_dict)))
-        if categories:
-            filters['category__in'] = categories
+        categories = list(filter(lambda c: session_filters.get(c.lower()), list(MangaCategory.choices_dict)))
+        if categories: filters['category__in'] = categories
 
         # filter by language
-        languages = list(filter(lambda l: l in Language.choices_dict, self.request.GET.getlist('lang')))
-        if languages:
-            filters['language__in'] = languages
+        language = session_filters.get('lang')
+        if language: filters['language'] = language
 
         return filters
+
+    def post(self, request, *args, **kwargs):
+        form = MangaListFilterForm(request, data=request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect(request.path)
 
 
 class MangaListView(MangaListMixin, TemplateView):
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         manga_list = Manga.published.filter(**self.get_filters()).order_by('-published_on')
         manga_list = paginate(manga_list, self.page_size, request.GET.get('p'))
         return self.render_to_response({
@@ -56,7 +61,7 @@ class MangaListView(MangaListMixin, TemplateView):
 
 class MangaListFavoritesView(MangaListMixin, ProtectedTemplateView):
 
-    template_name = 'manga/manga-list-favorites.html'
+    template_name = 'manga/manga-list.html'
     page_size = 120
 
     def get(self, request):

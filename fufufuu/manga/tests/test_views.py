@@ -24,13 +24,24 @@ class MangaListViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'manga/manga-list.html')
 
+    def test_manga_list_view_post(self):
+        response = self.client.post(reverse('manga.list'), {
+            'non_h': 'on',
+            'lang': Language.ENGLISH,
+        })
+        self.assertRedirects(response, reverse('manga.list'))
+
+        filters = self.client.session['manga_list_filters']
+        self.assertTrue(filters.get('non_h'))
+        self.assertFalse(filters.get('ecchi'))
+        self.assertEqual(filters.get('lang'), Language.ENGLISH)
 
 class MangaListFavoritesViewTests(BaseTestCase):
 
     def test_manga_list_favorites_view_get(self):
         response = self.client.get(reverse('manga.list.favorites'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'manga/manga-list-favorites.html')
+        self.assertTemplateUsed(response, 'manga/manga-list.html')
 
     def test_manga_list_favorites_view_get_anonymous(self):
         self.client.logout()

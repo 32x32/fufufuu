@@ -1,4 +1,6 @@
+{% import '_macros/forms.html' as forms with context %}
 {% import '_macros/widgets.html' as widgets with context %}
+{% set filters = request.session.get('manga_list_filters', {}) %}
 <div class="filter-bar">
     <form action="" method="get" class="right" id="manga-filter-pagination">
         {{ widgets.pagination(manga_list) }}
@@ -7,34 +9,35 @@
         {% endfor %}
     </form>
     <span class="btn toggle-switch max-xs" data-toggle-id="manga-list-filters" data-toggle-text="{% trans %}Hide Filters{% endtrans %}">{% trans %}Show Filters{% endtrans %}</span>
-    <form action="" method="get" id="manga-list-filters">
+    <form action="" method="post" id="manga-list-filters">
+        {{ forms.csrf_input() }}
         <div class="manga-filter-section">
             <label class="ml-filter-bar-cat manga-category-non_h">
-                <input type="checkbox" name="non_h"{% if request.GET.non_h %} checked{% endif %}{% if request.GET.non_h %} checked{% endif %}>
+                <input type="checkbox" name="non_h"{% if filters.get('non_h') %} checked{% endif %}>
                 <span class="space-left min-sm">{% trans %}Non-H{% endtrans %}</span>
             </label>
             <label class="ml-filter-bar-cat manga-category-ecchi">
-                <input type="checkbox" name="ecchi"{% if request.GET.ecchi %} checked{% endif %}>
+                <input type="checkbox" name="ecchi"{% if filters.get('ecchi') %} checked{% endif %}>
                 <span class="space-left min-sm">{% trans %}Ecchi{% endtrans %}</span>
             </label>
             <label class="ml-filter-bar-cat manga-category-vanilla">
-                <input type="checkbox" name="vanilla"{% if request.GET.vanilla %} checked{% endif %}>
+                <input type="checkbox" name="vanilla"{% if filters.get('vanilla') %} checked{% endif %}>
                 <span class="space-left min-sm">{% trans %}Vanilla{% endtrans %}</span>
             </label>
             <label class="ml-filter-bar-cat manga-category-alternative">
-                <input type="checkbox" name="alternative"{% if request.GET.alternative %} checked{% endif %}>
+                <input type="checkbox" name="alternative"{% if filters.get('alternative') %} checked{% endif %}>
                 <span class="space-left min-sm">{% trans %}Alternative{% endtrans %}</span>
             </label>
             <label class="ml-filter-bar-cat manga-category-yaoi">
-                <input type="checkbox" name="yaoi"{% if request.GET.yaoi %} checked{% endif %}>
+                <input type="checkbox" name="yaoi"{% if filters.get('yaoi') %} checked{% endif %}>
                 <span class="space-left min-sm">{% trans %}Yaoi{% endtrans %}</span>
             </label>
             <label class="ml-filter-bar-cat manga-category-yuri">
-                <input type="checkbox" name="yuri"{% if request.GET.yuri %} checked{% endif %}>
+                <input type="checkbox" name="yuri"{% if filters.get('yuri') %} checked{% endif %}>
                 <span class="space-left min-sm">{% trans %}Yuri{% endtrans %}</span>
             </label>
             <label class="ml-filter-bar-cat manga-category-other">
-                <input type="checkbox" name="other"{% if request.GET.other %} checked{% endif %}>
+                <input type="checkbox" name="other"{% if filters.get('other') %} checked{% endif %}>
                 <span class="space-left min-sm">{% trans %}Other{% endtrans %}</span>
             </label>
         </div>
@@ -42,7 +45,7 @@
             <select name="lang" class="manga-list-language-filter">
                 <option value="">{% trans %}All Languages{% endtrans %}&nbsp;&nbsp;</option>
                 {% for lang in LANGUAGES %}
-                    <option value="{{ lang.0 }}"{% if lang.0 == request.GET.lang %} selected{% endif %}>{{ lang.1 }}</option>
+                    <option value="{{ lang.0 }}"{% if lang.0 == filters.get('lang') %} selected{% endif %}>{{ lang.1 }}</option>
                 {% endfor %}
             </select>
         </div>

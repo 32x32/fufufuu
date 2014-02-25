@@ -322,3 +322,33 @@ class MangaPageFormSet(BaseModelFormSet):
             form.instance.page = page
             form.instance.save()
         self.messages.append(('error', _('The selected images have been deleted.')))
+
+
+class MangaListFilterForm(forms.Form):
+
+    non_h           = forms.BooleanField(required=False)
+    ecchi           = forms.BooleanField(required=False)
+    vanilla         = forms.BooleanField(required=False)
+    alternative     = forms.BooleanField(required=False)
+    yaoi            = forms.BooleanField(required=False)
+    yuri            = forms.BooleanField(required=False)
+    other           = forms.BooleanField(required=False)
+
+    lang            = forms.ChoiceField(choices=Language.choices, required=False)
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+    def save(self):
+        cd = self.cleaned_data
+        self.request.session['manga_list_filters'] = {
+            'non_h':        bool(cd.get('non_h')),
+            'ecchi':        bool(cd.get('ecchi')),
+            'vanilla':      bool(cd.get('vanilla')),
+            'alternative':  bool(cd.get('alternative')),
+            'yaoi':         bool(cd.get('yaoi')),
+            'yuri':         bool(cd.get('yuri')),
+            'other':        bool(cd.get('other')),
+            'lang':         cd.get('lang'),
+        }
