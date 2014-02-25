@@ -36,7 +36,6 @@ class EventHandler(FileSystemEventHandler):
             subprocess.call(['lessc', '-x', input_path], stdout=output)
 
             now = datetime.datetime.now().strftime('%H:%M:%S')
-            file_path = event.src_path[event.src_path.rindex(PATH):]
             print('{} - compiled {}'.format(now, output_path))
 
 
