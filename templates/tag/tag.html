@@ -19,4 +19,14 @@
 
 {% block content %}
     {% include 'manga/_include/manga-list-core.html' %}
+    {% if not manga_list %}
+        <div class="container">
+            <div class="panel">
+                <h4 class="panel-heading">{% trans %}There is nothing here.{% endtrans %}</h4>
+                <div class="panel-body">
+                    <p>{% trans %}Unfortunately, there are no manga or doujinshi that satisfies your filtering criteria.{% endtrans %}</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
