@@ -100,6 +100,17 @@ class RevisionModelTests(BaseTestCase):
         revision = Revision.create(old_manga, new_manga, self.user)
         self.assertEqual(revision, None)
 
+    def test_revision_can_create(self):
+        old_manga = self.manga
+        new_manga = copy.deepcopy(self.manga)
+
+        for i in range(self.user.revision_limit):
+            self.assertTrue(Revision.can_create(self.user))
+            new_manga.title = 'Test Manga Title {}'.format(i)
+            Revision.create(old_manga, new_manga, self.user)
+
+        self.assertFalse(Revision.can_create(self.user))
+
 
 class RevisionEventModelTests(BaseTestCase):
 

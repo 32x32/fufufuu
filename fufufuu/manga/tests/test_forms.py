@@ -206,6 +206,22 @@ class MangaEditFormTests(BaseTestCase):
         manga = Manga.objects.get(id=self.manga.id)
         self.assertEqual(manga.markdown, '北京')
 
+    def test_manga_edit_form_edit_limit(self):
+        user = self.create_test_user('testuser2')
+        user.revision_limit = 0
+        self.client.login(username='testuser2', password='password')
+
+        self.request.user = user
+
+        form = MangaEditForm(request=self.request, instance=self.manga, data={
+            'title': self.manga.title,
+            'language': self.manga.language,
+            'category': self.manga.category,
+            'action': 'save',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['__all__'], ['You have reached your edit limit for the day, please try again later.'])
+
 
 class MangaPageFormsetTests(BaseTestCase):
 

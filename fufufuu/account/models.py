@@ -20,11 +20,13 @@ class User(AbstractBaseUser):
     html                = models.TextField(blank=True)
     avatar              = models.FileField(upload_to=user_avatar_upload_to, blank=True, null=True)
 
+    # boolean flags
     is_moderator        = models.BooleanField(default=False)
     is_staff            = models.BooleanField(default=False)
     is_active           = models.BooleanField(default=True)
 
     # 24 hour limits
+    revision_limit      = models.IntegerField(default=10)
     upload_limit        = models.IntegerField(default=10)
     comment_limit       = models.IntegerField(default=100)
 

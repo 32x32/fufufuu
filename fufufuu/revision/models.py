@@ -5,6 +5,7 @@ from django.contrib.contenttypes import generic
 from django.db import models
 from django.forms.models import model_to_dict
 from fufufuu.account.models import User
+from fufufuu.core.utils import yesterday
 from fufufuu.revision.enums import RevisionStatus, RevisionAction
 
 
@@ -41,6 +42,16 @@ class Revision(models.Model):
     def set_diff(self, diff_dict):
         self.diff_raw = base64.b64encode(pickle.dumps(diff_dict)).decode('utf-8')
     diff = property(get_diff, set_diff)
+
+    @classmethod
+    def can_create(cls, user):
+        """
+        Returns a boolean for whether the user is allowed to create a new
+        revision.
+        """
+
+        revision_count = cls.objects.filter(created_by=user, created_on__gte=yesterday(), status=RevisionStatus.PENDING).count()
+        return revision_count < user.revision_limit
 
     @classmethod
     def create(cls, old_instance, new_instance, created_by, m2m_data=None):

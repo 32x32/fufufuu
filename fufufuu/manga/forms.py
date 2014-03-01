@@ -12,6 +12,7 @@ from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_F
 from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import generate_manga_archive
 from fufufuu.revision.enums import RevisionStatus
+from fufufuu.revision.models import Revision
 from fufufuu.settings import MD2HTML
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
@@ -186,6 +187,9 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
             raise forms.ValidationError(_('Please specify both collection and collection part (or leave them both blank).'))
         elif collection_name and collection_part:
             self.collection_obj = get_or_create_tag_by_name_or_alias(TagType.COLLECTION, collection_name, self.request.user)
+
+        if not Revision.can_create(self.request.user):
+            raise forms.ValidationError(_('You have reached your edit limit for the day, please try again later.'))
 
         return cd
 
