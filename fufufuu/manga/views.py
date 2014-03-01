@@ -1,5 +1,6 @@
 import base64
 import json
+import os
 
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
@@ -124,7 +125,14 @@ class MangaInfoView(TemplateView):
 
     def get(self, request, id, slug):
         manga = get_object_or_404(Manga.published, id=id)
+        try:
+            archive = MangaArchive.objects.get(manga=manga)
+        except MangaArchive.DoesNotExist:
+            archive = generate_manga_archive(manga)
+        if not os.path.exists(archive.file.path):
+            archive = generate_manga_archive(manga)
         return self.render_to_response({
+            'archive': archive,
             'manga': manga,
         })
 

@@ -1,3 +1,4 @@
+import os
 import zipfile
 from io import BytesIO
 
@@ -11,7 +12,8 @@ from fufufuu.core.tests import BaseTestCase
 from fufufuu.core.utils import slugify
 from fufufuu.download.models import DownloadLink
 from fufufuu.manga.enums import MangaStatus, MangaCategory
-from fufufuu.manga.models import Manga, MangaFavorite
+from fufufuu.manga.models import Manga, MangaFavorite, MangaArchive
+from fufufuu.manga.utils import generate_manga_archive
 from fufufuu.revision.enums import RevisionStatus
 from fufufuu.revision.models import Revision
 from fufufuu.tag.models import Tag
@@ -66,12 +68,23 @@ class MangaViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 404)
 
 
-class MangaInfoTests(BaseTestCase):
+class MangaInfoViewTests(BaseTestCase):
 
     def test_manga_info_view_get(self):
         response = self.client.get(reverse('manga.info', args=[self.manga.id, self.manga.slug]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'manga/manga-info.html')
+
+    def test_manga_info_view_get_no_archive_file(self):
+        archive = generate_manga_archive(self.manga)
+        os.remove(archive.file.path)
+
+        response = self.client.get(reverse('manga.info', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-info.html')
+
+        archive = MangaArchive.objects.get(manga=self.manga)
+        self.assertTrue(os.path.exists(archive.file.path))
 
 
 class MangaThumbnailsViewTests(BaseTestCase):

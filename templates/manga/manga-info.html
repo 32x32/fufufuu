@@ -30,7 +30,7 @@
         <form action="{{ url('manga.download', args=[manga.id, manga.slug]) }}" method="post">
             {{ forms.csrf_input() }}
             <button class="btn btn-warning btn-block">
-                <strong>{% trans %}Download (26.2MB){% endtrans %}</strong>
+                <strong>{% trans %}Download{% endtrans %} ({{ archive.file.size|filesizeformat }})</strong>
                 <span class="icon icon-down-circled space-left"></span>
             </button>
         </form>

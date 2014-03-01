@@ -2,7 +2,7 @@
 # {{ manga.title }}
 #-------------------------------------------------------------------------------
 
-name: {{ manga.archive_name }}
+filename: {{ manga.archive_name }}
 pages: {{ manga.mangapage_set.count() }}
 language: {{ manga.language_display }}
 
