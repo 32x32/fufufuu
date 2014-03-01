@@ -4,7 +4,7 @@
 {% block title %}{% trans title=manga.title %}Edit Images: {{ title }}{% endtrans %}{% endblock %}
 
 {% block content %}
-    <div class="container-fat relative">
+    <div class="container relative">
         {% if formset|length > 0 %}
             <form action="" method="post" enctype="multipart/form-data" style="min-height: 314px;">
                 <div class="manga-edit-main space-bottom-15">

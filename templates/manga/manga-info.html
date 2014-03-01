@@ -4,87 +4,79 @@
 
 {% macro tag_widget(tag_list, title) %}
     {% if tag_list %}
-        <div class="panel panel-thin">
-            <h5 class="panel-heading">{{ title }}</h5>
-            <div class="panel-body manga-info-tag-list">
-                {% for tag in tag_list %}
-                    <a href="{{ url('tag', args=[tag.id, tag.slug]) }}" class="manga-info-tag-item">{{ tag.name }}</a>
-                {% endfor %}
-            </div>
-        </div>
+        <tr>
+            <td width="100"><label class="label-normalized">{{ title }}</label></td>
+            <td>
+                <div class="manga-info-tag-list">
+                    {% for tag in tag_list %}
+                        <a href="{{ url('tag', args=[tag.id, tag.slug]) }}" class="manga-info-tag-item">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
     {% endif %}
 {% endmacro %}
 
 {% block title %}{{ manga.title }}{% endblock %}
 
 {% block content %}
-    <div id="manga-info-read" class="manga-info-section">
-        <a href="{{ url('manga', args=[manga.id, manga.slug]) }}" title="{{ manga.title }}" class="manga-info-cover">
-            {% if manga.cover %}
-                <img class="lazy-image" src="{{ manga.cover|image_resize('manga_info_cover', manga.id) }}" alt="{{ manga.title }}">
-            {% else %}
-                <img class="lazy-image" src="{{ STATIC_URL }}images/no-image.png" alt="{{ manga.title }}">
-            {% endif %}
-            <strong>{% trans %}Read Online{% endtrans %}<span class="icon icon-right-open space-left-5"></span></strong>
-        </a>
-        <form action="{{ url('manga.download', args=[manga.id, manga.slug]) }}" method="post">
-            {{ forms.csrf_input() }}
-            <button class="btn btn-warning btn-block">
-                <strong>{% trans %}Download{% endtrans %} ({{ archive.file.size|filesizeformat }})</strong>
-                <span class="icon icon-down-circled space-left"></span>
-            </button>
-        </form>
-    </div>
-    <div id="manga-info-tags" class="manga-info-section">
-        <h2 id="tags" class="manga-info-header">{% trans %}Info{% endtrans %}</h2>
-        <div class="panel panel-thin">
-            <h5 class="panel-heading">{% trans %}Uploader{% endtrans %}</h5>
-            <div class="panel-body">
-                <a href="#">
-                    <span class="left space-right-10">{{ widgets.user_avatar(manga.created_by) }}</span>
-                    <strong>{{ manga.created_by }}</strong>
-                    <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
-                    <div class="clear"></div>
-                </a>
-            </div>
-        </div>
-        <div class="panel panel-thin">
-            <h5 class="panel-heading">{% trans %}Description{% endtrans %}</h5>
-            <div class="panel-body markdown">
-                {% if manga.markdown %}
-                    {{ manga.html }}
+    <div class="container">
+        <div id="manga-info-cover" class="space-bottom-10">
+            <a href="{{ url('manga', args=[manga.id, manga.slug]) }}" title="{{ manga.title }}" class="block">
+                {% if manga.cover %}
+                    <img class="lazy-image manga-info-cover-img" src="{{ manga.cover|image_resize('manga_info_cover', manga.id) }}" alt="{{ manga.title }}">
                 {% else %}
-                    <p>{% trans %}No Description Available{% endtrans %}</p>
+                    <img class="lazy-image manga-info-cover-img" src="{{ STATIC_URL }}images/no-image.png" alt="{{ manga.title }}">
                 {% endif %}
+                <button class="btn btn-primary btn-block manga-info-cover-action manga-info-cover-action-read">
+                    <span class="icon icon-docs space-right"></span>
+                    <span>{% trans %}Read Online{% endtrans %}</span>
+                </button>
+            </a>
+            <form action="{{ url('manga.download', args=[manga.id, manga.slug]) }}" method="post">
+                {{ forms.csrf_input() }}
+                <button class="btn btn-warning btn-block manga-info-cover-action">
+                    <span class="icon icon-down-circled space-right"></span>
+                    <span>{% trans %}Download{% endtrans %} ({{ archive.file.size|filesizeformat }})</span>
+                </button>
+            </form>
+        </div>
+        <div class="manga-info-section">
+            <div class="panel panel-thin">
+                <h5 class="panel-heading">{% trans %}Uploader{% endtrans %}</h5>
+                <div class="panel-body">
+                    <a href="#">
+                        <span class="left space-right-10">{{ widgets.user_avatar(manga.created_by) }}</span>
+                        <strong>{{ manga.created_by }}</strong>
+                        <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
+                        <div class="clear"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="panel panel-thin">
+                <h5 class="panel-heading">{% trans %}Description{% endtrans %}</h5>
+                <div class="panel-body markdown">
+                    {% if manga.markdown %}
+                        {{ manga.html }}
+                    {% else %}
+                        <p>{% trans %}No Description Available{% endtrans %}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="panel panel-thin">
+                <h5 class="panel-heading">{% trans %}Tags{% endtrans %}</h5>
+                <div class="panel-body panel-body-no-padding">
+                    <table class="panel-table">
+                        {{ tag_widget(manga.tag_dictionary.SCANLATOR, gettext('Scanlators')) }}
+                        {{ tag_widget(manga.tag_dictionary.AUTHOR, gettext('Authors')) }}
+                        {{ tag_widget(manga.tag_dictionary.CIRCLE, gettext('Circles')) }}
+                        {{ tag_widget(manga.tag_dictionary.CONTENT, gettext('Content')) }}
+                        {{ tag_widget(manga.tag_dictionary.EVENT, gettext('Event')) }}
+                        {{ tag_widget(manga.tag_dictionary.MAGAZINE, gettext('Magazine')) }}
+                        {{ tag_widget(manga.tag_dictionary.Parody, gettext('Parody')) }}
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="manga-info-tags" class="manga-info-section">
-        <h2 id="tags" class="manga-info-header">{% trans %}Tags{% endtrans %}</h2>
-        <div data-section="tags">
-            {{ tag_widget(manga.tag_dictionary.SCANLATOR, gettext('Scanlators')) }}
-            {{ tag_widget(manga.tag_dictionary.AUTHOR, gettext('Authors')) }}
-            {{ tag_widget(manga.tag_dictionary.CIRCLE, gettext('Circles')) }}
-            {{ tag_widget(manga.tag_dictionary.CONTENT, gettext('Content')) }}
-            {{ tag_widget(manga.tag_dictionary.EVENT, gettext('Event')) }}
-            {{ tag_widget(manga.tag_dictionary.MAGAZINE, gettext('Magazine')) }}
-            {{ tag_widget(manga.tag_dictionary.Parody, gettext('Parody')) }}
-{#            <div class="panel panel-thin">#}
-{#                <h5 class="panel-heading">{% trans %}Metrics{% endtrans %}</h5>#}
-{#                <div class="panel-body">#}
-{#                    <p class="space-bottom-0">{% trans %}32890 Downloads{% endtrans %}</p>#}
-{#                    <p class="space-bottom-0">{% trans %}719 Favorites{% endtrans %}</p>#}
-{#                    <p>{% trans %}513 Comments{% endtrans %}</p>#}
-{#                </div>#}
-{#            </div>#}
-        </div>
-    </div>
-    <div id="manga-info-related" class="manga-info-section">
-        <h2 id="related" class="manga-info-header">{% trans %}Related{% endtrans %}</h2>
-        <div data-section="related"></div>
-    </div>
-    <div id="manga-info-comments" class="manga-info-section">
-        <h2 id="comments" class="manga-info-header">{% trans %}Comments{% endtrans %}</h2>
-        <div data-section="comments"></div>
     </div>
 {% endblock %}

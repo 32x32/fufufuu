@@ -5,13 +5,13 @@
 
 {% block content %}
     <form action="" method="post" enctype="multipart/form-data">
-        <div class="container-fat manga-edit-main">
+        <div class="container manga-edit-main">
             {{ forms.csrf_input() }}
             {{ forms.non_field_errors(form) }}
             <div class="half-wrapper">
                 <div class="half half-md">
                     {{ forms.field(form.title) }}
-                    <table class="table-full-border space-top-15">
+                    <table class="table-full-border space-top-10">
                         <tr>
                             <td width="120"><label>{% trans %}Current{% endtrans %}</label></td>
                             <td>
@@ -27,7 +27,7 @@
                             <td>{{ form.cover }}</td>
                         </tr>
                     </table>
-                    <table class="table-full-border space-top-15 space-bottom-15">
+                    <table class="table-full-border space-top-10 space-bottom-10">
                         <tr>
                             <td width="120">{{ form.language.label_tag() }}</td>
                             <td>{{ form.language }}</td>
@@ -42,13 +42,13 @@
                 </div>
                 <div class="half half-md">
                     {% if manga.title == 'Untitled' and manga.status == 'DRAFT' %}
-                        <div class="well space-bottom-15">
+                        <div class="well space-bottom-10">
                             <p class="help-block space-bottom-0">{% trans %}Tags should be entered as a <strong>comma</strong> separated list of text. Here's is an example list of authors:{% endtrans %}</p>
                             <p><strong>{% trans %}Panda Niku, Ookuma Nekosuke{% endtrans %}</strong></p>
                             <p class="help-block">{% trans %}"Panda Niku" and "Ookuma Nekosuke" will show up as two separate authors.{% endtrans %}</p>
                         </div>
                     {% endif %}
-                    <table class="table-full-border space-bottom-15 manga-edit-inputs">
+                    <table class="table-full-border space-bottom-10 manga-edit-inputs">
                         <tr>
                             <td width="120">{{ form.authors.label_tag() }}</td>
                             <td>{{ form.authors }}</td>
@@ -78,7 +78,7 @@
                             <td>{{ form.scanlators }}</td>
                         </tr>
                     </table>
-                    <table class="table-full-border space-bottom-15 manga-edit-inputs">
+                    <table class="table-full-border space-bottom-10 manga-edit-inputs">
                         <tr>
                             <td width="120">{{ form.tank.label_tag() }}</td>
                             <td>{{ form.tank }}</td>
@@ -86,7 +86,7 @@
                             <td width="100">{{ form.tank_chapter }}</td>
                         </tr>
                     </table>
-                    <table class="table-full-border space-bottom-15 manga-edit-inputs">
+                    <table class="table-full-border space-bottom-10 manga-edit-inputs">
                         <tr>
                             <td width="120">{{ form.collection.label_tag() }}</td>
                             <td>{{ form.collection }}</td>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="manga-edit-sidebar">
-            <div class="well space-bottom-15">
+            <div class="well space-bottom-10">
                 {% if user == manga.created_by or user.is_moderator %}
                     <button type="submit" class="btn btn-primary" name="action" value="save">{% trans %}Save{% endtrans %}</button>
                 {% else %}
@@ -153,7 +153,7 @@
                 {% endif %}
             </div>
             {% if manga.status == 'DRAFT' %}
-                <div class="well space-bottom-15">
+                <div class="well space-bottom-10">
                     <button type="submit" class="btn btn-warning" name="action" value="publish">{% trans %}Save and Publish{% endtrans %}</button>
                     <p class="help-block space-top-10">{% trans %}This will publish the current upload to the front page of Fufufuu.{% endtrans %}</p>
                 </div>

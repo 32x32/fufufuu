@@ -46,14 +46,21 @@
 ---------------------------------------------------*/
 
 .half-wrapper {
-    margin: 0 -7px;
+    margin: 0 -5px;
 }
 
 .half {
     .inline-block();
-    padding: 0 7px;
+    padding: 0 5px;
     overflow: hidden;
     width: 100%;
+}
+
+@media screen and (max-width: @screen-lg1) {
+    .half-lg:first-of-type { padding-bottom: 15px; }
+}
+@media screen and (min-width: @screen-lg) {
+    .half-lg { width: 50%; }
 }
 
 @media screen and (max-width: @screen-md1) {

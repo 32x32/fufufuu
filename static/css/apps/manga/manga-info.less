@@ -1,91 +1,42 @@
 /* --------------------------------------------------
-    manga-info styles
+    manga-info-cover
 ---------------------------------------------------*/
 
-#template-manga-info {
-    padding: 5px;
+@media screen and (min-width: @screen-sm) {
+    #manga-info-cover {
+        max-width: 240px;
+        position: absolute;
+    }
+}
+@media screen and (min-width: @screen-xs) and (max-width: @screen-sm1) {
+    #manga-info-cover { padding: 0 25%; }
 }
 
-.manga-info-header {
-    border-bottom: 1px solid #ccc;
-    margin: 10px 0;
+.manga-info-cover-img {
+    border: 1px solid @color-accent1;
 }
-@media screen and (min-width: @screen-xs) {
-    .manga-info-header { display: none; }
+.manga-info-cover-action-read {
+    border: none;
 }
-@media screen and (max-width: @screen-xs1) {
-    .manga-info-header {
-        cursor: pointer;
-        font-weight: @font-weight-base;
-        &:after {
-            content: '\e877';
-            float: right;
-            font-family: 'entypo';
-            padding: 0 10px;
-        }
-    }
-    .manga-info-header + div {
-        height: 0;
-        overflow: hidden;
-        &.active { height: auto; }
-    }
+.manga-info-cover-action {
+    .border-radius(0);
+    padding: 10px 0;
 }
 
 /* --------------------------------------------------
-    manga-info sections
+    manga-info-section-list
 ---------------------------------------------------*/
+
+@media screen and (min-width: @screen-sm) {
+    .manga-info-section {
+        margin-left: 250px;
+    }
+}
 
 .manga-info-section {
-    .inline-block();
-    float: left;
-    padding: 5px;
-    width: 100%;
-}
-
-#manga-info-read {
-    max-width: 320px;
-}
-#manga-info-tags {
-    max-width: 400px;
-}
-#manga-info-related {
-
-}
-#manga-info-comments {}
-
-@media screen and (max-width: @screen-xs1) {
-    #manga-info-read { max-width: 100%; padding-bottom: 0; }
-    #manga-info-tags { max-width: 100%; }
-}
-@media screen and (min-width: @screen-xs) and (max-width: @screen-md1) {
-    #manga-info-read { max-width: 50%; }
-    #manga-info-tags { max-width: 50%; }
-}
-
-/* --------------------------------------------------
-    manga-info read
----------------------------------------------------*/
-
-.manga-info-cover {
-    .border-radius(@border-radius);
-
-    background-color: @color-accent1;
-    border: 1px solid @color-accent1;
-    color: #fff;
-    display: block;
+    list-style-type: none;
     margin-bottom: 10px;
-    text-align: center;
-
-    > strong {
-        display: block;
-        padding: 10px 0;
-    }
 }
-
-/* --------------------------------------------------
-    manga-info tags
----------------------------------------------------*/
-
 
 .manga-info-tag-list {
     margin: -3px;

@@ -165,33 +165,31 @@
     }
 }
 
-@media screen and (min-width: @screen-lg) {
-    .manga-filter-section {
-        line-height: 40px;
-        height: 40px;
-        margin-bottom: 0;
+.manga-filter-section {
+    line-height: 40px;
+    height: 40px;
+    margin-bottom: 0;
 
-        > select {
-            height: 40px;
-            padding: 7px;
-        }
-    }
-    .ml-filter-bar-cat {
-        line-height: 40px;
-        > input[type="checkbox"] {
-            top: -13px;
-        }
+    > select {
+        height: 40px;
+        padding: 7px;
     }
 }
-
-@media screen and (max-width: @screen-lg1) {
+.ml-filter-bar-cat {
+    line-height: 40px;
+    > input[type="checkbox"] {
+        top: -13px;
+    }
+}
+@media screen and (min-width: @screen-xs) and (max-width: @screen-sm1) {
     #manga-filter-section-button {
         display: block;
+        margin-top: 10px;
     }
 }
 @media screen and (max-width: @screen-xs1) {
     #manga-list-filters {
-        margin-top: 10px;
         display: none;
     }
+    .manga-filter-section { margin-top: 10px; }
 }
