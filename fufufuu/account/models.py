@@ -19,6 +19,8 @@ class User(AbstractBaseUser):
     markdown            = models.TextField(blank=True)
     html                = models.TextField(blank=True)
     avatar              = models.FileField(upload_to=user_avatar_upload_to, blank=True, null=True)
+
+    is_moderator        = models.BooleanField(default=False)
     is_staff            = models.BooleanField(default=False)
     is_active           = models.BooleanField(default=True)
 

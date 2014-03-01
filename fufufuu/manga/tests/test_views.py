@@ -271,7 +271,7 @@ class MangaEditImagesViewTests(BaseTestCase):
         self.manga.created_by = user
         self.manga.save(user)
 
-        self.user.is_staff = False
+        self.user.is_moderator = False
         self.user.save()
 
         response = self.client.get(reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))

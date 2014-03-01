@@ -38,7 +38,7 @@
             <span class="icon icon-pencil"></span>
             <span>{% trans %}Edit{% endtrans %}</span>
         </a>
-        {% if manga.created_by == user or user.is_staff %}
+        {% if manga.created_by == user or user.is_moderator %}
             <a href="{{ url_manga_edit_images }}" class="{{ utils.link_active(url_manga_edit_images) }}">
                 <span class="icon icon-pencil"></span>
                 <span>{% trans %}Edit Images{% endtrans %}</span>

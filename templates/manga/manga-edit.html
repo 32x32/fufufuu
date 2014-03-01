@@ -145,7 +145,7 @@
         </div>
         <div class="manga-edit-sidebar">
             <div class="well space-bottom-15">
-                {% if user == manga.created_by or user.is_staff %}
+                {% if user == manga.created_by or user.is_moderator %}
                     <button type="submit" class="btn btn-primary" name="action" value="save">{% trans %}Save{% endtrans %}</button>
                 {% else %}
                     <button type="submit" class="btn btn-primary" name="action" value="save">{% trans %}Suggest Changes{% endtrans %}</button>
@@ -158,7 +158,7 @@
                     <p class="help-block space-top-10">{% trans %}This will publish the current upload to the front page of Fufufuu.{% endtrans %}</p>
                 </div>
             {% endif %}
-            {% if user == manga.created_by or user.is_staff %}
+            {% if user == manga.created_by or user.is_moderator %}
                 <div class="well">
                     <button type="submit" class="btn btn-error" name="action" value="delete">{% trans %}Delete{% endtrans %}</button>
                     <p class="help-block space-top-10">{% trans %}This will remove the current upload from Fufufuu permanently.{% endtrans %}</p>

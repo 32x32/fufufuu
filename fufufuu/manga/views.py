@@ -338,7 +338,7 @@ class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
         return HttpResponseNotAllowed(permitted_methods=['post'])
 
     def post(self, request, id, slug):
-        if request.user.is_staff:
+        if request.user.is_moderator:
             manga = get_object_or_404(Manga.objects, id=id)
         else:
             manga = get_object_or_404(Manga.objects, id=id, created_by=request.user)

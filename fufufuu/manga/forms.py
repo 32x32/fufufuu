@@ -231,7 +231,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
             if manga.status == MangaStatus.PUBLISHED: generate_manga_archive(manga)
         else:
             revision = manga.create_revision(self.request.user, tag_list)
-            if revision and (self.request.user == manga.created_by or self.request.user.is_staff):
+            if revision and (self.request.user == manga.created_by or self.request.user.is_moderator):
                 manga, m2m = revision.apply()
                 manga.save(self.request.user)
                 if 'tags' in m2m: manga.tags = m2m['tags']

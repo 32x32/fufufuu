@@ -56,13 +56,15 @@ class DataCreator:
 
     @timed
     def create_users(self):
-        def create_user_helper(username, is_staff=False):
-            user = User(username=username, is_staff=is_staff)
+        def create_user_helper(username, **kwargs):
+            user_data = { 'username': username }
+            user_data.update(**kwargs)
+            user = User(**user_data)
             user.set_password('password')
             user.save()
             return user
 
-        self.user = create_user_helper('testuser', is_staff=True)
+        self.user = create_user_helper('testuser', is_staff=True, is_moderator=True)
 
         for i in range(self.config['USERS']):
             create_user_helper('testuser{}'.format(i))

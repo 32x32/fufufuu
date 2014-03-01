@@ -51,7 +51,7 @@
                             <button class="btn btn-error">{% trans %}Withdraw Revision{% endtrans %}</button>
                         </form>
                     {% endif %}
-                    {% if revision.status == 'PENDING' and (user == manga.created_by or user.is_staff) %}
+                    {% if revision.status == 'PENDING' and (user == manga.created_by or user.is_moderator) %}
                         <form action="" method="post" class="space-top-10">
                             {{ forms.csrf_input() }}
                             <input type="hidden" name="revision_id" value="{{ revision.id }}">
