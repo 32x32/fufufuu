@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from fufufuu.core.uploads import user_avatar_upload_to
+from fufufuu.image.enums import ImageKeyType
+from fufufuu.image.filters import image_resize
 
 
 class UserManager(BaseUserManager):
@@ -46,3 +48,7 @@ class User(AbstractBaseUser):
 
     class Meta:
         db_table = 'user'
+
+    @property
+    def avatar_url(self):
+        return image_resize(self.avatar, ImageKeyType.ACCOUNT_AVATAR, self.id)

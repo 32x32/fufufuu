@@ -16,7 +16,7 @@
                             <td width="120"><label>{% trans %}Current{% endtrans %}</label></td>
                             <td>
                                 {% if manga.cover %}
-                                    <img src="{{ STATIC_URL }}images/loading.png" data-src="{{ manga.cover|image_resize('manga_cover', manga.id) }}" class="lazy-image manga-cover">
+                                    <img src="{{ manga.cover_url }}" class="manga-cover">
                                 {% else %}
                                     <img src="{{ STATIC_URL }}images/no-image.png" class="manga-cover">
                                 {% endif %}

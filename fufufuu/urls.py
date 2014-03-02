@@ -23,7 +23,6 @@ urlpatterns = patterns('',
     url(r'^favorites/$',                MangaListFavoritesView.as_view(), name='manga.list.favorites'),
     url(r'^i18n/',                      include('django.conf.urls.i18n')),
     url(r'^m/',                         include('fufufuu.manga.urls')),
-    url(r'^media/image/',               include('fufufuu.image.urls')),
     url(r'^tag/',                       include('fufufuu.tag.urls')),
     url(r'^upload/',                    include('fufufuu.upload.urls')),
 
@@ -35,11 +34,12 @@ urlpatterns = patterns('',
 
 if DEBUG:
     urlpatterns += patterns('',
-        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
+        url(r'^media/image/',           include('fufufuu.image.urls')),
+        url(r'^media/(?P<path>.*)$',    'django.views.static.serve', {'document_root': MEDIA_ROOT}),
     )
 
 if DEBUG and not DEBUG_TOOLBAR_PATCH_SETTINGS:
     import debug_toolbar
     urlpatterns += patterns('',
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+        url(r'^__debug__/',             include(debug_toolbar.urls)),
     )

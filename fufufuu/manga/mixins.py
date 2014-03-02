@@ -1,5 +1,7 @@
 from collections import defaultdict
 from fufufuu.core.languages import Language
+from fufufuu.image.enums import ImageKeyType
+from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaStatus, MangaCategory
 from fufufuu.tag.enums import TagType
 
@@ -36,3 +38,7 @@ class MangaMixin:
         filename.append('{}'.format(self.title))
 
         return ' '.join(filename)[:196] + '.zip'
+
+    @property
+    def cover_url(self):
+        return image_resize(self.cover, ImageKeyType.MANGA_COVER, self.id)

@@ -1,4 +1,5 @@
 import re
+
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext, ungettext
@@ -6,11 +7,12 @@ from jinja2 import nodes
 from jinja2.environment import Environment
 from jinja2.ext import Extension
 from jinja2.loaders import FileSystemLoader
+
 from fufufuu.core.filters import exclude_keys, startswith, language_display
-from fufufuu.image.filters import image_resize
 from fufufuu.manga.filters import manga_category_display, manga_status_display
 from fufufuu.tag.filters import tag_type_display
 from fufufuu.settings import TEMPLATE_DIRS, DEBUG
+
 
 #-------------------------------------------------------------------------------
 
@@ -63,7 +65,6 @@ TEMPLATE_ENV.globals.update(**{
 })
 TEMPLATE_ENV.filters.update(**{
     'exclude_keys':             exclude_keys,
-    'image_resize':             image_resize,
     'language_display':         language_display,
     'manga_category_display':   manga_category_display,
     'manga_status_display':     manga_status_display,

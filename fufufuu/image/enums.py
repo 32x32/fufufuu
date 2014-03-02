@@ -2,7 +2,6 @@ class ImageKeyType:
 
     ACCOUNT_AVATAR              = 'ACCOUNT_AVATAR'
     MANGA_THUMB                 = 'MANGA_THUMB'
-    MANGA_THUMB_RETINA          = 'MANGA_THUMB_RETINA'
     MANGA_COVER                 = 'MANGA_COVER'
     MANGA_INFO_COVER            = 'MANGA_INFO_COVER'
     MANGA_PAGE                  = 'MANGA_PAGE'
@@ -11,7 +10,6 @@ class ImageKeyType:
     choices = (
         (ACCOUNT_AVATAR,        ACCOUNT_AVATAR),
         (MANGA_THUMB,           MANGA_THUMB),
-        (MANGA_THUMB_RETINA,    MANGA_THUMB_RETINA),
         (MANGA_COVER,           MANGA_COVER),
         (MANGA_INFO_COVER,      MANGA_INFO_COVER),
         (MANGA_PAGE,            MANGA_PAGE),

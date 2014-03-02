@@ -19,7 +19,7 @@
 
 {% macro user_avatar(user) %}
     {% if user.avatar %}
-        <img src="{{ user.avatar|image_resize('account_avatar', user.id) }}" alt="{{ user.username }}" class="account-avatar">
+        <img src="{{ user.avatar_url }}" alt="{{ user.username }}" class="account-avatar">
     {% else %}
         <img src="{{ STATIC_URL }}images/no-avatar.png" alt="{{ user.username }}" class="account-avatar">
     {% endif %}

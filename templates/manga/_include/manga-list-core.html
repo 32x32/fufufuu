@@ -7,7 +7,7 @@
                 <div class="mli-core">
                     <a href="{{ url_manga }}" target="_blank" title="{{ manga.title }}" class="mli-cover">
                         {% if manga.cover %}
-                            <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ manga.cover|image_resize('manga_cover', manga.id) }}" alt="{{ manga.title }}">
+                            <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ manga.cover_url }}" alt="{{ manga.title }}">
                         {% else %}
                             <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ STATIC_URL }}images/no-image.png" alt="{{ manga.title }}">
                         {% endif %}

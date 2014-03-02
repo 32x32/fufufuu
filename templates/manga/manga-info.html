@@ -24,9 +24,9 @@
         <div id="manga-info-cover" class="space-bottom-10">
             <a href="{{ url('manga', args=[manga.id, manga.slug]) }}" title="{{ manga.title }}" class="block">
                 {% if manga.cover %}
-                    <img class="lazy-image manga-info-cover-img" src="{{ manga.cover|image_resize('manga_info_cover', manga.id) }}" alt="{{ manga.title }}">
+                    <img class="manga-info-cover-img" src="{{ manga.cover_url }}" alt="{{ manga.title }}">
                 {% else %}
-                    <img class="lazy-image manga-info-cover-img" src="{{ STATIC_URL }}images/no-image.png" alt="{{ manga.title }}">
+                    <img class="manga-info-cover-img" src="{{ STATIC_URL }}images/no-image.png" alt="{{ manga.title }}">
                 {% endif %}
                 <button class="btn btn-primary btn-block manga-info-cover-action manga-info-cover-action-read">
                     <span class="icon icon-docs space-right"></span>

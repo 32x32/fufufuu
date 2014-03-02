@@ -143,9 +143,10 @@ class MangaThumbnailsView(TemplateView):
 
     def get(self, request, id, slug):
         manga = get_object_or_404(Manga.published, id=id)
+        manga_page_list = manga.mangapage_set.all()
         return self.render_to_response({
             'manga': manga,
-            'manga_page_list': manga.mangapage_set.all(),
+            'manga_page_list': manga_page_list,
         })
 
 

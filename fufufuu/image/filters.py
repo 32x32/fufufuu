@@ -1,15 +1,19 @@
 from django.core.cache import cache
-from django.core.files.base import File
+from django.db.models.fields.files import FieldFile
 from django.db.utils import IntegrityError
+
 from fufufuu.image.models import Image, get_cache_key
 
 
-def image_resize(source, key_type, key_id):
+IMAGE_CACHE_TIMEOUT = 60 * 60 # 60 minutes
+
+
+def image_resize(file_field, key_type, key_id):
     """
     key_type should be one of ImageKeyType.choices
     """
 
-    if not source or not isinstance(source, File):
+    if not file_field or not isinstance(file_field, FieldFile):
         return ''
 
     key_type = key_type.upper()
@@ -23,9 +27,9 @@ def image_resize(source, key_type, key_id):
     except Image.DoesNotExist:
         image = Image(key_type=key_type, key_id=key_id)
         try:
-            image.save(source)
+            image.save(file_field)
         except IntegrityError:
             image = Image.objects.only('file').get(key_type=key_type, key_id=key_id)
 
-    cache.set(cache_key, image.file.url)
+    cache.set(cache_key, image.file.url, IMAGE_CACHE_TIMEOUT)
     return image.file.url
