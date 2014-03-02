@@ -73,7 +73,33 @@
                         {{ tag_widget(manga.tag_dictionary.CONTENT, gettext('Content')) }}
                         {{ tag_widget(manga.tag_dictionary.EVENT, gettext('Event')) }}
                         {{ tag_widget(manga.tag_dictionary.MAGAZINE, gettext('Magazine')) }}
-                        {{ tag_widget(manga.tag_dictionary.Parody, gettext('Parody')) }}
+                        {{ tag_widget(manga.tag_dictionary.PARODY, gettext('Parody')) }}
+                        {% if manga.tank_id %}
+                            <tr>
+                                <td><label class="label-normalized">{% trans %}Tank{% endtrans %}</label></td>
+                                {% with tag = manga.tank %}
+                                    <td>
+                                        <div class="inline-block space-right-10">
+                                            <div class="manga-info-tag-list"><a href="{{ url('tag', args=[tag.id, tag.slug]) }}" class="manga-info-tag-item">{{ tag.name }}</a></div>
+                                        </div>
+                                        <span class="inline-block text-xsmall text-normalized">{% trans number=manga.tank_chapter %}Chapter {{ number }}{% endtrans %}</span>
+                                    </td>
+                                {% endwith %}
+                            </tr>
+                        {% endif %}
+                        {% if manga.collection_id %}
+                            <tr>
+                                <td><label class="label-normalized">{% trans %}Collection{% endtrans %}</label></td>
+                                {% with tag = manga.collection %}
+                                    <td>
+                                        <div class="inline-block space-right-10">
+                                            <div class="manga-info-tag-list"><a href="{{ url('tag', args=[tag.id, tag.slug]) }}" class="manga-info-tag-item">{{ tag.name }}</a></div>
+                                        </div>
+                                        <span class="inline-block text-xsmall text-normalized">{% trans number=manga.collection_part %}Part {{ number }}{% endtrans %}</span>
+                                    </td>
+                                {% endwith %}
+                            </tr>
+                        {% endif %}
                     </table>
                 </div>
             </div>
