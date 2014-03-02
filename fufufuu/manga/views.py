@@ -9,6 +9,7 @@ from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
+from fufufuu.core.response import HttpResponseXAccel
 
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
@@ -240,6 +241,13 @@ class MangaEditMixin:
             pass
         return manga
 
+    def get_manga_restricted(self, id):
+        if self.request.user.is_moderator:
+            manga = get_object_or_404(Manga.objects, id=id)
+        else:
+            manga = get_object_or_404(Manga.objects, id=id, created_by=self.request.user)
+        return manga
+
 
 class MangaEditView(MangaEditMixin, ProtectedTemplateView):
 
@@ -314,14 +322,14 @@ class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
         )
 
     def get(self, request, id, slug):
-        manga = self.get_manga(id)
+        manga = self.get_manga_restricted(id)
         return self.render_to_response({
             'manga': manga,
             'formset': (self.get_formset_cls()(user=request.user, queryset=MangaPage.objects.filter(manga=manga))),
         })
 
     def post(self, request, id, slug):
-        manga = self.get_manga(id)
+        manga = self.get_manga_restricted(id)
         formset = self.get_formset_cls()(
             user=request.user,
             queryset=MangaPage.objects.filter(manga=manga),
@@ -343,16 +351,21 @@ class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
         })
 
 
+class MangaEditImagesPageView(MangaEditMixin, ProtectedTemplateView):
+
+    def get(self, request, id, slug, page):
+        manga = self.get_manga_restricted(id)
+        manga_page = get_object_or_404(MangaPage, manga=manga, page=page)
+        return HttpResponseXAccel(manga_page.image.url, manga_page.image.name, attachment=False)
+
+
 class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
 
     def get(self, request, id, slug):
         return HttpResponseNotAllowed(permitted_methods=['post'])
 
     def post(self, request, id, slug):
-        if request.user.is_moderator:
-            manga = get_object_or_404(Manga.objects, id=id)
-        else:
-            manga = get_object_or_404(Manga.objects, id=id, created_by=request.user)
+        manga = self.get_manga_restricted(id)
         if 'zipfile' in request.FILES:
             errors = process_zipfile(manga, request.FILES.get('zipfile'), request.user)
         elif 'images' in request.FILES:

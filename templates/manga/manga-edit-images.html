@@ -26,7 +26,7 @@
                                         <label class="right">{{ form.select }}</label>
                                         {{ form.ORDER }}
                                         {% if page.image %}
-                                            <a href="{{ page.image.url }}" target="_blank" class="mtli-link"{% if page.name %} title="{{ page.name }}"{% endif %}>{% if page.name %}{{ page.name }}{% else %}{{ page.page }}{% endif %}</a>
+                                            <a href="{{ url('manga.edit.images.page', args=[manga.id, manga.slug, page.page]) }}" target="_blank" class="mtli-link"{% if page.name %} title="{{ page.name }}"{% endif %}>{% if page.name %}{{ page.name }}{% else %}{{ page.page }}{% endif %}</a>
                                         {% endif %}
                                     </div>
                                 </div>

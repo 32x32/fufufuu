@@ -288,7 +288,7 @@ class MangaEditImagesViewTests(BaseTestCase):
         self.user.save()
 
         response = self.client.get(reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
 
         self.client.login(username='testuser2', password='password')
 
@@ -355,3 +355,29 @@ class MangaEditUploadViewTests(BaseTestCase):
             ]
         })
         self.assertRedirects(response, reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
+
+
+class MangaEditImagesPageView(BaseTestCase):
+
+    def test_edit_images_page_view_get(self):
+        manga_page = self.manga.mangapage_set.all()[0]
+        manga_page.image = SimpleUploadedFile('01.jpg', self.create_test_image_file().getvalue())
+        manga_page.save()
+
+        response = self.client.get(reverse('manga.edit.images.page', args=[self.manga.id, self.manga.slug, manga_page.page]))
+        self.assertEqual(response['location'], 'http://testserver{}'.format(manga_page.image.url))
+
+    def test_edit_images_page_view_get_no_allowed(self):
+        manga_page = self.manga.mangapage_set.all()[0]
+        manga_page.image = SimpleUploadedFile('01.jpg', self.create_test_image_file().getvalue())
+        manga_page.save()
+
+        user = self.create_test_user('testuser2')
+        self.manga.created_by = user
+        self.manga.save(user)
+
+        self.user.is_moderator = False
+        self.user.save()
+
+        response = self.client.get(reverse('manga.edit.images.page', args=[self.manga.id, self.manga.slug, manga_page.page]))
+        self.assertEqual(response.status_code, 404)
