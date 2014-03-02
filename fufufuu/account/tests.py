@@ -130,3 +130,40 @@ class AccountSettingsViewTests(BaseTestCase):
 
         user = User.objects.get(id=self.user.id)
         self.assertFalse(user.avatar)
+
+
+class AccountSettingsPasswordViewTests(BaseTestCase):
+
+    def test_account_settings_password_view_get(self):
+        response = self.client.get(reverse('account.settings.password'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'account/account-settings.html')
+
+    def test_account_settings_password_view_post_password_mismatch(self):
+        response = self.client.post(reverse('account.settings.password'), {
+            'old_password': 'password',
+            'new_password1': '1234',
+            'new_password2': '5678',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'account/account-settings.html')
+
+    def test_account_settings_password_view_post_incorrect_old_password(self):
+        response = self.client.post(reverse('account.settings.password'), {
+            'old_password': '1234',
+            'new_password1': '5678',
+            'new_password2': '5678',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'account/account-settings.html')
+
+    def test_account_settings_password_view_post(self):
+        response = self.client.post(reverse('account.settings.password'), {
+            'old_password': 'password',
+            'new_password1': '1234',
+            'new_password2': '1234',
+        })
+        self.assertRedirects(response, reverse('account.settings'))
+
+        user = User.objects.get(id=self.user.id)
+        self.assertTrue(user.check_password('1234'))

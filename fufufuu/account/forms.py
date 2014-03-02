@@ -164,3 +164,49 @@ class AccountSettingsForm(BlankLabelSuffixMixin, forms.ModelForm):
 
         user.save()
         return user
+
+
+class AccountSettingsPasswordForm(BlankLabelSuffixMixin, forms.Form):
+
+    old_password = forms.CharField(
+        label=_('Current Password'),
+        widget=forms.PasswordInput(attrs={'required': 'required'})
+    )
+
+    new_password1 = forms.CharField(
+        label=_('New Password'),
+        widget=forms.PasswordInput(attrs={'required': 'required'})
+    )
+
+    new_password2 = forms.CharField(
+        label=_('Confirm New Password'),
+        widget=forms.PasswordInput(attrs={'required': 'required'})
+    )
+
+    error_messages = {
+        'password_mismatch': _("The two password fields didn't match."),
+        'password_incorrect': _('Your current password was entered incorrectly. Please enter it again.'),
+    }
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+    def clean_old_password(self):
+        old_password = self.cleaned_data["old_password"]
+        if not self.user.check_password(old_password):
+            raise forms.ValidationError(self.error_messages['password_incorrect'])
+        return old_password
+
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError(self.error_messages['password_mismatch'])
+        return password2
+
+    def save(self, commit=True):
+        self.user.set_password(self.cleaned_data['new_password1'])
+        if commit:
+            self.user.save()
+        return self.user

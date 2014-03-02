@@ -5,7 +5,8 @@ from django.http.response import HttpResponseNotAllowed
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 from django.views.generic.base import View
-from fufufuu.account.forms import AccountLoginForm, AccountRegisterForm, AccountSettingsForm
+from fufufuu.account.forms import AccountLoginForm, AccountRegisterForm, AccountSettingsForm, \
+    AccountSettingsPasswordForm
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 
 
@@ -62,14 +63,26 @@ class AccountLogoutView(View):
         return redirect('account.login')
 
 
-class AccountSettingsView(ProtectedTemplateView):
+#-------------------------------------------------------------------------------
+
+
+class AccountSettingsBaseView(ProtectedTemplateView):
 
     template_name = 'account/account-settings.html'
 
+    def render_to_response(self, context_additional):
+        context = {
+            'form': AccountSettingsForm(instance=self.request.user),
+            'password_form': AccountSettingsPasswordForm(user=self.request.user),
+        }
+        context.update(context_additional)
+        return super().render_to_response(context)
+
     def get(self, request):
-        return self.render_to_response({
-            'form': AccountSettingsForm(instance=request.user),
-        })
+        return self.render_to_response({})
+
+
+class AccountSettingsView(AccountSettingsBaseView):
 
     def post(self, request):
         form = AccountSettingsForm(instance=request.user, data=request.POST, files=request.FILES)
@@ -80,4 +93,18 @@ class AccountSettingsView(ProtectedTemplateView):
 
         return self.render_to_response({
             'form': form,
+        })
+
+
+class AccountSettingsPasswordView(AccountSettingsBaseView):
+
+    def post(self, request):
+        form = AccountSettingsPasswordForm(user=self.request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _('Your password has been updated.'))
+            return redirect('account.settings')
+
+        return self.render_to_response({
+            'password_form': form,
         })
