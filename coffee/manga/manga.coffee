@@ -108,7 +108,7 @@ $ ->
         # manga chapter-jump
         #---------------------------------------------------------------------------
 
-        $('#m-chapter-jump').change ->
+        $('.m-chapter-jump').change ->
             window.location.href = $(this).val()
             return false
 

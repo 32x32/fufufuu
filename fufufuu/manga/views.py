@@ -107,11 +107,11 @@ class MangaView(TemplateView):
         manga = get_object_or_404(Manga.published, id=id)
         payload = self.get_payload(manga)
 
-        tank = manga.tank
-        if tank: context['chapter_list'] = tank.manga_set.order_by('tank_chapter')
+        if manga.tank_id:
+            context['chapter_list'] = Manga.published.filter(tank_id=manga.tank_id).order_by('tank_chapter')
 
-        collection = manga.collection
-        if collection: context['collection_list'] = collection.manga_set.order_by('collection_part')
+        if manga.collection_id:
+            context['collection_list'] = Manga.published.filter(collection_id=manga.collection_id).order_by('collection_part')
 
         context.update({
             'manga': manga,
