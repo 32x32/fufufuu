@@ -8,6 +8,8 @@ from django.utils.translation import ugettext as _
 
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
+from fufufuu.image.enums import ImageKeyType
+from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_FIELDNAME_MAP
 from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import generate_manga_archive
@@ -282,6 +284,10 @@ class MangaPageFormSet(BaseModelFormSet):
         super().__init__(*args, **kwargs)
         self.user = user
         self.messages = []
+
+        for form in self:
+            mp = form.instance
+            mp.image_thumbnail_url = image_resize(mp.image, ImageKeyType.MANGA_THUMB, mp.id)
 
     def clean(self):
         cd = self.cleaned_data

@@ -2,13 +2,13 @@ from django.core.cache import cache
 from django.db import models
 from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
+
 from fufufuu.account.models import User
 from fufufuu.core.languages import Language
 from fufufuu.core.models import BaseAuditableModel
 from fufufuu.core.uploads import manga_cover_upload_to, manga_archive_upload_to, manga_page_upload_to
 from fufufuu.core.utils import slugify
 from fufufuu.image.enums import ImageKeyType
-from fufufuu.image.filters import image_resize
 from fufufuu.image.models import Image, get_cache_key
 from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.mixins import MangaMixin
@@ -110,10 +110,6 @@ class MangaPage(models.Model):
     class Meta:
         db_table = 'manga_page'
         ordering = ('page',)
-
-    @property
-    def image_thumbnail_url(self):
-        return image_resize(self.image, ImageKeyType.MANGA_THUMB, self.id)
 
 
 class MangaArchive(models.Model):
