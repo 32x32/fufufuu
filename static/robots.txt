@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /account/
+Disallow: /captcha/
+Disallow: /download/
+Disallow: /favorites/
+Disallow: /i18n/
+Disallow: /media/
+Disallow: /static/
+Disallow: /upload/
