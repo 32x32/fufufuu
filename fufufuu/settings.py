@@ -7,6 +7,7 @@ SECRET_KEY = 'jr!s(3kt-i)tk8qkn$phyt3itptg08vh8gzu=cs#z6otufv#y2'
 
 DEBUG = False
 DEBUG_TOOLBAR = False
+DEBUG_TOOLBAR_PATCH_SETTINGS = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (

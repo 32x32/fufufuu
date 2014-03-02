@@ -1,0 +1,8 @@
+html, body {
+    background-color: #eee;
+    font-family: 'Open Sans';
+    font-size: 15px;
+    margin: 0 auto;
+    max-width: 960px;
+    padding: 10px;
+}

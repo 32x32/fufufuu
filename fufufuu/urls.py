@@ -2,12 +2,14 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from fufufuu.core.views import PageNotFoundView, ServerErrorView
 from fufufuu.manga.views import MangaListView, MangaListFavoritesView
-from fufufuu.settings import DEBUG, MEDIA_ROOT
+from fufufuu.settings import DEBUG, DEBUG_TOOLBAR_PATCH_SETTINGS, MEDIA_ROOT
+
 
 admin.autodiscover()
 
 handler404 = PageNotFoundView.as_view()
 handler500 = ServerErrorView.as_view()
+
 
 urlpatterns = patterns('',
 
@@ -27,7 +29,17 @@ urlpatterns = patterns('',
 
 )
 
+#-------------------------------------------------------------------------------
+# debug specific settings
+#-------------------------------------------------------------------------------
+
 if DEBUG:
     urlpatterns += patterns('',
         url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
+    )
+
+if DEBUG and not DEBUG_TOOLBAR_PATCH_SETTINGS:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
     )
