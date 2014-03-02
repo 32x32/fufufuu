@@ -3,6 +3,7 @@
 
 {% set url_account_login = url('account.login') %}
 {% set url_account_register = url('account.register') %}
+{% set url_account_settings = url('account.settings') %}
 {% set url_upload_list = url('upload.list') %}
 
 <header>
@@ -11,7 +12,7 @@
     <div class="header-menu min-xs">
         {% if user.is_authenticated() %}
             <a href="{{ url_upload_list }}" class="min-md {{ utils.link_active(url_upload_list) }}"><span class="icon icon-up-circled"></span></a>
-            <a href="#"><span class="icon icon-cog space-right"></span><span class="min-sm">{{ user.username }}</span></a>
+            <a href="{{ url_account_settings }}" class="{{ utils.link_active_starts_with(url_account_settings) }}"><span class="icon icon-cog space-right"></span><span class="min-sm">{{ user.username }}</span></a>
             <a href="#" onclick="document.getElementById('account-logout-form').submit()"><span class="icon icon-logout"></span></a>
         {% else %}
             <a href="{{ url_account_login }}" class="{{ utils.link_active(url_account_login) }}">{% trans %}Login{% endtrans %}</a>

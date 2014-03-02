@@ -1,10 +1,12 @@
 from django.contrib.auth import logout, login
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseNotAllowed
 from django.shortcuts import redirect
+from django.utils.translation import ugettext as _
 from django.views.generic.base import View
-from fufufuu.account.forms import AccountLoginForm, AccountRegisterForm
-from fufufuu.core.views import TemplateView
+from fufufuu.account.forms import AccountLoginForm, AccountRegisterForm, AccountSettingsForm
+from fufufuu.core.views import TemplateView, ProtectedTemplateView
 
 
 class AccountBaseView(TemplateView):
@@ -58,3 +60,24 @@ class AccountLogoutView(View):
     def post(self, request):
         logout(request)
         return redirect('account.login')
+
+
+class AccountSettingsView(ProtectedTemplateView):
+
+    template_name = 'account/account-settings.html'
+
+    def get(self, request):
+        return self.render_to_response({
+            'form': AccountSettingsForm(instance=request.user),
+        })
+
+    def post(self, request):
+        form = AccountSettingsForm(instance=request.user, data=request.POST, files=request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _('Your profile has been updated.'))
+            return redirect('account.settings')
+
+        return self.render_to_response({
+            'form': form,
+        })

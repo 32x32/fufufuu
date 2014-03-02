@@ -1,4 +1,3 @@
-import subprocess
 from collections import defaultdict
 
 from django import forms
@@ -6,7 +5,7 @@ from django.forms.models import BaseModelFormSet
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
-from fufufuu.core.forms import BlankLabelSuffixMixin
+from fufufuu.core.forms import BlankLabelSuffixMixin, convert_markdown
 from fufufuu.core.languages import Language
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
@@ -15,7 +14,6 @@ from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import generate_manga_archive
 from fufufuu.revision.enums import RevisionStatus
 from fufufuu.revision.models import Revision
-from fufufuu.settings import MD2HTML
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
@@ -157,16 +155,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     def clean_markdown(self):
         markdown = self.cleaned_data.get('markdown')
-        try:
-            p = subprocess.Popen([MD2HTML], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-            out, err = p.communicate(markdown.encode('utf-8'), timeout=1)
-            if err is not None:
-                raise forms.ValidationError(_('An error occurred while processing the description.'))
-            self.html = out.decode('utf-8')
-        except subprocess.TimeoutExpired:
-            raise forms.ValidationError(_('Timeout while processing the description.'))
-        except Exception:
-            raise forms.ValidationError(_('An unknown error occurred while processing the description.'))
+        self.html = convert_markdown(markdown)
         return markdown
 
     def clean(self):

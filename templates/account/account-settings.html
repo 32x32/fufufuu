@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% import '_macros/forms.html' as forms with context %}
+
+{% block title %}{% trans %}Account Settings{% endtrans %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <form action="" method="post" class="panel">
+            <h4 class="panel-heading">{% trans %}Edit Profile{% endtrans %}</h4>
+            <div class="panel-body">
+                {{ forms.csrf_input() }}
+            </div>
+        </form>
+        <form action="" class="panel">
+            <h4 class="panel-heading">{% trans %}Change Password{% endtrans %}</h4>
+            <div class="panel-body">
+                {{ forms.csrf_input() }}
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,5 +1,6 @@
 from captcha.conf import settings
 from captcha.models import CaptchaStore
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
 from fufufuu.account.models import User
 from fufufuu.core.tests import BaseTestCase
@@ -91,3 +92,41 @@ class AccountLogoutViewTests(BaseTestCase):
     def test_account_logout_view_post(self):
         response = self.client.post(reverse('account.logout'))
         self.assertRedirects(response, reverse('account.login'))
+
+
+class AccountSettingsViewTests(BaseTestCase):
+
+    def test_account_settings_view_get(self):
+        response = self.client.get(reverse('account.settings'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'account/account-settings.html')
+
+    def test_account_settings_view_post(self):
+        self.assertEqual(self.user.markdown, '')
+        self.assertEqual(self.user.html, '')
+        self.assertFalse(self.user.avatar)
+
+        response = self.client.post(reverse('account.settings'), {
+            'markdown': 'This is some markdown.',
+            'avatar': SimpleUploadedFile('test.jpg', self.create_test_image_file().getvalue())
+        })
+        self.assertRedirects(response, reverse('account.settings'))
+
+        user = User.objects.get(id=self.user.id)
+        self.assertEqual(user.markdown, 'This is some markdown.')
+        self.assertEqual(user.html, '<p>This is some markdown.</p>\n')
+        self.assertTrue(user.avatar)
+
+    def test_account_settings_view_post_clear_avatar(self):
+        self.user.avatar = SimpleUploadedFile('test.jpg', self.create_test_image_file().getvalue())
+        self.user.save()
+
+        self.assertTrue(self.user.avatar)
+
+        response = self.client.post(reverse('account.settings'), {
+            'avatar-clear': 'on'
+        })
+        self.assertRedirects(response, reverse('account.settings'))
+
+        user = User.objects.get(id=self.user.id)
+        self.assertFalse(user.avatar)

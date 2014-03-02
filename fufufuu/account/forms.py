@@ -2,8 +2,9 @@ from captcha.fields import CaptchaField
 from django import forms
 from django.contrib.auth import authenticate
 from django.utils.translation import ugettext as _
+
 from fufufuu.account.models import User
-from fufufuu.core.forms import BlankLabelSuffixMixin
+from fufufuu.core.forms import BlankLabelSuffixMixin, convert_markdown
 
 
 USERNAME_REGEX = r'^([a-zA-Z0-9]+_?)+[a-zA-Z0-9]$'
@@ -113,3 +114,48 @@ class AccountLoginForm(BlankLabelSuffixMixin, forms.Form):
 
     def get_user(self):
         return self.user_cache
+
+
+class AccountSettingsForm(BlankLabelSuffixMixin, forms.ModelForm):
+
+    avatar = forms.FileField(
+        required=False,
+        label=_('Avatar'),
+        widget=forms.ClearableFileInput(),
+    )
+
+    markdown = forms.CharField(
+        label=_('Description'),
+        required=False,
+        max_length=1000,
+        widget=forms.Textarea(attrs={
+            'maxlength': '1000',
+            'rows': '6'
+        }),
+        help_text=_('Use the description to add a link to your blog or website! <a href="/f/markdown/" class="text-xsmall" target="_blank">This field uses markdown for formatting.</a>')
+    )
+
+    class Meta:
+        model = User
+        fields = ['markdown', 'avatar']
+
+    def __init__(self, *args, **kwargs):
+        if 'instance' not in kwargs:
+            raise RuntimeError('This form must be used with a User instance.')
+
+        super().__init__(*args, **kwargs)
+        self.html = None
+
+    def clean_markdown(self):
+        markdown = self.cleaned_data.get('markdown')
+        self.html = convert_markdown(markdown)
+        return markdown
+
+    def save(self):
+        user = super().save(commit=False)
+
+        if self.html:
+            user.html = self.html
+
+        user.save()
+        return user
