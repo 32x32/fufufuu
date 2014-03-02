@@ -121,7 +121,7 @@ class AccountSettingsForm(BlankLabelSuffixMixin, forms.ModelForm):
     avatar = forms.FileField(
         required=False,
         label=_('Avatar'),
-        widget=forms.ClearableFileInput(),
+        widget=forms.FileInput(),
     )
 
     markdown = forms.CharField(
@@ -150,6 +150,11 @@ class AccountSettingsForm(BlankLabelSuffixMixin, forms.ModelForm):
         markdown = self.cleaned_data.get('markdown')
         self.html = convert_markdown(markdown)
         return markdown
+
+    def clean_avatar(self):
+        if 'avatar-clear' in self.data:
+            return False
+        return self.cleaned_data.get('avatar')
 
     def save(self):
         user = super().save(commit=False)

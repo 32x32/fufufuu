@@ -4,11 +4,37 @@
 {% block title %}{% trans %}Account Settings{% endtrans %}{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <form action="" method="post" class="panel">
+    <div class="container width-800">
+        <form action="" method="post" class="panel" enctype="multipart/form-data">
             <h4 class="panel-heading">{% trans %}Edit Profile{% endtrans %}</h4>
             <div class="panel-body">
                 {{ forms.csrf_input() }}
+                {{ forms.non_field_errors(form) }}
+                    <table class="table-full-border space-bottom-10">
+                        <tr>
+                            <td width="120"><label>{% trans %}Current{% endtrans %}</label></td>
+                            <td>
+                                {% if user.avatar %}
+                                    <img src="{{ user.avatar_url }}" class="account-avatar-original">
+                                {% else %}
+                                    <img src="{{ STATIC_URL }}images/no-avatar.png" class="account-avatar-original">
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="120"><label>{{ form.avatar.label_tag() }}</label></td>
+                            <td>{{ form.avatar }}</td>
+                        </tr>
+                        <tr>
+                            <td width="120"><label for="id_avatar-clear">{% trans %}Delete{% endtrans %}</label></td>
+                            <td><input type="checkbox" name="avatar-clear" id="id_avatar-clear"></td>
+                        </tr>
+                    </table>
+                {{ forms.field(form.markdown) }}
+                <div class="markdown markdown-preview" data-for="id_markdown"></div>
+                <div class="form-field form-buttons">
+                    <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+                </div>
             </div>
         </form>
         <form action="" class="panel">
@@ -18,4 +44,8 @@
             </div>
         </form>
     </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/markdown.min.js?version={{ RESOURCE_VERSION }}"></script>
 {% endblock %}
