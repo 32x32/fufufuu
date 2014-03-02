@@ -37,6 +37,13 @@ INTERNAL_IPS = [
 
 SESSION_COOKIE_DOMAIN = 'staging.fufufuu.net'
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
+
 #-------------------------------------------------------------------------------
 # custom settings
 #-------------------------------------------------------------------------------

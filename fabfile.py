@@ -96,7 +96,7 @@ def setup_appserver():
         # image processing
         'libjpeg8-dev', 'libpng12-dev', 'libfreetype6-dev',
         # utilities
-        'cron', 'ntp', 'rsync', 'gettext', 'htop', 'nodejs',
+        'cron', 'ntp', 'rsync', 'gettext', 'htop', 'nodejs', 'memcached',
         # server
         'nginx',
     ]
