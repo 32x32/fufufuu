@@ -1,13 +1,14 @@
 from collections import defaultdict
 import logging
-import markdown
 import os
 import sys
+
+import markdown
 
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import sessionmaker
 
-from models import OldUser, OldManga, OldMangaFavoriteUser, OldTag, OldMangaTag, OldTank
+from models import OldUser, OldManga, OldMangaFavoriteUser, OldTag, OldMangaTag, OldTank, OldMangaPage
 
 
 PROJECT_PATH = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
@@ -15,7 +16,8 @@ sys.path.append(PROJECT_PATH)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 
 from fufufuu.account.models import User
-from fufufuu.manga.models import Manga, MangaFavorite, MangaTag
+from fufufuu.manga.enums import MangaCategory
+from fufufuu.manga.models import Manga, MangaFavorite, MangaTag, MangaPage
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 
@@ -78,9 +80,6 @@ class Migrator(object):
 
         self.logger.debug('migrated {} users'.format(User.objects.all().count()))
         self.user = User.objects.get(username='ParadigmShift')
-
-    def migrate_users_avatar(self):
-        pass
 
     def migrate_comments(self):
         pass
@@ -153,6 +152,12 @@ class Migrator(object):
                 if old_manga.tank_id:
                     tank_id = self.tank_id_map[old_manga.tank_id]
 
+                category = old_manga.category
+                if category == 'NON-H': category = MangaCategory.NON_H
+
+                language = old_manga.language
+                if language == 'zh-cn': language = 'zh'
+
                 manga_list.append(Manga(
                     id=old_manga.id,
                     title=old_manga.title,
@@ -160,9 +165,9 @@ class Migrator(object):
                     markdown=old_manga.description,
                     html=self.convert_markdown(old_manga.description),
                     cover=None,
-                    category=old_manga.category,
+                    category=category,
                     status=old_manga.status,
-                    language=old_manga.language,
+                    language=language,
                     uncensored=False,
                     tank_id=tank_id,
                     tank_chapter=old_manga.tank_chp,
@@ -221,14 +226,34 @@ class Migrator(object):
         self.logger.debug('migrated {} manga tags'.format(MangaTag.objects.all().count()))
 
     def migrate_manga_pages(self):
-        pass
+        self.logger.debug('manga pages migration started'.center(80, '-'))
+
+        def _migrate_manga_pages(old_manga_page_list):
+            manga_page_list = []
+            for old_manga_page in old_manga_page_list:
+                manga_page_list.append(MangaPage(
+                    manga_id=old_manga_page.manga_id,
+                    double=old_manga_page.double,
+                    page=old_manga_page.page,
+                    image=None,
+                    name=old_manga_page.name,
+                ))
+            MangaPage.objects.bulk_create(manga_page_list)
+
+        count = self.session.query(OldMangaPage).count()
+        for i in range(0, count, CHUNK_SIZE):
+            self.logger.debug('migrated {} manga pages'.format(i))
+            _migrate_manga_pages(self.session.query(OldMangaPage)[i:i+CHUNK_SIZE])
+
+        self.logger.debug('migrated {} manga pages'.format(MangaPage.objects.all().count()))
 
     def run(self):
+        import datetime
+        start = datetime.datetime.now()
         self.logger.debug('Starting Migration'.center(80, '-'))
 
         self.connect()
         self.migrate_users()
-        self.migrate_users_avatar()
         self.migrate_comments()
         self.migrate_tags()
         self.migrate_tanks()
@@ -238,7 +263,8 @@ class Migrator(object):
         self.migrate_manga_pages()
         self.disconnect()
 
-        self.logger.debug('Finished Migration'.center(80, '-'))
+        end = datetime.datetime.now()
+        self.logger.debug('Finished Migration in {}'.format(start-end).center(80, '-'))
 
 if __name__ == '__main__':
     migrator = Migrator()

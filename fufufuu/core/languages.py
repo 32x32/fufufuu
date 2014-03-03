@@ -9,6 +9,7 @@ class Language:
         ('de', 'Deutsch'),
         ('es', 'Español'),
         ('fr', 'Français'),
+        ('it', 'Italiano'),
         ('ko', '한국어 '),
         ('pt', 'Português'),
         ('ru', 'русский язык'),
