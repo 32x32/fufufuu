@@ -40,7 +40,7 @@ class Migrator(object):
         self.logger.addHandler(handler)
 
     def connect(self):
-        self.engine = create_engine('postgresql://derekkwok@localhost/fufufuu_old')
+        self.engine = create_engine('postgresql://derekkwok:password@localhost/fufufuu_old')
         self.session = sessionmaker(bind=self.engine)()
 
         self.logger.debug('connected to fufufuu_old')
@@ -56,8 +56,12 @@ class Migrator(object):
 
     def get_file(self, path):
         if not path: return None
-        file = open('{}{}'.format(OLD_MEDIA_ROOT, path), mode='rb')
-        return File(file)
+        try:
+            file = open('{}{}'.format(OLD_MEDIA_ROOT, path), mode='rb')
+            return File(file)
+        except FileNotFoundError:
+            self.logger.warn('Missing file {}'.format(path))
+            return None
 
     #---------------------------------------------------------------------------
 
