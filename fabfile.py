@@ -46,7 +46,7 @@ def production():
         print('"production" not entered, exiting...')
         sys.exit()
 
-    env.hosts = ['fufufuu']
+    env.hosts = ['fufufuu3']
     env.config = 'production'
 
 #-------------------------------------------------------------------------------
@@ -77,8 +77,8 @@ def install_python():
         sudo('make install')
         sudo('rm -f /usr/local/bin/python3.3')
         sudo('ln -s /opt/python3.3/bin/python3.3 /usr/local/bin/python3.3')
-    run('rm -f Python-3.3.4.tgz')
-    run('rm -fr Python-3.3.4')
+    sudo('rm -f Python-3.3.4.tgz')
+    sudo('rm -fr Python-3.3.4')
 
 
 def setup_appserver():
@@ -102,8 +102,6 @@ def setup_appserver():
     ]
 
     db_password = prompt('Please enter the db password: ')
-
-    if not exists('/usr/local/bin/python3.3'): install_python()
 
     # setup environment variables
     append('/etc/environment', 'FUFUFUU_DB_PASSWORD="{}"'.format(db_password), use_sudo=True)
@@ -132,6 +130,9 @@ def setup_appserver():
     # apt-get install packages
     sudo('apt-get update')
     sudo('apt-get install -y {}'.format(' '.join(packages)))
+
+    if not exists('/usr/local/bin/python3.3'): install_python()
+
     sudo('pip install supervisor==3.0')
     sudo('pip install virtualenv')
     sudo('virtualenv {venv_path} --python=/usr/local/bin/python3.3'.format(**env), user='www-data')
@@ -330,4 +331,3 @@ def manage(command):
     with virtualenv():
         with cd('{django_path}'.format(**env)):
             sudo('python3.3 manage.py {}'.format(command), user='www-data')
-

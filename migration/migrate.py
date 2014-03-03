@@ -24,7 +24,7 @@ from fufufuu.tag.models import Tag
 
 
 CHUNK_SIZE = 1000
-OLD_MEDIA_ROOT = '/var/www/fufufuu/media-old/'
+OLD_MEDIA_ROOT = '/home/derekkwok/media/'
 
 
 class Migrator(object):
