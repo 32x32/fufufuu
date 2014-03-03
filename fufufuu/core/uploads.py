@@ -11,8 +11,11 @@ def get_timestamp():
 
 
 def user_avatar_upload_to(instance, filename):
-    filename = '{}.{}'.format(instance.username, get_image_extension(instance.avatar))
-    return os.sep.join(['user-avatar', instance.username[0].lower(), filename])
+    username = instance.username
+    if not username.isalnum():
+        username = int_to_base36(instance.id)
+    filename = '{}.{}'.format(username, get_image_extension(instance.avatar))
+    return os.sep.join(['user-avatar', username[0].lower(), filename])
 
 
 def manga_cover_upload_to(instance, filename):
