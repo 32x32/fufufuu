@@ -1,7 +1,7 @@
 from collections import defaultdict
 import logging
+import markdown
 import os
-import subprocess
 import sys
 
 from sqlalchemy.engine import create_engine
@@ -16,7 +16,6 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 
 from fufufuu.account.models import User
 from fufufuu.manga.models import Manga, MangaFavorite, MangaTag
-from fufufuu.settings import MD2HTML
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 
@@ -36,11 +35,8 @@ class Migrator(object):
 
         self.logger.addHandler(handler)
 
-    def convert_markdown(self, markdown):
-        p = subprocess.Popen([MD2HTML], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        out, err = p.communicate(markdown.encode('utf-8'), timeout=1)
-        html = out.decode('utf-8')
-        return html
+    def convert_markdown(self, markdown_raw):
+        return markdown.markdown(markdown_raw)
 
     def connect(self):
         self.engine = create_engine('postgresql://derekkwok@localhost/fufufuu_old')
@@ -86,9 +82,6 @@ class Migrator(object):
     def migrate_users_avatar(self):
         pass
 
-    def migrate_users_html(self):
-        pass
-
     def migrate_comments(self):
         pass
 
@@ -116,15 +109,17 @@ class Migrator(object):
 
     def migrate_tanks(self):
         self.tank_title_map = defaultdict(list)
-        self.tank_id_map = defaultdict(list)
+        self.tank_id_map = {}
         self.logger.debug('tank migration started'.center(80, '-'))
 
         def _migrate_tanks(old_tank_list):
             tank_list = []
             for old_tank in old_tank_list:
                 skip = old_tank.title in self.tank_title_map
-                self.tank_title_map[old_tank.title].append(old_tank.id)
                 if skip: continue
+
+                self.tank_title_map[old_tank.title] = old_tank.id
+
                 tank_list.append(Tag(
                     tag_type=TagType.TANK,
                     name=old_tank.title,
@@ -141,12 +136,23 @@ class Migrator(object):
 
         self.logger.debug('migrated {} tanks'.format(Tag.objects.filter(tag_type=TagType.TANK).count()))
 
+        # generate map from old_tank_id to new tank id
+        tag_list = Tag.objects.filter(tag_type=TagType.TANK)
+        tag_dict = dict([(t.name, t.id) for t in tag_list])
+
+        for old_tank in self.session.query(OldTank):
+            self.tank_id_map[old_tank.id] = tag_dict.get(old_tank.title)
+
     def migrate_manga(self):
         self.logger.debug('manga migration started'.center(80, '-'))
 
         def _migrate_manga(old_manga_list):
             manga_list = []
             for old_manga in old_manga_list:
+                tank_id = None
+                if old_manga.tank_id:
+                    tank_id = self.tank_id_map[old_manga.tank_id]
+
                 manga_list.append(Manga(
                     id=old_manga.id,
                     title=old_manga.title,
@@ -154,9 +160,12 @@ class Migrator(object):
                     markdown=old_manga.description,
                     html=self.convert_markdown(old_manga.description),
                     cover=None,
+                    category=old_manga.category,
                     status=old_manga.status,
                     language=old_manga.language,
                     uncensored=False,
+                    tank_id=tank_id,
+                    tank_chapter=old_manga.tank_chp,
                     published_on=old_manga.date_published,
                     created_on=old_manga.date_created,
                     created_by_id=old_manga.uploader_id,
@@ -211,6 +220,9 @@ class Migrator(object):
 
         self.logger.debug('migrated {} manga tags'.format(MangaTag.objects.all().count()))
 
+    def migrate_manga_pages(self):
+        pass
+
     def run(self):
         self.logger.debug('Starting Migration'.center(80, '-'))
 
@@ -223,6 +235,7 @@ class Migrator(object):
         self.migrate_manga()
         self.migrate_manga_favorites()
         self.migrate_manga_tags()
+        self.migrate_manga_pages()
         self.disconnect()
 
         self.logger.debug('Finished Migration'.center(80, '-'))
