@@ -46,7 +46,7 @@ class OldManga(Base):
     uploader_id         = Column(Integer)
     title               = Column(String)
     slug                = Column(String)
-    descriptpion        = Column(String)
+    description         = Column(String)
     cover               = Column(String)
     category            = Column(String)
     language            = Column(String)
