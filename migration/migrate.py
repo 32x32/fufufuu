@@ -2,6 +2,7 @@ from collections import defaultdict
 import logging
 import os
 import sys
+from django.core.files.base import File
 
 import markdown
 
@@ -23,6 +24,7 @@ from fufufuu.tag.models import Tag
 
 
 CHUNK_SIZE = 1000
+OLD_MEDIA_ROOT = '/var/www/fufufuu/media-old/'
 
 
 class Migrator(object):
@@ -37,9 +39,6 @@ class Migrator(object):
 
         self.logger.addHandler(handler)
 
-    def convert_markdown(self, markdown_raw):
-        return markdown.markdown(markdown_raw)
-
     def connect(self):
         self.engine = create_engine('postgresql://derekkwok@localhost/fufufuu_old')
         self.session = sessionmaker(bind=self.engine)()
@@ -49,6 +48,18 @@ class Migrator(object):
     def disconnect(self):
         self.session.close()
         self.logger.debug('disconnected to fufufuu_old')
+
+    #---------------------------------------------------------------------------
+
+    def convert_markdown(self, markdown_raw):
+        return markdown.markdown(markdown_raw)
+
+    def get_file(self, path):
+        if not path: return None
+        file = open('{}{}'.format(OLD_MEDIA_ROOT, path), mode='rb')
+        return File(file)
+
+    #---------------------------------------------------------------------------
 
     def migrate_users(self):
         self.logger.debug('users migration started'.center(80, '-'))
@@ -63,7 +74,7 @@ class Migrator(object):
                     password=old_user.password,
                     markdown=old_user.description,
                     html=self.convert_markdown(old_user.description),
-                    avatar=None,
+                    avatar=self.get_file(old_user.picture),
                     is_moderator=is_moderator,
                     is_staff=old_user.is_staff,
                     is_active=old_user.is_active,
@@ -164,7 +175,7 @@ class Migrator(object):
                     slug=old_manga.slug,
                     markdown=old_manga.description,
                     html=self.convert_markdown(old_manga.description),
-                    cover=None,
+                    cover=self.get_file(old_manga.cover),
                     category=category,
                     status=old_manga.status,
                     language=language,
@@ -235,7 +246,7 @@ class Migrator(object):
                     manga_id=old_manga_page.manga_id,
                     double=old_manga_page.double,
                     page=old_manga_page.page,
-                    image=None,
+                    image=self.get_file(old_manga_page.image_source),
                     name=old_manga_page.name,
                 ))
             MangaPage.objects.bulk_create(manga_page_list)
@@ -264,7 +275,7 @@ class Migrator(object):
         self.disconnect()
 
         end = datetime.datetime.now()
-        self.logger.debug('Finished Migration in {}'.format(start-end).center(80, '-'))
+        self.logger.debug('Finished Migration in {}'.format(end-start).center(80, '-'))
 
 if __name__ == '__main__':
     migrator = Migrator()
