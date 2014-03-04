@@ -14,7 +14,11 @@ sys.path.append(PROJECT_PATH)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 
 from django.core.files.base import File
+from django.db.models.aggregates import Max
+from django.db.utils import IntegrityError
 from fufufuu.account.models import User
+from fufufuu.image.enums import ImageKeyType
+from fufufuu.image.models import Image
 from fufufuu.manga.enums import MangaCategory
 from fufufuu.manga.models import Manga, MangaFavorite, MangaTag, MangaPage
 from fufufuu.tag.enums import TagType
@@ -23,6 +27,14 @@ from fufufuu.tag.models import Tag
 
 CHUNK_SIZE = 1000
 OLD_MEDIA_ROOT = '/home/derekkwok/media/'
+
+
+def image_resize(file_path, key_type, key_id):
+    try:
+        image = Image(key_type=key_type, key_id=key_id)
+        image.save(file_path)
+    except IntegrityError:
+        pass
 
 
 class Migrator(object):
@@ -127,13 +139,16 @@ class Migrator(object):
 
         def _migrate_tanks(old_tank_list):
             tank_list = []
+            new_id = Tag.objects.all().aggregate(Max('id'))['id__max']
             for old_tank in old_tank_list:
                 skip = old_tank.title in self.tank_title_map
                 if skip: continue
 
+                new_id += 1
                 self.tank_title_map[old_tank.title] = old_tank.id
 
                 tank_list.append(Tag(
+                    id=new_id,
                     tag_type=TagType.TANK,
                     name=old_tank.title,
                     slug=old_tank.slug,
@@ -250,7 +265,7 @@ class Migrator(object):
                     double=old_manga_page.double,
                     page=old_manga_page.page,
                     image=self.get_file(old_manga_page.image_source),
-                    name=old_manga_page.name,
+                    name=old_manga_page.name[:100],
                 ))
             MangaPage.objects.bulk_create(manga_page_list)
 
@@ -261,6 +276,58 @@ class Migrator(object):
 
         self.logger.debug('migrated {} manga pages'.format(MangaPage.objects.all().count()))
 
+    def generate_cache_users(self):
+        self.logger.debug('generate cache for users - started'.center(80, '-'))
+
+        def _generate_cache(user_list):
+            for user in user_list:
+                if not user.avatar: continue
+                image_resize(user.avatar.path, ImageKeyType.ACCOUNT_AVATAR, user.id)
+
+        count = User.objects.all().count()
+        for i in range(0, count, CHUNK_SIZE):
+            self.logger.debug('generated cache for {} users'.format(i))
+            _generate_cache(User.objects.all()[i:i+CHUNK_SIZE])
+
+        self.logger.debug('generated cache for {} users'.format(count))
+
+    def generate_cache_manga(self):
+        self.logger.debug('generate cache for manga - started'.center(80, '-'))
+
+        def _generate_cache(manga_list):
+            for manga in manga_list:
+                if not manga.cover:
+                    self.logger.warning('manga {} has no cover'.format(manga.id))
+                    continue
+                image_resize(manga.cover.path, ImageKeyType.MANGA_COVER, manga.id)
+                image_resize(manga.cover.path, ImageKeyType.MANGA_INFO_COVER, manga.id)
+
+        count = Manga.all.all().count()
+        for i in range(0, count, CHUNK_SIZE):
+            self.logger.debug('generated cache for {} manga'.format(i))
+            _generate_cache(Manga.all.all()[i:i+CHUNK_SIZE])
+
+        self.logger.debug('generated cache for {} manga'.format(count))
+
+    def generate_cache_manga_pages(self):
+        self.logger.debug('generate cache for manga pages - started'.center(80, '-'))
+
+        def _generate_cache(manga_page_list):
+            for mp in manga_page_list:
+                if not mp.image:
+                    self.logger.warning('manga page {} has no image'.format(mp.id))
+                    continue
+                image_key_type = mp.double and ImageKeyType.MANGA_PAGE_DOUBLE or ImageKeyType.MANGA_PAGE
+                image_resize(mp.image.path, image_key_type, mp.id)
+                image_resize(mp.image.path, ImageKeyType.MANGA_THUMB, mp.id)
+
+        count = MangaPage.objects.all().count()
+        for i in range(0, count, CHUNK_SIZE):
+            self.logger.debug('generated cache for {} manga pages'.format(i))
+            _generate_cache(MangaPage.objects.all()[i:i+CHUNK_SIZE])
+
+        self.logger.debug('generated cache for {} manga pages'.format(count))
+
     def run(self):
         import datetime
         start = datetime.datetime.now()
@@ -268,13 +335,16 @@ class Migrator(object):
 
         self.connect()
         self.migrate_users()
+        self.generate_cache_users()
         self.migrate_comments()
         self.migrate_tags()
         self.migrate_tanks()
         self.migrate_manga()
+        self.generate_cache_manga()
         self.migrate_manga_favorites()
         self.migrate_manga_tags()
         self.migrate_manga_pages()
+        self.generate_cache_manga_pages()
         self.disconnect()
 
         end = datetime.datetime.now()

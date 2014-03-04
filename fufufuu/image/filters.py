@@ -1,6 +1,6 @@
+import os
 from django.core.cache import cache
 from django.db.models.fields.files import FieldFile
-
 from django.db.utils import IntegrityError
 from fufufuu.image.models import Image, get_cache_key
 
@@ -28,6 +28,8 @@ def image_resize(file_path, key_type, key_id):
 
     try:
         image = Image.objects.only('file').get(key_type=key_type, key_id=key_id)
+        if not os.path.exists(image.file.path):
+            image.regenerate()
     except Image.DoesNotExist:
         image = Image(key_type=key_type, key_id=key_id)
         try:
