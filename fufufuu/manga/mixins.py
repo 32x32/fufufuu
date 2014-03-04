@@ -41,4 +41,4 @@ class MangaMixin:
 
     @property
     def cover_url(self):
-        return image_resize(self.cover.path, ImageKeyType.MANGA_COVER, self.id)
+        return image_resize(self.cover, ImageKeyType.MANGA_COVER, self.id)

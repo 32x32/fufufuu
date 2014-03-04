@@ -1,4 +1,6 @@
 from django.core.cache import cache
+from django.db.models.fields.files import FieldFile
+
 from django.db.utils import IntegrityError
 from fufufuu.image.models import Image, get_cache_key
 
@@ -11,7 +13,11 @@ def image_resize(file_path, key_type, key_id):
     key_type should be one of ImageKeyType.choices
     """
 
-    if not file_path or not isinstance(file_path, str):
+    if not file_path:
+        return ''
+    elif isinstance(file_path, FieldFile):
+        file_path = file_path.path
+    elif not isinstance(file_path, str):
         return ''
 
     key_type = key_type.upper()

@@ -258,7 +258,7 @@ class MangaPageFormSet(BaseModelFormSet):
 
         for form in self:
             mp = form.instance
-            mp.image_thumbnail_url = image_resize(mp.image.path, ImageKeyType.MANGA_THUMB, mp.id)
+            mp.image_thumbnail_url = image_resize(mp.image, ImageKeyType.MANGA_THUMB, mp.id)
 
     @property
     def unselected_forms(self):

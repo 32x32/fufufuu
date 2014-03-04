@@ -91,7 +91,7 @@ class MangaView(TemplateView):
             page_list.append({
                 'double': page.double,
                 'page': page.page,
-                'url': image_resize(page.image.path, key_type, page.id),
+                'url': image_resize(page.image, key_type, page.id),
             })
 
         payload = json.dumps({'page_list': page_list})
@@ -143,7 +143,7 @@ class MangaThumbnailsView(TemplateView):
         manga = get_object_or_404(Manga.published, id=id)
         manga_page_list = manga.mangapage_set.all()
         for mp in manga_page_list:
-            mp.image_thumbnail_url = image_resize(mp.image.path, ImageKeyType.MANGA_THUMB, mp.id)
+            mp.image_thumbnail_url = image_resize(mp.image, ImageKeyType.MANGA_THUMB, mp.id)
         return self.render_to_response({
             'manga': manga,
             'manga_page_list': manga_page_list,
