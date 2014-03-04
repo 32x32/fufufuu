@@ -1,6 +1,6 @@
 import os
 
-from django.core.files.base import File
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
 
 from fufufuu.core.tests import BaseTestCase
@@ -11,19 +11,25 @@ from fufufuu.image.models import Image
 class ImageModelTests(BaseTestCase):
 
     def tests_image_replace_file(self):
+        self.manga.cover = SimpleUploadedFile('test.jpg', self.create_test_image_file().getvalue())
+        self.manga.save(self.user)
+
         image = Image(key_type=ImageKeyType.MANGA_THUMB, key_id=1)
-        image.save(File(self.create_test_image_file()))
+        image.save(self.manga.cover.path)
 
         path = image.file.path
         self.assertTrue(os.path.exists(path))
 
-        image.save(File(self.create_test_image_file()))
+        image.save(self.manga.cover.path)
         self.assertNotEqual(path, image.file.path)
         self.assertFalse(os.path.exists(path))
 
     def test_image_delete(self):
+        self.manga.cover = SimpleUploadedFile('test.jpg', self.create_test_image_file().getvalue())
+        self.manga.save(self.user)
+
         image = Image(key_type=ImageKeyType.MANGA_THUMB, key_id=1)
-        image.save(File(self.create_test_image_file()))
+        image.save(self.manga.cover.path)
 
         path = image.file.path
         self.assertTrue(os.path.exists(path))

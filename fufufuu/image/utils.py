@@ -11,9 +11,7 @@ class ImageTransformer(object):
         return a BytesIO object with the transformed image
         """
 
-        source.seek(0)
-
-        im = Image.open(source)
+        im = Image.open(open(source, 'rb'))
         ImageFile.MAXBLOCK = im.size[0] * im.size[1]
 
         if im.mode != 'RGB':

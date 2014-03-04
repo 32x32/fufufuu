@@ -86,9 +86,9 @@ class MangaModelTests(BaseTestCase):
         self.manga.save(updated_by=self.user)
 
         image1 = Image(key_type=ImageKeyType.MANGA_COVER, key_id=self.manga.id)
-        image1.save(self.manga.cover)
+        image1.save(self.manga.cover.path)
         image2 = Image(key_type=ImageKeyType.MANGA_INFO_COVER, key_id=self.manga.id)
-        image2.save(self.manga.cover)
+        image2.save(self.manga.cover.path)
 
         self.manga.save(updated_by=self.user)
 

@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 
-from fufufuu.core.uploads import image_upload_to, disabled_upload_to
+from fufufuu.core.uploads import image_upload_to
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.utils import ImageTransformer
 
@@ -21,7 +21,7 @@ class Image(models.Model):
     key_type = models.CharField(max_length=20, choices=ImageKeyType.choices)
     key_id = models.IntegerField()
 
-    source = models.FileField(upload_to=disabled_upload_to)
+    source = models.CharField(max_length=100)
     file = models.FileField(upload_to=image_upload_to)
 
     created_on = models.DateTimeField(auto_now_add=True)

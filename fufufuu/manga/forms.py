@@ -251,6 +251,15 @@ class MangaPageForm(forms.ModelForm):
 
 class MangaPageFormSet(BaseModelFormSet):
 
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+        self.messages = []
+
+        for form in self:
+            mp = form.instance
+            mp.image_thumbnail_url = image_resize(mp.image, ImageKeyType.MANGA_THUMB, mp.id)
+
     @property
     def unselected_forms(self):
         if hasattr(self, '_unselected_forms'):
@@ -268,15 +277,6 @@ class MangaPageFormSet(BaseModelFormSet):
         def _selected(form): return form.cleaned_data.get('select')
         self._selected_forms = list(filter(_selected, self.ordered_forms))
         return self._selected_forms
-
-    def __init__(self, user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.user = user
-        self.messages = []
-
-        for form in self:
-            mp = form.instance
-            mp.image_thumbnail_url = image_resize(mp.image, ImageKeyType.MANGA_THUMB, mp.id)
 
     def clean(self):
         cd = self.cleaned_data
