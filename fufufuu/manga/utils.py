@@ -1,3 +1,4 @@
+from multiprocessing import Pool
 import os
 import tempfile
 import zipfile
@@ -9,6 +10,8 @@ from PIL import Image
 from fufufuu.core.models import DeletedFile
 from fufufuu.core.templates import TEMPLATE_ENV
 from fufufuu.core.utils import get_image_extension
+from fufufuu.image.enums import ImageKeyType
+from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaStatus
 from fufufuu.manga.models import MangaPage, MangaArchive
 from fufufuu.tag.models import Tag
@@ -23,7 +26,10 @@ SUPPORTED_IMAGE_FORMATS = ['JPEG', 'PNG']
 
 def process_images(manga, file_list, user):
     # TODO: handle maximum total size
-    errors, manga_page_list = [], []
+    errors = []
+    manga_page_list = []
+    process_list = []
+
     page_num = MangaPage.objects.filter(manga=manga).count()
 
     for i, f in enumerate(file_list, start=1):
@@ -64,8 +70,23 @@ def process_images(manga, file_list, user):
         if not manga.cover:
             manga.cover = f
             manga.save(updated_by=user)
+            process_list.append((manga.cover.path, ImageKeyType.MANGA_COVER, manga.id))
+            process_list.append((manga.cover.path, ImageKeyType.MANGA_INFO_COVER, manga.id))
 
     MangaPage.objects.bulk_create(manga_page_list)
+
+    # pre-generate image cache for speed
+    manga_page_list = MangaPage.objects.filter(manga=manga, page__in=[mp.page for mp in manga_page_list])
+    for mp in manga_page_list:
+        image_key_type = mp.double and ImageKeyType.MANGA_PAGE_DOUBLE or ImageKeyType.MANGA_PAGE
+        process_list.append((mp.image.path, image_key_type, mp.id))
+        process_list.append((mp.image.path, ImageKeyType.MANGA_THUMB, mp.id))
+
+    pool = Pool()
+    pool.starmap(image_resize, process_list)
+    pool.close()
+    pool.join()
+
     return errors
 
 

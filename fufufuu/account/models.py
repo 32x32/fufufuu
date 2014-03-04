@@ -55,7 +55,7 @@ class User(AbstractBaseUser):
 
     @property
     def avatar_url(self):
-        return image_resize(self.avatar, ImageKeyType.ACCOUNT_AVATAR, self.id)
+        return image_resize(self.avatar.path, ImageKeyType.ACCOUNT_AVATAR, self.id)
 
 
 @receiver(post_save, sender=User)
