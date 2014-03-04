@@ -2,20 +2,18 @@ from collections import defaultdict
 import logging
 import os
 import sys
-from django.core.files.base import File
 
 import markdown
-
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import sessionmaker
 
-from models import OldUser, OldManga, OldMangaFavoriteUser, OldTag, OldMangaTag, OldTank, OldMangaPage
-
+from models import *
 
 PROJECT_PATH = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
 sys.path.append(PROJECT_PATH)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 
+from django.core.files.base import File
 from fufufuu.account.models import User
 from fufufuu.manga.enums import MangaCategory
 from fufufuu.manga.models import Manga, MangaFavorite, MangaTag, MangaPage
@@ -106,6 +104,7 @@ class Migrator(object):
             tag_list = []
             for old_tag in old_tag_list:
                 tag_list.append(Tag(
+                    id=old_tag.id,
                     tag_type=old_tag.tag_type,
                     name=old_tag.name,
                     slug=old_tag.slug,
