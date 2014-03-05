@@ -10,11 +10,13 @@ from sqlalchemy.orm.session import sessionmaker
 
 from models import *
 
+
 PROJECT_PATH = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
 sys.path.append(PROJECT_PATH)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 
-from django.core.files.base import File
+from django import db
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.aggregates import Max
 from django.db.utils import IntegrityError
 from fufufuu.account.models import User
@@ -28,9 +30,12 @@ from fufufuu.tag.models import Tag
 
 CHUNK_SIZE = 1000
 OLD_MEDIA_ROOT = '/home/derekkwok/media/'
+CONNECTION_STRING = 'postgresql://derekkwok:password@localhost/fufufuu_old'
 
 
 def process_image_list(l):
+    db.close_old_connections()
+
     pool = Pool()
     pool.starmap(image_resize, l)
     pool.close()
@@ -38,6 +43,8 @@ def process_image_list(l):
 
 
 def image_resize(file_path, key_type, key_id):
+    if not os.path.exists(file_path):
+        return
     try:
         image = Image(key_type=key_type, key_id=key_id)
         image.save(file_path)
@@ -58,7 +65,7 @@ class Migrator(object):
         self.logger.addHandler(handler)
 
     def connect(self):
-        self.engine = create_engine('postgresql://derekkwok:password@localhost/fufufuu_old')
+        self.engine = create_engine(CONNECTION_STRING)
         self.session = sessionmaker(bind=self.engine)()
 
         self.logger.debug('connected to fufufuu_old')
@@ -75,8 +82,7 @@ class Migrator(object):
     def get_file(self, path):
         if not path: return None
         try:
-            file = open('{}{}'.format(OLD_MEDIA_ROOT, path), mode='rb')
-            return File(file)
+            return SimpleUploadedFile('migrator', open('{}{}'.format(OLD_MEDIA_ROOT, path), mode='rb').read())
         except FileNotFoundError:
             self.logger.warn('Missing file {}'.format(path))
             return None

@@ -11,7 +11,8 @@ class ImageTransformer(object):
         return a BytesIO object with the transformed image
         """
 
-        im = Image.open(open(source, 'rb'))
+        file = open(source, 'rb')
+        im = Image.open(file)
         ImageFile.MAXBLOCK = im.size[0] * im.size[1]
 
         if im.mode != 'RGB':
@@ -36,4 +37,7 @@ class ImageTransformer(object):
 
         output = BytesIO()
         im.save(output, format='JPEG', quality=spec.get('quality', 75), optimize=True, progressive=False)
+
+        file.close()
+
         return output
