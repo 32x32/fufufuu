@@ -1,8 +1,12 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
+from django.views.decorators.cache import cache_page
+
 from fufufuu.core.views import PageNotFoundView, ServerErrorView
 from fufufuu.manga.views import MangaListView, MangaListFavoritesView
 from fufufuu.settings import DEBUG, DEBUG_TOOLBAR_PATCH_SETTINGS, MEDIA_ROOT
+from fufufuu.sitemaps import SITEMAPS
 
 
 admin.autodiscover()
@@ -20,11 +24,16 @@ urlpatterns = patterns('',
     url(r'^captcha/',                   include('captcha.urls')),
     url(r'^download/',                  include('fufufuu.download.urls')),
     url(r'^f/',                         include('fufufuu.flat.urls')),
-    url(r'^favorites/$',                MangaListFavoritesView.as_view(), name='manga.list.favorites'),
     url(r'^i18n/',                      include('django.conf.urls.i18n')),
     url(r'^m/',                         include('fufufuu.manga.urls')),
     url(r'^tag/',                       include('fufufuu.tag.urls')),
     url(r'^upload/',                    include('fufufuu.upload.urls')),
+
+    # individual views
+    url(r'^favorites/$',                MangaListFavoritesView.as_view(), name='manga.list.favorites'),
+
+    # sitemap
+    url(r'^sitemap\.xml$',              cache_page(60*60)(sitemap), {'sitemaps': SITEMAPS}, name='sitemap'),
 
     # legacy urls
     url(r'^',                           include('fufufuu.legacy.urls')),
