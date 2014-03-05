@@ -89,3 +89,21 @@ $ ->
         input = $('#' + preview.attr('data-for'))
         input.on 'keyup', -> preview.html(markdown.toHTML(input.val()))
         preview.html(markdown.toHTML(input.val()))
+
+    #---------------------------------------------------------------------------
+    # prevent double clicking of form buttons
+    #---------------------------------------------------------------------------
+
+    $('form').each ->
+        form = $(this)
+        form.find('button').click ->
+            self = $(this)
+            self.attr('disabled', 'disabled')
+            unset = -> self.removeAttr('disabled')
+            setTimeout(unset, 3000)
+            form.append($('<input>', {
+                type: 'hidden'
+                name: self.attr('name')
+                value: self.val()
+            }))
+            form.submit()
