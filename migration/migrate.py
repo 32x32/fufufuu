@@ -1,5 +1,6 @@
 from collections import defaultdict
 import logging
+from multiprocessing import Pool
 import os
 import sys
 
@@ -27,6 +28,13 @@ from fufufuu.tag.models import Tag
 
 CHUNK_SIZE = 1000
 OLD_MEDIA_ROOT = '/home/derekkwok/media/'
+
+
+def process_image_list(l):
+    pool = Pool()
+    pool.starmap(image_resize, l)
+    pool.close()
+    pool.join()
 
 
 def image_resize(file_path, key_type, key_id):
@@ -280,9 +288,11 @@ class Migrator(object):
         self.logger.debug('generate cache for users - started'.center(80, '-'))
 
         def _generate_cache(user_list):
+            process_list = []
             for user in user_list:
                 if not user.avatar: continue
-                image_resize(user.avatar.path, ImageKeyType.ACCOUNT_AVATAR, user.id)
+                process_list.append((user.avatar.path, ImageKeyType.ACCOUNT_AVATAR, user.id))
+            process_image_list(process_list)
 
         count = User.objects.all().count()
         for i in range(0, count, CHUNK_SIZE):
@@ -295,12 +305,14 @@ class Migrator(object):
         self.logger.debug('generate cache for manga - started'.center(80, '-'))
 
         def _generate_cache(manga_list):
+            process_list = []
             for manga in manga_list:
                 if not manga.cover:
                     self.logger.warning('manga {} has no cover'.format(manga.id))
                     continue
-                image_resize(manga.cover.path, ImageKeyType.MANGA_COVER, manga.id)
-                image_resize(manga.cover.path, ImageKeyType.MANGA_INFO_COVER, manga.id)
+                process_list.append((manga.cover.path, ImageKeyType.MANGA_COVER, manga.id))
+                process_list.append((manga.cover.path, ImageKeyType.MANGA_INFO_COVER, manga.id))
+            process_image_list(process_list)
 
         count = Manga.all.all().count()
         for i in range(0, count, CHUNK_SIZE):
@@ -313,13 +325,15 @@ class Migrator(object):
         self.logger.debug('generate cache for manga pages - started'.center(80, '-'))
 
         def _generate_cache(manga_page_list):
+            process_list = []
             for mp in manga_page_list:
                 if not mp.image:
                     self.logger.warning('manga page {} has no image'.format(mp.id))
                     continue
                 image_key_type = mp.double and ImageKeyType.MANGA_PAGE_DOUBLE or ImageKeyType.MANGA_PAGE
-                image_resize(mp.image.path, image_key_type, mp.id)
-                image_resize(mp.image.path, ImageKeyType.MANGA_THUMB, mp.id)
+                process_list.append((mp.image.path, image_key_type, mp.id))
+                process_list.append((mp.image.path, ImageKeyType.MANGA_THUMB, mp.id))
+            process_image_list(process_list)
 
         count = MangaPage.objects.all().count()
         for i in range(0, count, CHUNK_SIZE):
