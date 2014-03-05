@@ -1,4 +1,3 @@
-from collections import defaultdict
 import logging
 from multiprocessing import Pool
 import os
@@ -22,6 +21,7 @@ from django.db.utils import IntegrityError
 from fufufuu.account.models import User
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.models import Image
+from fufufuu.legacy.models import LegacyTank
 from fufufuu.manga.enums import MangaCategory
 from fufufuu.manga.models import Manga, MangaFavorite, MangaTag, MangaPage
 from fufufuu.tag.enums import TagType
@@ -147,53 +147,48 @@ class Migrator(object):
         self.logger.debug('migrated {} tags'.format(Tag.objects.all().count()))
 
     def migrate_tanks(self):
-        self.tank_title_map = defaultdict(list)
-        self.tank_id_map = {}
         self.logger.debug('tank migration started'.center(80, '-'))
 
-        def _migrate_tanks(old_tank_list):
-            tank_list = []
-            new_id = Tag.objects.all().aggregate(Max('id'))['id__max']
-            for old_tank in old_tank_list:
-                skip = old_tank.title in self.tank_title_map
-                if skip: continue
-
-                new_id += 1
-                self.tank_title_map[old_tank.title] = old_tank.id
-
-                tank_list.append(Tag(
-                    id=new_id,
-                    tag_type=TagType.TANK,
-                    name=old_tank.title,
-                    slug=old_tank.slug,
-                    created_by_id=self.user.id,
-                    created_on=old_tank.date_created,
-                ))
-            Tag.objects.bulk_create(tank_list)
-
-        count = self.session.query(OldTank).count()
-        for i in range(0, count, CHUNK_SIZE):
-            self.logger.debug('migrated {} tanks'.format(i))
-            _migrate_tanks(self.session.query(OldTank)[i:i+CHUNK_SIZE])
-
-        self.logger.debug('migrated {} tanks'.format(Tag.objects.filter(tag_type=TagType.TANK).count()))
-
-        # generate map from old_tank_id to new tank id
-        tag_list = Tag.objects.filter(tag_type=TagType.TANK)
-        tag_dict = dict([(t.name, t.id) for t in tag_list])
+        new_id = Tag.objects.all().aggregate(Max('id'))['id__max']
+        tank_title_map = {}
 
         for old_tank in self.session.query(OldTank):
-            self.tank_id_map[old_tank.id] = tag_dict.get(old_tank.title)
+
+            if old_tank.title in tank_title_map:
+                LegacyTank.objects.create(id=old_tank.id, tag=tank_title_map[old_tank.title])
+                continue
+
+            new_id += 1
+            tag = Tag(
+                id=new_id,
+                tag_type=TagType.TANK,
+                name=old_tank.title,
+                slug=old_tank.slug,
+                created_by_id=self.user.id,
+                created_on=old_tank.date_created,
+            )
+            tag.save(updated_by=None)
+            tank_title_map[old_tank.title] = tag
+
+            LegacyTank.objects.create(
+                id=old_tank.id,
+                tag=tag
+            )
+
+        self.logger.debug('created {} legacy tanks'.format(LegacyTank.objects.all().count()))
+        self.logger.debug('migrated {} tanks'.format(Tag.objects.filter(tag_type=TagType.TANK).count()))
+
 
     def migrate_manga(self):
         self.logger.debug('manga migration started'.center(80, '-'))
+        tank_list = LegacyTank.objects.all()
+        tank_dict = dict([(t.id, t.tag_id) for t in tank_list])
 
         def _migrate_manga(old_manga_list):
             manga_list = []
             for old_manga in old_manga_list:
                 tank_id = None
-                if old_manga.tank_id:
-                    tank_id = self.tank_id_map[old_manga.tank_id]
+                if old_manga.tank_id: tank_id = tank_dict.get(old_manga.tank_id)
 
                 category = old_manga.category
                 if category == 'NON-H': category = MangaCategory.NON_H

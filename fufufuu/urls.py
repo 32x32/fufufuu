@@ -26,6 +26,9 @@ urlpatterns = patterns('',
     url(r'^tag/',                       include('fufufuu.tag.urls')),
     url(r'^upload/',                    include('fufufuu.upload.urls')),
 
+    # legacy urls
+    url(r'^',                           include('fufufuu.legacy.urls')),
+
 )
 
 #-------------------------------------------------------------------------------
