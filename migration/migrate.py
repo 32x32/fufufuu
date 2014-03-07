@@ -274,7 +274,7 @@ class Migrator(object):
                     double=old_manga_page.double,
                     page=old_manga_page.page,
                     image=self.get_file(old_manga_page.image_source),
-                    name=old_manga_page.name[:100],
+                    name=old_manga_page.name and old_manga_page.name[:100] or '',
                 ))
             MangaPage.objects.bulk_create(manga_page_list)
 
