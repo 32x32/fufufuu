@@ -95,8 +95,10 @@ def setup_appserver():
         'postgresql-9.3', 'postgresql-server-dev-9.3',
         # image processing
         'libjpeg8-dev', 'libpng12-dev', 'libfreetype6-dev',
+        # nodejs + memcached
+        'nodejs', 'memcached',
         # utilities
-        'cron', 'ntp', 'rsync', 'gettext', 'htop', 'nodejs', 'memcached',
+        'cron', 'ntp', 'rsync', 'gettext', 'htop', 'tmux', 'bmon',
         # server
         'nginx',
     ]
@@ -129,7 +131,7 @@ def setup_appserver():
 
     # apt-get install packages
     sudo('apt-get update')
-    sudo('apt-get install -y {}'.format(' '.join(packages)))
+    sudo('apt-get install -y --force-yes {}'.format(' '.join(packages)))
 
     if not exists('/usr/local/bin/python3.3'): install_python()
 
