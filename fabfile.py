@@ -81,7 +81,21 @@ def install_python():
     sudo('rm -fr Python-3.3.4')
 
 
-def setup_appserver():
+def install_elasticsearch():
+    """
+    installs Elastic Search
+    """
+
+    sudo('apt-get update')
+    sudo('apt-get -y install python-software-properties')
+    sudo('add-apt-repository -y ppa:webupd8team/java')
+    sudo('apt-get update')
+    sudo('apt-get -y install oracle-java7-installer', pty=False)
+    sudo('wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.1.deb')
+    sudo('dpkg -i elasticsearch-1.0.1.deb')
+
+
+def setup():
     """
     installs all necessary software for fufufuu
     """
