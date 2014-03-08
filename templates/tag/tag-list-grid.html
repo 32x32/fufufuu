@@ -6,14 +6,6 @@
 {% block content_upper %}
     <div class="filter-bar">
         <a href="{{ url('tag.list.%s'|format(tag_type|lower)) }}" class="btn space-right-10">{% trans %}List View{% endtrans %}</a>
-        <form action="" method="get" class="auto-submit inline-block">
-            <select name="lang" class="fat space-right-10">
-                <option value="">{% trans %}All <Alias></Alias> Languages{% endtrans %}&nbsp;&nbsp;</option>
-                {% for language in LANGUAGES %}
-                    <option value="{{ language.0 }}"{% if language.0 == lang %} selected{% endif %}>{{ language.1 }}</option>
-                {% endfor %}
-            </select>
-        </form>
         <form action="" method="get" class="right">
             {{ widgets.pagination(tag_list) }}
         </form>
