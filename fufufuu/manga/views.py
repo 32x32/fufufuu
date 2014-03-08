@@ -48,7 +48,12 @@ class MangaListMixin:
         form = MangaListFilterForm(request, data=request.POST)
         if form.is_valid():
             form.save()
-        return redirect(request.path)
+
+        redirect_path = request.path
+        query = request.POST.get('q')
+        if query: redirect_path = '{}?q={}'.format(redirect_path, query)
+
+        return redirect(redirect_path)
 
 
 class MangaListView(MangaListMixin, TemplateView):

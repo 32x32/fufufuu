@@ -11,6 +11,9 @@
     <span class="btn toggle-switch max-xs" data-toggle-id="manga-list-filters" data-toggle-text="{% trans %}Hide Filters{% endtrans %}">{% trans %}Show Filters{% endtrans %}</span>
     <form action="" method="post" id="manga-list-filters">
         {{ forms.csrf_input() }}
+        {% if request.GET.q %}
+            <input type="hidden" name="q" value="{{ request.GET.q }}">
+        {% endif %}
         <div class="manga-filter-section">
             <label class="ml-filter-bar-cat manga-category-non_h">
                 <input type="checkbox" name="non_h"{% if filters.get('non_h') %} checked{% endif %}>
