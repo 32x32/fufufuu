@@ -17,7 +17,16 @@
     </div>
     {% if manga_list %}
         {% include 'manga/_include/manga-list-core.html' %}
-    {% elif not request.GET.q %}
+    {% elif request.GET.q %}
         <div class="min-xs container">{% include 'manga/_include/manga-list-empty.html' %}</div>
+    {% else %}
+        <div class="min-xs container">
+            <div class="panel">
+                <h4 class="panel-heading">{% trans %}Please Enter a Search Term{% endtrans %}</h4>
+                <div class="panel-body">
+                    <p>{% trans %}The search page only works if you actually type in something to search for!{% endtrans %}</p>
+                </div>
+            </div>
+        </div>
     {% endif %}
 {% endblock %}
