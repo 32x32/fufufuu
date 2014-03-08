@@ -338,6 +338,16 @@ def nginx_update():
     sudo('/etc/init.d/nginx restart')
 
 
+def memcached_update():
+    """
+    updates the memcached config and restarts memcached
+    """
+
+    sudo('rm -fr /etc/memcached.conf')
+    put('config/{config}/memcached.conf'.format(**env), '/etc/memcached.conf', use_sudo=True)
+    sudo('/etc/init.d/memcached restart')
+
+
 def manage(command):
     """
     runs 'python manage.py <command>'
