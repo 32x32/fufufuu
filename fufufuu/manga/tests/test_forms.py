@@ -117,6 +117,12 @@ class MangaEditFormTests(BaseTestCase):
         self.assertEqual(manga.collection, collection)
         self.assertEqual(manga.collection_part, '3')
 
+        form = MangaEditForm(request=self.request, instance=manga)
+        self.assertEqual(form.fields['tank'].initial, tank.name)
+        self.assertEqual(form.fields['tank_chapter'].initial, '2')
+        self.assertEqual(form.fields['collection'].initial, collection.name)
+        self.assertEqual(form.fields['collection_part'].initial, '3')
+
     def test_manga_edit_form_tags(self):
         authors = Tag.objects.filter(tag_type=TagType.AUTHOR)
         circles = Tag.objects.filter(tag_type=TagType.CIRCLE)

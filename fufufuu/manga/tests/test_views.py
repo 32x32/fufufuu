@@ -16,6 +16,7 @@ from fufufuu.manga.models import Manga, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import generate_manga_archive
 from fufufuu.revision.enums import RevisionStatus
 from fufufuu.revision.models import Revision
+from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 
 
@@ -37,6 +38,7 @@ class MangaListViewTests(BaseTestCase):
         self.assertTrue(filters.get('non_h'))
         self.assertFalse(filters.get('ecchi'))
         self.assertEqual(filters.get('lang'), Language.ENGLISH)
+
 
 class MangaListFavoritesViewTests(BaseTestCase):
 
@@ -261,6 +263,17 @@ class MangaEditViewTests(BaseTestCase):
             created_by=user
         )
         self.assertEqual(new_revision.diff['title'], ('Test Manga 1', 'Revision Title 2'))
+
+    def test_manga_edit_view_get_tank(self):
+        tank = Tag.objects.filter(tag_type=TagType.TANK)[0]
+        self.manga.tank = tank
+        self.manga.tank_chapter = '1'
+        self.manga.save(self.user)
+
+        response = self.client.get(reverse('manga.edit', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-edit.html')
+        self.assertTrue(tank.name in str(response.content))
 
 
 class MangaEditImagesViewTests(BaseTestCase):

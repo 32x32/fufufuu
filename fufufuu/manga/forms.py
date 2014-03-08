@@ -105,6 +105,10 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
         if 'data' not in kwargs:
             self.initialize_tag_fields(manga, tag_id_list)
+            self.fields['tank'].initial             = manga.tank_id and manga.tank.name or ''
+            self.fields['tank_chapter'].initial     = manga.tank_chapter
+            self.fields['collection'].initial       = manga.collection_id and manga.collection.name or ''
+            self.fields['collection_part'].initial  = manga.collection_part
 
     def initialize_tag_fields(self, manga, tag_id_list):
         if tag_id_list:

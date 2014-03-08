@@ -17,6 +17,7 @@ def convert_markdown(markdown):
     returns the markdown converted into HTML
     """
 
+    markdown = markdown.strip()
     try:
         p = subprocess.Popen([MD2HTML], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         out, err = p.communicate(markdown.encode('utf-8'), timeout=1)
