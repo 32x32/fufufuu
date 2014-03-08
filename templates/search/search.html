@@ -17,7 +17,7 @@
     </div>
     {% if manga_list %}
         {% include 'manga/_include/manga-list-core.html' %}
-    {% elif request.GET.q %}
+    {% elif not request.GET.q %}
         <div class="min-xs container">{% include 'manga/_include/manga-list-empty.html' %}</div>
     {% endif %}
 {% endblock %}
