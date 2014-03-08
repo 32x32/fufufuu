@@ -4,11 +4,12 @@
 {% set url_account_login = url('account.login') %}
 {% set url_account_register = url('account.register') %}
 {% set url_account_settings = url('account.settings') %}
+{% set url_search = url('search') %}
 {% set url_upload_list = url('upload.list') %}
 
 <header>
     <span class="icon icon-menu max-md left" id="header-menu-icon"></span>
-    <a href="" class="icon icon-search max-xs right"></a>
+    <a href="{{ url_search }}" class="icon icon-search max-xs right"></a>
     <div class="header-menu min-xs">
         {% if user.is_authenticated() %}
             <a href="{{ url_upload_list }}" class="min-md {{ utils.link_active(url_upload_list) }}"><span class="icon icon-up-circled"></span></a>
@@ -19,10 +20,10 @@
             <a href="{{ url_account_register }}" class="{{ utils.link_active(url_account_register) }}">{% trans %}Create Account{% endtrans %}</a>
         {% endif %}
     </div>
-    <a href="{{ url('manga.list') }}" class="header-heading">Fufufuu</a>
-    <form action="" method="get" id="header-search-form" class="min-xs">
+    <a href="{{ url_search }}" class="header-heading">Fufufuu</a>
+    <form action="{{ url('search') }}" method="get" id="header-search-form" class="min-xs">
         <label class="icon icon-search left" for="id_header_search"></label>
-        <input type="text" placeholder="{% trans %}Search for Manga, Doujinshi and Tags{% endtrans %}" id="id_header_search">
+        <input type="text" placeholder="{% trans %}Search for Manga and Doujinshi{% endtrans %}" id="id_header_search" value="{{ request.GET.q }}" name="q">
     </form>
 </header>
 <form action="{{ url('account.logout') }}" method="post" class="none" id="account-logout-form">

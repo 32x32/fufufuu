@@ -1,6 +1,23 @@
-{% extends 'base.htm' %}
+{% extends 'base.html' %}
 
 {% block title %}{% trans %}Search{% endtrans %}{% endblock %}
 
+{% block content_upper %}
+    {% include 'manga/_include/manga-list-filters.html' %}
+{% endblock %}
+
 {% block content %}
+    <div class="max-xs container">
+        <form action="" method="get" class="space-bottom-10">
+            <input type="text" placeholder="{% trans %}Search for Manga and Doujinshi{% endtrans %}" id="id_header_search" value="{{ request.GET.q }}" name="q" autofocus="autofocus">
+        </form>
+        {% if not manga_list and request.GET.q %}
+            {% include 'manga/_include/manga-list-empty.html' %}
+        {% endif %}
+    </div>
+    {% if manga_list %}
+        {% include 'manga/_include/manga-list-core.html' %}
+    {% elif request.GET.q %}
+        <div class="min-xs container">{% include 'manga/_include/manga-list-empty.html' %}</div>
+    {% endif %}
 {% endblock %}
