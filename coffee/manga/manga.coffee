@@ -33,8 +33,8 @@ $ ->
                 return data.length
             return pageNum
 
-        nextChapter = $('#manga-chapter-jump option:selected').next().val()
-        prevChapter = $('#manga-chapter-jump option:selected').prev().val()
+        nextChapter = $('#m-chapter-jump option:selected').next().val()
+        prevChapter = $('#m-chapter-jump option:selected').prev().val()
 
         #-----------------------------------------------------------------------
         # knockout

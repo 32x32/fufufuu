@@ -12,7 +12,7 @@
                 {% endfor %}
             </select>
             {% if chapter_list %}
-                <select class="space-right-10 right m-chapter-jump">
+                <select class="space-right-10 right m-chapter-jump" id="m-chapter-jump">
                     {% for manga_ in chapter_list %}
                         <option value="{{ url('manga', args=[manga_.id, manga_.slug]) }}"{% if manga_.id == manga.id %} selected{% endif %}>{% trans number=manga_.tank_chapter %}Chapter {{ number }}{% endtrans %}</option>
                     {% endfor %}
