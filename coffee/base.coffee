@@ -25,7 +25,7 @@ $ ->
 
     if $('.lazy-image').length
 
-        VERTICAL_BUFFER = 500
+        VERTICAL_BUFFER = 1000
 
         isElementInViewport = (el) ->
             rect = el.getBoundingClientRect()
