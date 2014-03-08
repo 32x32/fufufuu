@@ -17,7 +17,6 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 from django import db
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.aggregates import Max
-from django.db.utils import IntegrityError
 from fufufuu.account.models import User
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.models import Image
@@ -31,6 +30,23 @@ from fufufuu.tag.models import Tag
 CHUNK_SIZE = 1000
 OLD_MEDIA_ROOT = '/home/derekkwok/media/'
 CONNECTION_STRING = 'postgresql://derekkwok:password@localhost/fufufuu_old'
+
+#-------------------------------------------------------------------------------
+# logging configuration
+#-------------------------------------------------------------------------------
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(formatter)
+
+logger = logging.getLogger('Migrator')
+logger.add(handler)
+logger.setLevel(logging.DEBUG)
+
+#-------------------------------------------------------------------------------
+# helper methods
+#-------------------------------------------------------------------------------
 
 
 def process_image_list(l):
@@ -48,31 +64,34 @@ def image_resize(file_path, key_type, key_id):
     try:
         image = Image(key_type=key_type, key_id=key_id)
         image.save(file_path)
-    except IntegrityError:
-        pass
+    except Exception as e:
+        logger.warn(str(e))
+
+
+#-------------------------------------------------------------------------------
 
 
 class Migrator(object):
 
     def __init__(self):
-        self.logger = logging.getLogger(self.__class__.__name__)
-        self.logger.setLevel(logging.DEBUG)
+        logger = logging.getLogger(self.__class__.__name__)
+        logger.setLevel(logging.DEBUG)
 
         handler = logging.StreamHandler(sys.stdout)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
 
-        self.logger.addHandler(handler)
+        logger.addHandler(handler)
 
     def connect(self):
         self.engine = create_engine(CONNECTION_STRING)
         self.session = sessionmaker(bind=self.engine)()
 
-        self.logger.debug('connected to fufufuu_old')
+        logger.debug('connected to fufufuu_old')
 
     def disconnect(self):
         self.session.close()
-        self.logger.debug('disconnected to fufufuu_old')
+        logger.debug('disconnected to fufufuu_old')
 
     #---------------------------------------------------------------------------
 
@@ -84,13 +103,13 @@ class Migrator(object):
         try:
             return SimpleUploadedFile('migrator', open('{}{}'.format(OLD_MEDIA_ROOT, path), mode='rb').read())
         except FileNotFoundError:
-            self.logger.warn('Missing file {}'.format(path))
+            logger.warn('Missing file {}'.format(path))
             return None
 
     #---------------------------------------------------------------------------
 
     def migrate_users(self):
-        self.logger.debug('users migration started'.center(80, '-'))
+        logger.debug('users migration started'.center(80, '-'))
 
         def _migrate_users(old_user_list):
             user_list = []
@@ -114,17 +133,17 @@ class Migrator(object):
 
         count = self.session.query(OldUser).count()
         for i in range(0, count, CHUNK_SIZE):
-            self.logger.debug('migrated {} users'.format(i))
+            logger.debug('migrated {} users'.format(i))
             _migrate_users(self.session.query(OldUser)[i:i+CHUNK_SIZE])
 
-        self.logger.debug('migrated {} users'.format(User.objects.all().count()))
+        logger.debug('migrated {} users'.format(User.objects.all().count()))
         self.user = User.objects.get(username='ParadigmShift')
 
     def migrate_comments(self):
         pass
 
     def migrate_tags(self):
-        self.logger.debug('tag migration started'.center(80, '-'))
+        logger.debug('tag migration started'.center(80, '-'))
 
         def _migrate_tags(old_tag_list):
             tag_list = []
@@ -141,13 +160,13 @@ class Migrator(object):
 
         count = self.session.query(OldTag).count()
         for i in range(0, count, CHUNK_SIZE):
-            self.logger.debug('migrated {} tags'.format(i))
+            logger.debug('migrated {} tags'.format(i))
             _migrate_tags(self.session.query(OldTag)[i:i+CHUNK_SIZE])
 
-        self.logger.debug('migrated {} tags'.format(Tag.objects.all().count()))
+        logger.debug('migrated {} tags'.format(Tag.objects.all().count()))
 
     def migrate_tanks(self):
-        self.logger.debug('tank migration started'.center(80, '-'))
+        logger.debug('tank migration started'.center(80, '-'))
 
         new_id = Tag.objects.all().aggregate(Max('id'))['id__max']
         tank_title_map = {}
@@ -175,12 +194,12 @@ class Migrator(object):
                 tag=tag
             )
 
-        self.logger.debug('created {} legacy tanks'.format(LegacyTank.objects.all().count()))
-        self.logger.debug('migrated {} tanks'.format(Tag.objects.filter(tag_type=TagType.TANK).count()))
+        logger.debug('created {} legacy tanks'.format(LegacyTank.objects.all().count()))
+        logger.debug('migrated {} tanks'.format(Tag.objects.filter(tag_type=TagType.TANK).count()))
 
 
     def migrate_manga(self):
-        self.logger.debug('manga migration started'.center(80, '-'))
+        logger.debug('manga migration started'.center(80, '-'))
         tank_list = LegacyTank.objects.all()
         tank_dict = dict([(t.id, t.tag_id) for t in tank_list])
 
@@ -218,13 +237,13 @@ class Migrator(object):
 
         count = self.session.query(OldManga).count()
         for i in range(0, count, CHUNK_SIZE):
-            self.logger.debug('migrated {} manga'.format(i))
+            logger.debug('migrated {} manga'.format(i))
             _migrate_manga(self.session.query(OldManga)[i:i+CHUNK_SIZE])
 
-        self.logger.debug('migrated {} manga'.format(Manga.all.all().count()))
+        logger.debug('migrated {} manga'.format(Manga.all.all().count()))
 
     def migrate_manga_favorites(self):
-        self.logger.debug('manga favorites migration started'.center(80, '-'))
+        logger.debug('manga favorites migration started'.center(80, '-'))
 
         def _migrate_manga_favorites(old_manga_favorites_list):
             manga_favorites_list = []
@@ -238,13 +257,13 @@ class Migrator(object):
 
         count = self.session.query(OldMangaFavoriteUser).count()
         for i in range(0, count, CHUNK_SIZE):
-            self.logger.debug('migrated {} manga favorites'.format(i))
+            logger.debug('migrated {} manga favorites'.format(i))
             _migrate_manga_favorites(self.session.query(OldMangaFavoriteUser)[i:i+CHUNK_SIZE])
 
-        self.logger.debug('migrated {} manga favorites'.format(MangaFavorite.objects.all().count()))
+        logger.debug('migrated {} manga favorites'.format(MangaFavorite.objects.all().count()))
 
     def migrate_manga_tags(self):
-        self.logger.debug('manga tags migration started'.center(80, '-'))
+        logger.debug('manga tags migration started'.center(80, '-'))
 
         def _migrate_manga_tags(old_manga_tag_list):
             manga_tag_list = []
@@ -258,13 +277,13 @@ class Migrator(object):
 
         count = self.session.query(OldMangaTag).count()
         for i in range(0, count, CHUNK_SIZE):
-            self.logger.debug('migrated {} manga tags'.format(MangaTag.objects.all().count()))
+            logger.debug('migrated {} manga tags'.format(MangaTag.objects.all().count()))
             _migrate_manga_tags(self.session.query(OldMangaTag)[i:i+CHUNK_SIZE])
 
-        self.logger.debug('migrated {} manga tags'.format(MangaTag.objects.all().count()))
+        logger.debug('migrated {} manga tags'.format(MangaTag.objects.all().count()))
 
     def migrate_manga_pages(self):
-        self.logger.debug('manga pages migration started'.center(80, '-'))
+        logger.debug('manga pages migration started'.center(80, '-'))
 
         def _migrate_manga_pages(old_manga_page_list):
             manga_page_list = []
@@ -280,13 +299,13 @@ class Migrator(object):
 
         count = self.session.query(OldMangaPage).count()
         for i in range(0, count, CHUNK_SIZE):
-            self.logger.debug('migrated {} manga pages'.format(i))
+            logger.debug('migrated {} manga pages'.format(i))
             _migrate_manga_pages(self.session.query(OldMangaPage)[i:i+CHUNK_SIZE])
 
-        self.logger.debug('migrated {} manga pages'.format(MangaPage.objects.all().count()))
+        logger.debug('migrated {} manga pages'.format(MangaPage.objects.all().count()))
 
     def generate_cache_users(self):
-        self.logger.debug('generate cache for users - started'.center(80, '-'))
+        logger.debug('generate cache for users - started'.center(80, '-'))
 
         def _generate_cache(user_list):
             process_list = []
@@ -297,19 +316,19 @@ class Migrator(object):
 
         count = User.objects.all().count()
         for i in range(0, count, CHUNK_SIZE):
-            self.logger.debug('generated cache for {} users'.format(i))
+            logger.debug('generated cache for {} users'.format(i))
             _generate_cache(User.objects.all()[i:i+CHUNK_SIZE])
 
-        self.logger.debug('generated cache for {} users'.format(count))
+        logger.debug('generated cache for {} users'.format(count))
 
     def generate_cache_manga(self):
-        self.logger.debug('generate cache for manga - started'.center(80, '-'))
+        logger.debug('generate cache for manga - started'.center(80, '-'))
 
         def _generate_cache(manga_list):
             process_list = []
             for manga in manga_list:
                 if not manga.cover:
-                    self.logger.warning('manga {} has no cover'.format(manga.id))
+                    logger.warning('manga {} has no cover'.format(manga.id))
                     continue
                 process_list.append((manga.cover.path, ImageKeyType.MANGA_COVER, manga.id))
                 process_list.append((manga.cover.path, ImageKeyType.MANGA_INFO_COVER, manga.id))
@@ -317,19 +336,19 @@ class Migrator(object):
 
         count = Manga.all.all().count()
         for i in range(0, count, CHUNK_SIZE):
-            self.logger.debug('generated cache for {} manga'.format(i))
+            logger.debug('generated cache for {} manga'.format(i))
             _generate_cache(Manga.all.all()[i:i+CHUNK_SIZE])
 
-        self.logger.debug('generated cache for {} manga'.format(count))
+        logger.debug('generated cache for {} manga'.format(count))
 
     def generate_cache_manga_pages(self):
-        self.logger.debug('generate cache for manga pages - started'.center(80, '-'))
+        logger.debug('generate cache for manga pages - started'.center(80, '-'))
 
         def _generate_cache(manga_page_list):
             process_list = []
             for mp in manga_page_list:
                 if not mp.image:
-                    self.logger.warning('manga page {} has no image'.format(mp.id))
+                    logger.warning('manga page {} has no image'.format(mp.id))
                     continue
                 image_key_type = mp.double and ImageKeyType.MANGA_PAGE_DOUBLE or ImageKeyType.MANGA_PAGE
                 process_list.append((mp.image.path, image_key_type, mp.id))
@@ -338,32 +357,35 @@ class Migrator(object):
 
         count = MangaPage.objects.all().count()
         for i in range(0, count, CHUNK_SIZE):
-            self.logger.debug('generated cache for {} manga pages'.format(i))
+            logger.debug('generated cache for {} manga pages'.format(i))
             _generate_cache(MangaPage.objects.all()[i:i+CHUNK_SIZE])
 
-        self.logger.debug('generated cache for {} manga pages'.format(count))
+        logger.debug('generated cache for {} manga pages'.format(count))
 
     def run(self):
         import datetime
         start = datetime.datetime.now()
-        self.logger.debug('Starting Migration'.center(80, '-'))
+        logger.debug('Starting Migration'.center(80, '-'))
 
         self.connect()
         self.migrate_users()
-        self.generate_cache_users()
         self.migrate_comments()
         self.migrate_tags()
         self.migrate_tanks()
         self.migrate_manga()
-        self.generate_cache_manga()
         self.migrate_manga_favorites()
         self.migrate_manga_tags()
         self.migrate_manga_pages()
+
+        self.generate_cache_users()
+        self.generate_cache_manga()
         self.generate_cache_manga_pages()
+
         self.disconnect()
 
         end = datetime.datetime.now()
-        self.logger.debug('Finished Migration in {}'.format(end-start).center(80, '-'))
+        logger.debug('Finished Migration in {}'.format(end-start).center(80, '-'))
+
 
 if __name__ == '__main__':
     migrator = Migrator()
