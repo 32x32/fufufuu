@@ -29,8 +29,8 @@ $ ->
             pageNum = parseInt(pageNum[1])
             if pageNum < 1
                 return 1
-            if pageNum > data.length
-                return data.length
+            if pageNum > pageList.length
+                return pageList.length
             return pageNum
 
         nextChapter = $('#m-chapter-jump option:selected').next().val()
