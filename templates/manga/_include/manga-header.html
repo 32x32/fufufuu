@@ -7,6 +7,7 @@
         {% else %}
             <span class="manga-category manga-category-{{ manga.category.lower() }}">{{ manga.category_display }}</span>
         {% endif %}
+        <span class="manga-category manga-category-other">{{ manga.language|language_display }}</span>
         <span>{{ manga.title }}</span>
     </h1>
 </div>

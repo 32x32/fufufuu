@@ -76,7 +76,7 @@
                         {{ tag_widget(manga.tag_dictionary.PARODY, gettext('Parody')) }}
                         {% if manga.tank_id %}
                             <tr>
-                                <td><label class="label-normalized">{% trans %}Tank{% endtrans %}</label></td>
+                                <td width="100"><label class="label-normalized">{% trans %}Tank{% endtrans %}</label></td>
                                 {% with tag = manga.tank %}
                                     <td>
                                         <div class="inline-block space-right-10">
@@ -89,7 +89,7 @@
                         {% endif %}
                         {% if manga.collection_id %}
                             <tr>
-                                <td><label class="label-normalized">{% trans %}Collection{% endtrans %}</label></td>
+                                <td width="100"><label class="label-normalized">{% trans %}Collection{% endtrans %}</label></td>
                                 {% with tag = manga.collection %}
                                     <td>
                                         <div class="inline-block space-right-10">
