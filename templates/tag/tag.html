@@ -5,15 +5,7 @@
 {% block content_upper %}
     {% include 'manga/_include/manga-list-filters.html' %}
     <div class="tag-info-block">
-        <span class="btn min-md right">{% trans %}Edit Tag{% endtrans %}</span>
-        <h2 class="tag-info-heading">{{ tag.name }}</h2>
-        <div class="tag-info-alias-list text-secondary">
-            {% for tag_alias in tag_alias_list %}
-                <span class="text-xsmall space-right">{{ tag_alias.name }}{% if not loop.last %},{% endif %}</span>
-            {% endfor %}
-        </div>
-        <div>{{ tag_data.html|safe }}</div>
-        <div class="clear"></div>
+        <h2 class="tag-info-heading"><span class="manga-tag space-right">{{ tag.tag_type|tag_type_display }}</span>{{ tag.name }}</h2>
     </div>
 {% endblock %}
 
