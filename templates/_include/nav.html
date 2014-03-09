@@ -23,7 +23,6 @@
     <hr class="nav-sep">
     <a href="{{ url_tag_list_grid_tank }}" class="nav-link {{ utils.link_active_starts_with(url_tag_list_grid_tank) }}"><span class="icon icon-docs"></span>{% trans %}Tanks{% endtrans %}</a>
     <a href="{{ url_tag_list_grid_collection }}" class="nav-link {{ utils.link_active_starts_with(url_tag_list_grid_collection) }}"><span class="icon icon-docs"></span>{% trans %}Collections{% endtrans %}</a>
-    <a href="#" class="nav-link"><span class="icon icon-docs"></span>{% trans %}Originals{% endtrans %}</a>
     <hr class="nav-sep">
     <a href="{{ url_tag_list_author }}{% if request.lang %}lang={{ request.lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_author) }}"><span class="icon icon-tag"></span>{% trans %}Authors{% endtrans %}</a>
     <a href="{{ url_tag_list_circle }}{% if request.lang %}lang={{ request.lang }}{% endif %}" class="nav-link {{ utils.link_active(url_tag_list_circle) }}"><span class="icon icon-tag"></span>{% trans %}Circles{% endtrans %}</a>
