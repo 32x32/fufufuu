@@ -2,6 +2,8 @@ from captcha.conf import settings
 from captcha.models import CaptchaStore
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
+from fufufuu.account.forms import AccountRegisterForm
+
 from fufufuu.account.models import User
 from fufufuu.core.tests import BaseTestCase
 
@@ -167,3 +169,33 @@ class AccountSettingsPasswordViewTests(BaseTestCase):
 
         user = User.objects.get(id=self.user.id)
         self.assertTrue(user.check_password('1234'))
+
+
+class AccountRegisterFormTests(BaseTestCase):
+
+    def test_valid_usernames(self):
+        username_list = [
+            'abcd',
+            'ab_cd',
+            'ab_cd_ef',
+            'abcdefghijklmnopqrst'
+        ]
+        for username in username_list:
+            form = AccountRegisterForm(data={'username': username})
+            form.is_valid()
+            self.assertFalse('username' in form.errors)
+
+    def test_invalid_usernames(self):
+        username_list = [
+            'abc',
+            '_bdc',
+            'abc_',
+            'a__d',
+            'abcdefghijklmnopqrstu',
+            'ab-cd',
+            '中文',
+        ]
+        for username in username_list:
+            form = AccountRegisterForm(data={'username': username})
+            form.is_valid()
+            self.assertTrue('username' in form.errors)

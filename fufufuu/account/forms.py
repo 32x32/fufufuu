@@ -7,7 +7,7 @@ from fufufuu.account.models import User
 from fufufuu.core.forms import BlankLabelSuffixMixin, convert_markdown
 
 
-USERNAME_REGEX = r'^([a-zA-Z0-9]+_?)+[a-zA-Z0-9]$'
+USERNAME_REGEX = r'^\w{4,20}$'
 
 
 class AccountRegisterForm(BlankLabelSuffixMixin, forms.ModelForm):
@@ -53,6 +53,10 @@ class AccountRegisterForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
+        if '_' == username[0] or '_' == username[-1]:
+            raise forms.ValidationError(_('A username cannot start or end with an underscore.'))
+        if '__' in username:
+            raise forms.ValidationError(_('Consecutive underscores are no allowed in usernames.'))
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError(self.error_messages['duplicate_username'])
         return username
