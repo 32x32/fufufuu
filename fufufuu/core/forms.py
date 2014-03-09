@@ -23,7 +23,7 @@ def convert_markdown(markdown):
         out, err = p.communicate(markdown.encode('utf-8'), timeout=1)
         if err is not None:
             raise forms.ValidationError(_('An error occurred while processing the description.'))
-        html = out.decode('utf-8')
+        html = out.decode('utf-8').strip()
     except subprocess.TimeoutExpired:
         raise forms.ValidationError(_('Timeout while processing the description.'))
     except Exception:

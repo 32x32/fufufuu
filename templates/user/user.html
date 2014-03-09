@@ -16,7 +16,13 @@
                 <p><a href="{{ url('user.uploads', args=[target_user.username]) }}">{% trans %}{{ manga_count }} uploads{% endtrans %}</a></p>
             </div>
             <hr class="space-top-0 space-bottom-0">
-            <div class="panel-body">{{ target_user.html }}</div>
+            <div class="panel-body">
+                {% if target_user.html %}
+                    {{ target_user.html }}
+                {% else %}
+                    <p>{% trans %}No Description{% endif %}</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}
