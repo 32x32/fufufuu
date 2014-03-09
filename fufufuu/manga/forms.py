@@ -172,16 +172,12 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
 
         if bool(tank_name) != bool(tank_chapter):
             raise forms.ValidationError(_('Please specify both tank and tank chapter (or leave them both blank).'))
-        elif tank_name and tank_chapter:
-            self.tank_obj = get_or_create_tag_by_name_or_alias(TagType.TANK, tank_name, self.request.user)
 
         collection_name = cd.get('collection')
         collection_part = cd.get('collection_part')
 
         if bool(collection_name) != bool(collection_part):
             raise forms.ValidationError(_('Please specify both collection and collection part (or leave them both blank).'))
-        elif collection_name and collection_part:
-            self.collection_obj = get_or_create_tag_by_name_or_alias(TagType.COLLECTION, collection_name, self.request.user)
 
         if not Revision.can_create(self.request.user):
             raise forms.ValidationError(_('You have reached your edit limit for the day, please try again later.'))
@@ -200,25 +196,29 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
     def save(self):
         manga = super().save(commit=False)
 
-        if self.html:
-            manga.html = self.html
+        cd = self.cleaned_data
 
-        if self.tank_obj:
-            manga.tank = self.tank_obj
-            manga.tank_chapter = self.cleaned_data.get('tank_chapter')
+        tank_name, tank_chapter = cd.get('tank'), cd.get('tank_chapter')
+        if tank_name and tank_chapter:
+            manga.tank = get_or_create_tag_by_name_or_alias(TagType.TANK, tank_name, self.request.user)
+            manga.tank_chapter = tank_chapter
         else:
             manga.tank = None
             manga.tank_chapter = None
 
-        if self.collection_obj:
-            manga.collection = self.collection_obj
-            manga.collection_part = self.cleaned_data.get('collection_part')
+        collection_name, collection_part = cd.get('collection'), cd.get('collection_part')
+        if collection_name and collection_part:
+            manga.collection = get_or_create_tag_by_name_or_alias(TagType.COLLECTION, collection_name, self.request.user)
+            manga.collection_part = collection_part
         else:
             manga.collection = None
             manga.collection_part = None
 
+        if self.html:
+            manga.html = self.html
+
         original_status = manga.status
-        if self.cleaned_data.get('action') == MangaAction.PUBLISH:
+        if cd.get('action') == MangaAction.PUBLISH:
             manga.status = MangaStatus.PUBLISHED
             manga.published_on = timezone.now()
 
