@@ -114,7 +114,7 @@ def setup():
         # utilities
         'cron', 'ntp', 'rsync', 'gettext', 'htop', 'tmux', 'bmon',
         # server
-        'nginx',
+        'nginx', 'exim4',
     ]
 
     db_password = prompt('Please enter the db password: ')
@@ -346,6 +346,18 @@ def memcached_update():
     sudo('rm -fr /etc/memcached.conf')
     put('config/{config}/memcached.conf'.format(**env), '/etc/memcached.conf', use_sudo=True)
     sudo('/etc/init.d/memcached restart')
+
+
+def exim4_update():
+    """
+    updates the configuration for exim4 and restarts exim4
+    """
+
+    sudo('echo "fufufuu.net" > /etc/mailname')
+    sudo('rm -f /etc/exim4/update-exim4.conf.conf')
+    put('config/{config}/update-exim4.conf.conf'.format(**env), '/etc/exim4/update-exim4.conf.conf', use_sudo=True)
+    sudo('update-exim4.conf')
+    append('/etc/email-addresses', 'root: no-reply@fufufuu.net', use_sudo=True)
 
 
 def manage(command):
