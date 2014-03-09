@@ -112,3 +112,9 @@ def get_object_or_none(klass, *args, **kwargs):
 #    )
 #    email.attach_alternative(loader.get_template(template).render(context), 'text/html')
 #    email.send(fail_silently=True)
+
+
+def get_ip_address(request):
+    ip_address = request.META.get('REMOTE_ADDR', '')
+    ip_address = ip_address[:200]
+    return ip_address

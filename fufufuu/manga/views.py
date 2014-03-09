@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from fufufuu.core.response import HttpResponseXAccel
 
-from fufufuu.core.utils import paginate
+from fufufuu.core.utils import paginate, get_ip_address
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
@@ -178,12 +178,9 @@ class MangaDownloadView(TemplateView):
         except MangaArchive.DoesNotExist:
             manga_archive = generate_manga_archive(manga)
 
-        ip_address = request.META.get('REMOTE_ADDR', '')
-        ip_address = ip_address[:200]
-
         link, created = DownloadLink.objects.get_or_create(
             url=manga_archive.file.url,
-            ip_address=ip_address,
+            ip_address=get_ip_address(request),
             created_by=request.user if request.user.is_authenticated() else None,
         )
 

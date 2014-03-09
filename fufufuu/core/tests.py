@@ -130,14 +130,10 @@ class CoreManagementTests(BaseTestCase):
     def tearDown(self):
         super().tearDown()
 
-    @suppress_output
-    def test_deleted_files_info(self):
-        call_command('deleted_files', 'info')
-
     def test_deleted_files_clear(self):
         self.assertTrue(os.path.exists(self.file.name))
 
-        call_command('deleted_files', 'clear')
+        call_command('clear_deleted_files')
         self.assertFalse(DeletedFile.objects.filter(id=self.deleted_file1.id).exists())
         self.assertFalse(DeletedFile.objects.filter(id=self.deleted_file3.id).exists())
         self.assertTrue(DeletedFile.objects.filter(id=self.deleted_file2.id).exists())

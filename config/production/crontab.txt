@@ -1,3 +1,4 @@
 MAILTO="derekkwok@localhost"
 0 * * * * sudo -u www-data /var/www/fufufuu/venv/bin/python3.3 /var/www/fufufuu/django/manage.py update_index --workers=4 --remove
-5 * * * * sudo -u www-data /var/www/fufufuu/venv/bin/python3.3 /var/www/fufufuu/django/manage.py deleted_files clear
+5 * * * * sudo -u www-data /var/www/fufufuu/venv/bin/python3.3 /var/www/fufufuu/django/manage.py clear_deleted_files
+10 * * * * sudo -u www-data /var/www/fufufuu/venv/bin/python3.3 /var/www/fufufuu/django/manage.py clear_downloads
