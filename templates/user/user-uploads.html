@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
+{% import '_macros/widgets.html' as widgets with context %}
 
 {% block title %}{{ target_user.username }} - {% trans %}Uploads{% endtrans %}{% endblock %}
 
+{% block content_upper %}
+    {% include 'manga/_include/manga-list-filters.html' %}
+{% endblock %}
+
 {% block content %}
+    {% include 'manga/_include/manga-list-core.html' %}
+    {% if not manga_list %}
+        <div class="container">{% include 'manga/_include/manga-list-empty.html' %}</div>
+    {% endif %}
 {% endblock %}
