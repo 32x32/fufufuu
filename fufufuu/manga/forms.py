@@ -237,6 +237,11 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
                 revision.status = RevisionStatus.APPROVED
                 revision.save()
 
+        if manga.tank and not manga.tank.cover:
+            manga.tank.set_default_cover()
+        if manga.collection and not manga.collection.cover:
+            manga.collection.set_default_cover()
+
         return manga
 
 
