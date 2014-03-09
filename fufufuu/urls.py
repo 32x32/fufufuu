@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^m/',                         include('fufufuu.manga.urls')),
     url(r'^search/',                    include('fufufuu.search.urls')),
     url(r'^tag/',                       include('fufufuu.tag.urls')),
+    url(r'^u/',                         include('fufufuu.user.urls')),
     url(r'^upload/',                    include('fufufuu.upload.urls')),
 
     # individual views
