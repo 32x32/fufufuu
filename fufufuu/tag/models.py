@@ -14,6 +14,7 @@ class Tag(BaseAuditableModel):
     tag_type = models.CharField(max_length=20, choices=TagType.choices)
     name = models.CharField(max_length=100, db_index=True)
     slug = models.SlugField(max_length=100)
+    cover = models.FileField(upload_to=tag_cover_upload_to, blank=True, null=True)
 
     class Meta:
         db_table = 'tag'
@@ -44,7 +45,6 @@ class TagData(BaseAuditableModel):
     language = models.CharField(max_length=20, choices=Language.choices)
     markdown = models.TextField(blank=True)
     html = models.TextField(blank=True)
-    cover = models.FileField(upload_to=tag_cover_upload_to, null=True)
 
     class Meta:
         db_table = 'tag_data'

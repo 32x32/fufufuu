@@ -40,8 +40,8 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(formatter)
 
-logger = logging.getLogger('Migrator')
-logger.add(handler)
+logger = logging.getLogger(__name__)
+logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
 #-------------------------------------------------------------------------------
@@ -177,6 +177,15 @@ class Migrator(object):
                 LegacyTank.objects.create(id=old_tank.id, tag=tank_title_map[old_tank.title])
                 continue
 
+            manga = self.session.query(OldManga).\
+                filter(OldManga.tank_id==old_tank.id).\
+                order_by(OldManga.tank_chp)[:]
+
+            if len(manga) > 0:
+                cover = manga[0].cover
+            else:
+                cover = ''
+
             new_id += 1
             tag = Tag(
                 id=new_id,
@@ -185,6 +194,7 @@ class Migrator(object):
                 slug=old_tank.slug,
                 created_by_id=self.user.id,
                 created_on=old_tank.date_created,
+                cover=cover,
             )
             tag.save(updated_by=None)
             tank_title_map[old_tank.title] = tag
