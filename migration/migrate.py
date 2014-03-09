@@ -1,3 +1,4 @@
+import datetime
 import logging
 from multiprocessing import Pool
 import os
@@ -8,7 +9,6 @@ from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import sessionmaker
 
 from models import *
-
 
 PROJECT_PATH = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
 sys.path.append(PROJECT_PATH)
@@ -26,6 +26,9 @@ from fufufuu.manga.models import Manga, MangaFavorite, MangaTag, MangaPage
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 
+#-------------------------------------------------------------------------------
+# migrator configuration
+#-------------------------------------------------------------------------------
 
 CHUNK_SIZE = 1000
 OLD_MEDIA_ROOT = '/home/derekkwok/media/'
@@ -68,30 +71,35 @@ def image_resize(file_path, key_type, key_id):
         logger.warn(str(e))
 
 
+def timed(func):
+    """
+    use @timed to decorate a function that will print out the time it took
+    for this function to run.
+    """
+
+    def inner(*args, **kwargs):
+        logger.debug('{} started'.format(func.__name__).ljust(80, '-'))
+        start = datetime.datetime.now()
+        result = func(*args, **kwargs)
+        finish = datetime.datetime.now()
+        logger.debug('{} finished in {}'.format(func.__name__, finish-start).ljust(80, '-'))
+        return result
+    return inner
+
+
 #-------------------------------------------------------------------------------
 
 
 class Migrator(object):
 
-    def __init__(self):
-        logger = logging.getLogger(self.__class__.__name__)
-        logger.setLevel(logging.DEBUG)
-
-        handler = logging.StreamHandler(sys.stdout)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-
-        logger.addHandler(handler)
-
+    @timed
     def connect(self):
         self.engine = create_engine(CONNECTION_STRING)
         self.session = sessionmaker(bind=self.engine)()
 
-        logger.debug('connected to fufufuu_old')
-
+    @timed
     def disconnect(self):
         self.session.close()
-        logger.debug('disconnected to fufufuu_old')
 
     #---------------------------------------------------------------------------
 
@@ -108,8 +116,8 @@ class Migrator(object):
 
     #---------------------------------------------------------------------------
 
+    @timed
     def migrate_users(self):
-        logger.debug('users migration started'.center(80, '-'))
 
         def _migrate_users(old_user_list):
             user_list = []
@@ -136,15 +144,15 @@ class Migrator(object):
             logger.debug('migrated {} users'.format(i))
             _migrate_users(self.session.query(OldUser)[i:i+CHUNK_SIZE])
 
-        logger.debug('migrated {} users'.format(User.objects.all().count()))
+        logger.debug('migrated {} users'.format(count))
         self.user = User.objects.get(username='ParadigmShift')
 
+    @timed
     def migrate_comments(self):
         pass
 
+    @timed
     def migrate_tags(self):
-        logger.debug('tag migration started'.center(80, '-'))
-
         def _migrate_tags(old_tag_list):
             tag_list = []
             for old_tag in old_tag_list:
@@ -163,11 +171,10 @@ class Migrator(object):
             logger.debug('migrated {} tags'.format(i))
             _migrate_tags(self.session.query(OldTag)[i:i+CHUNK_SIZE])
 
-        logger.debug('migrated {} tags'.format(Tag.objects.all().count()))
+        logger.debug('migrated {} tags'.format(count, count))
 
+    @timed
     def migrate_tanks(self):
-        logger.debug('tank migration started'.center(80, '-'))
-
         new_id = Tag.objects.all().aggregate(Max('id'))['id__max']
         tank_title_map = {}
 
@@ -207,9 +214,8 @@ class Migrator(object):
         logger.debug('created {} legacy tanks'.format(LegacyTank.objects.all().count()))
         logger.debug('migrated {} tanks'.format(Tag.objects.filter(tag_type=TagType.TANK).count()))
 
-
+    @timed
     def migrate_manga(self):
-        logger.debug('manga migration started'.center(80, '-'))
         tank_list = LegacyTank.objects.all()
         tank_dict = dict([(t.id, t.tag_id) for t in tank_list])
 
@@ -252,9 +258,8 @@ class Migrator(object):
 
         logger.debug('migrated {} manga'.format(Manga.all.all().count()))
 
+    @timed
     def migrate_manga_favorites(self):
-        logger.debug('manga favorites migration started'.center(80, '-'))
-
         def _migrate_manga_favorites(old_manga_favorites_list):
             manga_favorites_list = []
             for old_manga_favorites in old_manga_favorites_list:
@@ -272,9 +277,8 @@ class Migrator(object):
 
         logger.debug('migrated {} manga favorites'.format(MangaFavorite.objects.all().count()))
 
+    @timed
     def migrate_manga_tags(self):
-        logger.debug('manga tags migration started'.center(80, '-'))
-
         def _migrate_manga_tags(old_manga_tag_list):
             manga_tag_list = []
             for old_manga_tag in old_manga_tag_list:
@@ -314,9 +318,8 @@ class Migrator(object):
 
         logger.debug('migrated {} manga pages'.format(MangaPage.objects.all().count()))
 
+    @timed
     def generate_cache_users(self):
-        logger.debug('generate cache for users - started'.center(80, '-'))
-
         def _generate_cache(user_list):
             process_list = []
             for user in user_list:
@@ -331,9 +334,8 @@ class Migrator(object):
 
         logger.debug('generated cache for {} users'.format(count))
 
+    @timed
     def generate_cache_manga(self):
-        logger.debug('generate cache for manga - started'.center(80, '-'))
-
         def _generate_cache(manga_list):
             process_list = []
             for manga in manga_list:
@@ -351,9 +353,8 @@ class Migrator(object):
 
         logger.debug('generated cache for {} manga'.format(count))
 
+    @timed
     def generate_cache_manga_pages(self):
-        logger.debug('generate cache for manga pages - started'.center(80, '-'))
-
         def _generate_cache(manga_page_list):
             process_list = []
             for mp in manga_page_list:
@@ -372,11 +373,8 @@ class Migrator(object):
 
         logger.debug('generated cache for {} manga pages'.format(count))
 
+    @timed
     def run(self):
-        import datetime
-        start = datetime.datetime.now()
-        logger.debug('Starting Migration'.center(80, '-'))
-
         self.connect()
         self.migrate_users()
         self.migrate_comments()
@@ -386,17 +384,19 @@ class Migrator(object):
         self.migrate_manga_favorites()
         self.migrate_manga_tags()
         self.migrate_manga_pages()
+        self.disconnect()
 
+    @timed
+    def generate_cache(self):
         self.generate_cache_users()
         self.generate_cache_manga()
         self.generate_cache_manga_pages()
 
-        self.disconnect()
-
-        end = datetime.datetime.now()
-        logger.debug('Finished Migration in {}'.format(end-start).center(80, '-'))
-
 
 if __name__ == '__main__':
     migrator = Migrator()
-    migrator.run()
+
+    if len(sys.argv) >= 2 and sys.argv[1] == '--generate-cache':
+        migrator.generate_cache()
+    else:
+        migrator.run()
