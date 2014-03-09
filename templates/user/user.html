@@ -1,6 +1,22 @@
 {% extends 'base.html' %}
+{% import '_macros/widgets.html' as widgets with context %}
 
 {% block title %}{{ target_user.username }}{% endblock %}
 
 {% block content %}
+    <div class="container">
+        <div class="panel width-800">
+            <div class="panel-heading">
+                <span class="left space-right-10">{{ widgets.user_avatar(target_user) }}</span>
+                <h4 class="space-top-0 space-bottom-0">{{ target_user.username }}</h4>
+                <p class="text-secondary text-xsmall space-bottom-0">{% trans date=target_user.created_on|naturaltime %}Joined {{ date }}{% endtrans %}</p>
+                <div class="clear"></div>
+            </div>
+            <div class="panel-body">
+                <p><a href="{{ url('user.uploads', args=[target_user.username]) }}">{% trans %}{{ manga_count }} uploads{% endtrans %}</a></p>
+            </div>
+            <hr class="space-top-0 space-bottom-0">
+            <div class="panel-body">{{ target_user.html }}</div>
+        </div>
+    </div>
 {% endblock %}

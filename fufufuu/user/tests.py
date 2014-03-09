@@ -9,14 +9,6 @@ class UserViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user/user.html')
 
-    def test_user_view_get_unicode(self):
-        self.user.username = '中文'
-        self.user.save()
-
-        response = self.client.get(reverse('user', args=['中文']))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'user/user.html')
-
     def test_user_view_get_404(self):
         response = self.client.get(reverse('user', args=['non_existent']))
         self.assertEqual(response.status_code, 404)

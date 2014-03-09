@@ -17,8 +17,10 @@ class UserView(UserViewMixin, TemplateView):
     template_name = 'user/user.html'
 
     def get(self, request, username):
+        target_user = self.get_user(username)
         return self.render_to_response({
-            'target_user': self.get_user(username),
+            'manga_count': Manga.published.filter(created_by=target_user).count(),
+            'target_user': target_user,
         })
 
 

@@ -6,7 +6,11 @@
 {% block content %}
     <div class="container width-800">
         <form action="{{ url('account.settings') }}" method="post" class="panel" enctype="multipart/form-data">
-            <h4 class="panel-heading">{% trans %}Edit Profile{% endtrans %}</h4>
+            <div class="panel-heading">
+                <h4 class="inline">{% trans %}Edit Profile{% endtrans %}</h4>
+                <span class="icon icon-minus text-secondary space-left space-right"></span>
+                <a href="{{ url('user', args=[user.username]) }}">{% trans %}View Profile{% endtrans %}</a>
+            </div>
             <div class="panel-body">
                 {{ forms.csrf_input() }}
                 {{ forms.non_field_errors(form) }}

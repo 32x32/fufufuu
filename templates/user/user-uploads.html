@@ -5,6 +5,10 @@
 
 {% block content_upper %}
     {% include 'manga/_include/manga-list-filters.html' %}
+    <div class="tag-info-block">
+        <span class="manga-category manga-category-other space-right">{% trans %}User{% endtrans %}</span>
+        <a href="{{ url('user', args=[target_user.username]) }}" class="space-right"><strong>{{ target_user.username }}</strong></a>
+    </div>
 {% endblock %}
 
 {% block content %}
