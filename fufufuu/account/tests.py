@@ -116,7 +116,7 @@ class AccountSettingsViewTests(BaseTestCase):
 
         user = User.objects.get(id=self.user.id)
         self.assertEqual(user.markdown, 'This is some markdown.')
-        self.assertEqual(user.html, '<p>This is some markdown.</p>\n')
+        self.assertEqual(user.html, '<p>This is some markdown.</p>')
         self.assertTrue(user.avatar)
 
     def test_account_settings_view_post_clear_avatar(self):
