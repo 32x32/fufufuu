@@ -22,6 +22,39 @@ class TagModelTests(BaseTestCase):
         tag.delete()
         self.assertFalse(os.path.exists(path))
 
+    def test_tag_set_default_cover_author(self):
+        tag = Tag.objects.filter(tag_type=TagType.AUTHOR)[0]
+        tag.set_default_cover()
+        self.assertFalse(tag.cover)
+
+    def test_tag_set_default_cover_tank_no_manga(self):
+        tag = Tag.objects.filter(tag_type=TagType.TANK)[0]
+        tag.manga_set.all().delete()
+        tag.set_default_cover()
+        self.assertFalse(tag.cover)
+
+    def test_tag_set_default_cover_tank(self):
+        tag = Tag.objects.filter(tag_type=TagType.TANK)[0]
+        self.assertFalse(tag.cover)
+
+        self.manga.tank = tag
+        self.manga.cover = SimpleUploadedFile('test', self.create_test_image_file().getvalue())
+        self.manga.save(self.user)
+
+        tag.set_default_cover()
+        self.assertTrue(tag.cover)
+
+    def test_tag_set_default_cover_collection(self):
+        tag = Tag.objects.filter(tag_type=TagType.COLLECTION)[0]
+        self.assertFalse(tag.cover)
+
+        self.manga.collection = tag
+        self.manga.cover = SimpleUploadedFile('test', self.create_test_image_file().getvalue())
+        self.manga.save(self.user)
+
+        tag.set_default_cover()
+        self.assertTrue(tag.cover)
+
 
 class TagListViewTests(BaseTestCase):
 

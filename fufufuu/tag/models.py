@@ -1,3 +1,4 @@
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
@@ -25,6 +26,22 @@ class Tag(BaseAuditableModel):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)[:100] or '-'
         super().save(*args, **kwargs)
+
+    def set_default_cover(self):
+        from fufufuu.manga.models import Manga
+
+        if self.tag_type not in [TagType.TANK, TagType.COLLECTION]:
+            return
+        if self.tag_type == TagType.TANK:
+            order_attr = 'tank_chapter'
+        elif self.tag_type == TagType.COLLECTION:
+            order_attr = 'collection_part'
+
+        manga_list = Manga.published.order_by(order_attr).filter(cover__isnull=False).only('cover')
+        cover_list = [manga.cover.path for manga in manga_list if manga.cover]
+        if cover_list:
+            self.cover = SimpleUploadedFile('cover', open(cover_list[0], 'rb').read())
+            self.save(None)
 
     @property
     def cover_url(self):
