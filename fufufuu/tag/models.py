@@ -62,8 +62,8 @@ class TagData(BaseAuditableModel):
 #-------------------------------------------------------------------------------
 
 
-@receiver(post_delete, sender=TagData)
-def tag_data_post_delete(instance, **kwargs):
+@receiver(post_delete, sender=Tag)
+def tag_post_delete(instance, **kwargs):
     for field in ['cover']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)

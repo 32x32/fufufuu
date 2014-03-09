@@ -11,15 +11,15 @@ from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
 
 class TagModelTests(BaseTestCase):
 
-    def test_tag_data_delete(self):
-        tag_data = TagData.objects.all()[0]
-        tag_data.cover = SimpleUploadedFile('sample.jpg', self.create_test_image_file().getvalue())
-        tag_data.save(self.user)
+    def test_tag_delete(self):
+        tag = Tag.objects.all()[0]
+        tag.cover = SimpleUploadedFile('sample.jpg', self.create_test_image_file().getvalue())
+        tag.save(self.user)
 
-        path = tag_data.cover.path
+        path = tag.cover.path
         self.assertTrue(os.path.exists(path))
 
-        tag_data.delete()
+        tag.delete()
         self.assertFalse(os.path.exists(path))
 
 
