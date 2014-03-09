@@ -1,6 +1,5 @@
 import datetime
 import logging
-from multiprocessing import Pool
 import os
 import sys
 
@@ -14,12 +13,9 @@ PROJECT_PATH = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
 sys.path.append(PROJECT_PATH)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 
-from django import db
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.aggregates import Max
 from fufufuu.account.models import User
-from fufufuu.image.enums import ImageKeyType
-from fufufuu.image.models import Image
 from fufufuu.legacy.models import LegacyTank
 from fufufuu.manga.enums import MangaCategory
 from fufufuu.manga.models import Manga, MangaFavorite, MangaTag, MangaPage
@@ -51,28 +47,6 @@ logger.setLevel(logging.DEBUG)
 # helper methods
 #-------------------------------------------------------------------------------
 
-
-def process_image_list(l):
-    db.close_old_connections()
-
-    pool = Pool()
-    pool.starmap(migrate_image_resize, l)
-    pool.close()
-    pool.join()
-
-
-def migrate_image_resize(file_path, key_type, key_id):
-    if not os.path.exists(file_path):
-        return
-    if Image.objects.filter(key_type=key_type, key_id=key_id).exists():
-        return
-    try:
-        image = Image(key_type=key_type, key_id=key_id)
-        image.save(file_path)
-    except Exception as e:
-        logger.warn(str(e))
-
-
 def timed(func):
     """
     use @timed to decorate a function that will print out the time it took
@@ -87,7 +61,6 @@ def timed(func):
         logger.debug('{} finished in {}'.format(func.__name__, finish-start).ljust(80, '-'))
         return result
     return inner
-
 
 #-------------------------------------------------------------------------------
 
@@ -140,6 +113,9 @@ class Migrator(object):
                 )
                 user_list.append(user)
             User.objects.bulk_create(user_list)
+
+            for old_user in old_user_list:
+                User.objects.filter(id=old_user.id).update(created_on=old_user.date_joined)
 
         count = self.session.query(OldUser).count()
         for i in range(0, count, CHUNK_SIZE):
@@ -244,11 +220,13 @@ class Migrator(object):
                     tank_id=tank_id,
                     tank_chapter=old_manga.tank_chp,
                     published_on=old_manga.date_published,
-                    created_on=old_manga.date_created,
                     created_by_id=old_manga.uploader_id,
                     updated_on=old_manga.last_updated,
                 ))
             Manga.objects.bulk_create(manga_list)
+
+            for old_manga in old_manga_list:
+                Manga.objects.filter(id=old_manga.id).update(created_on=old_manga.date_created)
 
         count = self.session.query(OldManga).count()
         for i in range(0, count, CHUNK_SIZE):
@@ -318,77 +296,6 @@ class Migrator(object):
         logger.debug('migrated {} manga pages'.format(MangaPage.objects.all().count()))
 
     @timed
-    def generate_cache_users(self):
-        def _generate_cache(user_list):
-            process_list = []
-            for user in user_list:
-                if not user.avatar: continue
-                process_list.append((user.avatar.path, ImageKeyType.ACCOUNT_AVATAR, user.id))
-            process_image_list(process_list)
-
-        count = User.objects.all().count()
-        for i in range(0, count, CHUNK_SIZE):
-            logger.debug('generated cache for {} users'.format(i))
-            _generate_cache(User.objects.all()[i:i+CHUNK_SIZE])
-
-        logger.debug('generated cache for {} users'.format(count))
-
-    @timed
-    def generate_cache_tags(self):
-        def _generate_cache(tag_list):
-            process_list = []
-            for tag in tag_list:
-                if not tag.cover: continue
-                process_list.append((tag.cover.path, ImageKeyType.MANGA_COVER, tag.id))
-            process_image_list(process_list)
-
-        count = Tag.objects.all().count()
-        for i in range(0, count, CHUNK_SIZE):
-            logger.debug('generated cache for {} tags'.format(i))
-            _generate_cache(Tag.objects.all()[i:i+CHUNK_SIZE])
-
-        logger.debug('generated cache for {} tags'.format(count))
-
-    @timed
-    def generate_cache_manga(self):
-        def _generate_cache(manga_list):
-            process_list = []
-            for manga in manga_list:
-                if not manga.cover:
-                    logger.warning('manga {} has no cover'.format(manga.id))
-                    continue
-                process_list.append((manga.cover.path, ImageKeyType.MANGA_COVER, manga.id))
-                process_list.append((manga.cover.path, ImageKeyType.MANGA_INFO_COVER, manga.id))
-            process_image_list(process_list)
-
-        count = Manga.all.all().count()
-        for i in range(0, count, CHUNK_SIZE):
-            logger.debug('generated cache for {} manga'.format(i))
-            _generate_cache(Manga.all.all()[i:i+CHUNK_SIZE])
-
-        logger.debug('generated cache for {} manga'.format(count))
-
-    @timed
-    def generate_cache_manga_pages(self):
-        def _generate_cache(manga_page_list):
-            process_list = []
-            for mp in manga_page_list:
-                if not mp.image:
-                    logger.warning('manga page {} has no image'.format(mp.id))
-                    continue
-                image_key_type = mp.double and ImageKeyType.MANGA_PAGE_DOUBLE or ImageKeyType.MANGA_PAGE
-                process_list.append((mp.image.path, image_key_type, mp.id))
-                process_list.append((mp.image.path, ImageKeyType.MANGA_THUMB, mp.id))
-            process_image_list(process_list)
-
-        count = MangaPage.objects.all().count()
-        for i in range(0, count, CHUNK_SIZE):
-            logger.debug('generated cache for {} manga pages'.format(i))
-            _generate_cache(MangaPage.objects.all()[i:i+CHUNK_SIZE])
-
-        logger.debug('generated cache for {} manga pages'.format(count))
-
-    @timed
     def run(self):
         self.connect()
         self.migrate_users()
@@ -401,18 +308,7 @@ class Migrator(object):
         self.migrate_manga_pages()
         self.disconnect()
 
-    @timed
-    def generate_cache(self):
-        self.generate_cache_users()
-        self.generate_cache_tags()
-        self.generate_cache_manga()
-        self.generate_cache_manga_pages()
-
 
 if __name__ == '__main__':
     migrator = Migrator()
-
-    if len(sys.argv) >= 2 and sys.argv[1] == '--generate-cache':
-        migrator.generate_cache()
-    else:
-        migrator.run()
+    migrator.run()
