@@ -64,6 +64,8 @@ def process_image_list(l):
 def migrate_image_resize(file_path, key_type, key_id):
     if not os.path.exists(file_path):
         return
+    if Image.objects.filter(key_type=key_type, key_id=key_id).exists():
+        return
     try:
         image = Image(key_type=key_type, key_id=key_id)
         image.save(file_path)
