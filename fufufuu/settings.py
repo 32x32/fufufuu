@@ -1,5 +1,6 @@
 import os
 from fufufuu.core.languages import Language
+from fufufuu.core.logging import email_admin_limit
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -118,6 +119,58 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'unique-snowflake',
     }
+}
+
+#-------------------------------------------------------------------------------
+# logging settings
+#-------------------------------------------------------------------------------
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+
+    # formatters
+    'formatters': {
+        'simple': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+
+    # filters
+    'filters': {
+        'email_admin_limit': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': email_admin_limit,
+        }
+    },
+
+    # handlers
+    'handlers': {
+        'email_admin': {
+            'level': 'ERROR',
+            'filters': ['email_admin_limit'],
+            'class': 'django.utils.log.AdminEmailHandler',
+        },
+        'errors': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'errors.log'),
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 30,
+            'encoding': 'utf-8',
+        },
+    },
+
+    # loggers
+    'loggers': {
+        '': {
+            'handlers': ['email_admin', 'errors'],
+            'level': 'INFO',
+            'propagate': True,
+        }
+    },
 }
 
 #-------------------------------------------------------------------------------

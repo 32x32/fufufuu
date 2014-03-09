@@ -1,3 +1,4 @@
+import logging
 import os
 
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -9,6 +10,7 @@ from fufufuu.core.uploads import image_upload_to
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.utils import ImageTransformer
 
+logger = logging.getLogger(__name__)
 
 IMAGE_CACHE_KEY = 'image-{key_type}-{key_id}'
 
@@ -31,9 +33,12 @@ class Image(models.Model):
         unique_together = [('key_type', 'key_id')]
 
     def save(self, source, *args, **kwargs):
+        if not os.path.exists(source):
+            logger.error('{} does not exist (key_type={}, key_id={})'.format(source, self.key_type, self.key_id))
+            return
+
         path = None
-        if self.file:
-            path = self.file.path
+        if self.file: path = self.file.path
 
         self.source = source
         file_content = ImageTransformer.transform(self.key_type, source)
