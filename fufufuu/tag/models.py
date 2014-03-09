@@ -6,6 +6,8 @@ from fufufuu.core.languages import Language
 from fufufuu.core.models import BaseAuditableModel
 from fufufuu.core.uploads import tag_cover_upload_to
 from fufufuu.core.utils import slugify
+from fufufuu.image.enums import ImageKeyType
+from fufufuu.image.filters import image_resize
 from fufufuu.tag.enums import TagType
 
 
@@ -23,6 +25,10 @@ class Tag(BaseAuditableModel):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)[:100] or '-'
         super().save(*args, **kwargs)
+
+    @property
+    def cover_url(self):
+        return image_resize(self.cover, ImageKeyType.MANGA_COVER, self.id)
 
 
 class TagAlias(models.Model):

@@ -56,12 +56,12 @@ def process_image_list(l):
     db.close_old_connections()
 
     pool = Pool()
-    pool.starmap(image_resize, l)
+    pool.starmap(migrate_image_resize, l)
     pool.close()
     pool.join()
 
 
-def image_resize(file_path, key_type, key_id):
+def migrate_image_resize(file_path, key_type, key_id):
     if not os.path.exists(file_path):
         return
     try:
@@ -335,6 +335,22 @@ class Migrator(object):
         logger.debug('generated cache for {} users'.format(count))
 
     @timed
+    def generate_cache_tags(self):
+        def _generate_cache(tag_list):
+            process_list = []
+            for tag in tag_list:
+                if not tag.cover: continue
+                process_list.append((tag.cover.path, ImageKeyType.MANGA_COVER, tag.id))
+            process_image_list(process_list)
+
+        count = Tag.objects.all().count()
+        for i in range(0, count, CHUNK_SIZE):
+            logger.debug('generated cache for {} tags'.format(i))
+            _generate_cache(Tag.objects.all()[i:i+CHUNK_SIZE])
+
+        logger.debug('generated cache for {} tags'.format(count))
+
+    @timed
     def generate_cache_manga(self):
         def _generate_cache(manga_list):
             process_list = []
@@ -389,6 +405,7 @@ class Migrator(object):
     @timed
     def generate_cache(self):
         self.generate_cache_users()
+        self.generate_cache_tags()
         self.generate_cache_manga()
         self.generate_cache_manga_pages()
 

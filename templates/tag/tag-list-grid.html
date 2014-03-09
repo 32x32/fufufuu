@@ -21,7 +21,7 @@
                     {% set url_tag = url('tag', args=[tag.id, tag.slug]) %}
                     <a href="{{ url_tag }}">
                         {% if tag.cover %}
-                            <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ STATIC_URL }}images/placeholder/placeholder-200x300.png" data-src-retina="{{ STATIC_URL }}images/placeholder/placeholder-400x600.png">
+                            <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ tag.cover_url }}">
                         {% else %}
                             <img class="lazy-image" src="{{ STATIC_URL }}images/loading.png" data-src="{{ STATIC_URL }}images/no-image.png">
                         {% endif %}
