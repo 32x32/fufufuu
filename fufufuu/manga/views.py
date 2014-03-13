@@ -177,6 +177,8 @@ class MangaDownloadView(TemplateView):
             manga_archive = MangaArchive.objects.get(manga=manga)
         except MangaArchive.DoesNotExist:
             manga_archive = generate_manga_archive(manga)
+        if not os.path.exists(manga_archive.file.path):
+            manga_archive = generate_manga_archive(manga)
 
         link, created = DownloadLink.objects.get_or_create(
             url=manga_archive.file.url,

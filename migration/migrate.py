@@ -19,8 +19,9 @@ from fufufuu.account.models import User
 from fufufuu.comment.models import Comment
 from fufufuu.core.utils import convert_markdown
 from fufufuu.legacy.models import LegacyTank
-from fufufuu.manga.enums import MangaCategory
+from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.models import Manga, MangaFavorite, MangaTag, MangaPage
+from fufufuu.manga.utils import generate_manga_archive
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 
@@ -294,6 +295,7 @@ class Migrator(object):
 
         logger.debug('migrated {} manga tags'.format(MangaTag.objects.all().count()))
 
+    @timed
     def migrate_manga_pages(self):
         logger.debug('manga pages migration started'.center(80, '-'))
 
@@ -317,6 +319,26 @@ class Migrator(object):
         logger.debug('migrated {} manga pages'.format(MangaPage.objects.all().count()))
 
     @timed
+    def migrate_manga_archives(self):
+        manga_list = Manga.objects.all()
+        manga_dict = dict([(m.id, m) for m in manga_list])
+        def _migrate_manga_archive(old_manga_list):
+            for old_manga in old_manga_list:
+                manga = manga_dict.get(old_manga.id)
+                if manga.status != MangaStatus.PUBLISHED:
+                    continue
+                manga_archive = generate_manga_archive(manga)
+                manga_archive.downloads = old_manga.download_count
+                manga_archive.save()
+
+        count = self.session.query(OldManga).count()
+        for i in range(0, count, CHUNK_SIZE):
+            logger.debug('migrated {} manga'.format(i))
+            _migrate_manga_archive(self.session.query(OldManga)[i:i+CHUNK_SIZE])
+
+        logger.debug('migrated {} manga'.format(Manga.all.all().count()))
+
+    @timed
     def run(self):
         self.connect()
         self.migrate_users()
@@ -327,6 +349,7 @@ class Migrator(object):
         self.migrate_manga_favorites()
         self.migrate_manga_tags()
         self.migrate_manga_pages()
+        self.migrate_manga_archives()
         self.disconnect()
 
 
