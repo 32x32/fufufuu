@@ -20,9 +20,9 @@ class Migration(SchemaMigration):
             ('markdown', self.gf('django.db.models.fields.TextField')()),
             ('html', self.gf('django.db.models.fields.TextField')()),
             ('is_removed', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('ip_address', self.gf('django.db.models.fields.CharField')(blank=True, max_length=200, null=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(on_delete=models.SET_NULL, to=orm['account.User'], null=True, related_name='+', blank=True)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
+            ('ip_address', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', null=True, on_delete=models.SET_NULL, to=orm['account.User'], blank=True)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
         db.send_create_signal('comment', ['Comment'])
 
@@ -35,10 +35,10 @@ class Migration(SchemaMigration):
     models = {
         'account.user': {
             'Meta': {'object_name': 'User', 'db_table': "'user'"},
-            'avatar': ('django.db.models.fields.files.FileField', [], {'blank': 'True', 'max_length': '100', 'null': 'True'}),
+            'avatar': ('django.db.models.fields.files.FileField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'comment_limit': ('django.db.models.fields.IntegerField', [], {'default': '100'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
-            'email': ('django.db.models.fields.EmailField', [], {'blank': 'True', 'max_length': '254'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '254', 'blank': 'True'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
@@ -48,24 +48,24 @@ class Migration(SchemaMigration):
             'markdown': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'revision_limit': ('django.db.models.fields.IntegerField', [], {'default': '10'}),
-            'updated_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now': 'True'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'upload_limit': ('django.db.models.fields.IntegerField', [], {'default': '10'}),
             'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
         },
         'comment.comment': {
             'Meta': {'object_name': 'Comment', 'db_table': "'comment'"},
             'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'to': "orm['account.User']", 'null': 'True', 'related_name': "'+'", 'blank': 'True'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['account.User']", 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'html': ('django.db.models.fields.TextField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'ip_address': ('django.db.models.fields.CharField', [], {'blank': 'True', 'max_length': '200', 'null': 'True'}),
+            'ip_address': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'is_removed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'markdown': ('django.db.models.fields.TextField', [], {}),
             'object_id': ('django.db.models.fields.PositiveIntegerField', [], {})
         },
         'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'object_name': 'ContentType', 'unique_together': "(('app_label', 'model'),)", 'db_table': "'django_content_type'"},
+            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),

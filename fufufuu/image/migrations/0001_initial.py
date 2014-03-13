@@ -14,7 +14,7 @@ class Migration(SchemaMigration):
             ('key_type', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('key_id', self.gf('django.db.models.fields.IntegerField')()),
             ('source', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('file', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
+            ('file', self.gf('django.db.models.fields.files.FileField')(max_length=255)),
             ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
         db.send_create_signal('image', ['Image'])
@@ -33,9 +33,9 @@ class Migration(SchemaMigration):
 
     models = {
         'image.image': {
-            'Meta': {'db_table': "'image'", 'object_name': 'Image', 'unique_together': "[('key_type', 'key_id')]"},
+            'Meta': {'db_table': "'image'", 'unique_together': "[('key_type', 'key_id')]", 'object_name': 'Image'},
             'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
+            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'key_id': ('django.db.models.fields.IntegerField', [], {}),
             'key_type': ('django.db.models.fields.CharField', [], {'max_length': '20'}),

@@ -27,11 +27,11 @@ class Migration(SchemaMigration):
 
     models = {
         'account.user': {
-            'Meta': {'object_name': 'User', 'db_table': "'user'"},
-            'avatar': ('django.db.models.fields.files.FileField', [], {'blank': 'True', 'max_length': '100', 'null': 'True'}),
+            'Meta': {'db_table': "'user'", 'object_name': 'User'},
+            'avatar': ('django.db.models.fields.files.FileField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'comment_limit': ('django.db.models.fields.IntegerField', [], {'default': '100'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
-            'email': ('django.db.models.fields.EmailField', [], {'blank': 'True', 'max_length': '254'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '254', 'blank': 'True'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
@@ -41,25 +41,26 @@ class Migration(SchemaMigration):
             'markdown': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'revision_limit': ('django.db.models.fields.IntegerField', [], {'default': '10'}),
-            'updated_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now': 'True'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'upload_limit': ('django.db.models.fields.IntegerField', [], {'default': '10'}),
-            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
+            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         'legacy.legacytank': {
-            'Meta': {'object_name': 'LegacyTank', 'db_table': "'legacy_tank'"},
+            'Meta': {'db_table': "'legacy_tank'", 'object_name': 'LegacyTank'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tag.Tag']"})
         },
         'tag.tag': {
-            'Meta': {'object_name': 'Tag', 'unique_together': "[('tag_type', 'name')]", 'db_table': "'tag'"},
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'blank': 'True', 'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']"}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'Meta': {'db_table': "'tag'", 'object_name': 'Tag', 'unique_together': "[('tag_type', 'name')]"},
+            'cover': ('django.db.models.fields.files.FileField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'to': "orm['account.User']", 'blank': 'True', 'related_name': "'+'", 'on_delete': 'models.SET_NULL'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'db_index': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '100'}),
             'tag_type': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
-            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'blank': 'True', 'null': 'True', 'related_name': "'+'", 'to': "orm['account.User']"}),
-            'updated_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now': 'True', 'db_index': 'True'})
+            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'null': 'True', 'to': "orm['account.User']", 'blank': 'True', 'related_name': "'+'", 'on_delete': 'models.SET_NULL'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True', 'auto_now': 'True', 'blank': 'True'})
         }
     }
 

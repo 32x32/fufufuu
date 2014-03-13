@@ -12,7 +12,7 @@ class Migration(SchemaMigration):
         db.create_table('deleted_file', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('path', self.gf('django.db.models.fields.CharField')(max_length=1024)),
-            ('delete_after', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 2, 16, 0, 0))),
+            ('delete_after', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 3, 14, 0, 0))),
             ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
         ))
         db.send_create_signal('core', ['DeletedFile'])
@@ -25,9 +25,9 @@ class Migration(SchemaMigration):
 
     models = {
         'core.deletedfile': {
-            'Meta': {'object_name': 'DeletedFile', 'db_table': "'deleted_file'"},
+            'Meta': {'db_table': "'deleted_file'", 'object_name': 'DeletedFile'},
             'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
-            'delete_after': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 2, 16, 0, 0)'}),
+            'delete_after': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 14, 0, 0)'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'path': ('django.db.models.fields.CharField', [], {'max_length': '1024'})
         }

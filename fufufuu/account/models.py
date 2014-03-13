@@ -24,7 +24,7 @@ class User(AbstractBaseUser):
     email               = models.EmailField(max_length=254, blank=True)
     markdown            = models.TextField(blank=True)
     html                = models.TextField(blank=True)
-    avatar              = models.FileField(upload_to=user_avatar_upload_to, blank=True, null=True)
+    avatar              = models.FileField(upload_to=user_avatar_upload_to, blank=True, null=True, max_length=255)
 
     # boolean flags
     is_moderator        = models.BooleanField(default=False)

@@ -24,7 +24,7 @@ class Image(models.Model):
     key_id = models.IntegerField()
 
     source = models.CharField(max_length=100)
-    file = models.FileField(upload_to=image_upload_to)
+    file = models.FileField(upload_to=image_upload_to, max_length=255)
 
     created_on = models.DateTimeField(auto_now_add=True)
 

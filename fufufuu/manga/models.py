@@ -34,7 +34,7 @@ class Manga(BaseAuditableModel, MangaMixin):
     slug                = models.SlugField(max_length=100)
     markdown            = models.TextField(blank=True)
     html                = models.TextField(blank=True)
-    cover               = models.FileField(upload_to=manga_cover_upload_to, null=True)
+    cover               = models.FileField(upload_to=manga_cover_upload_to, null=True, max_length=255)
     status              = models.CharField(max_length=20, choices=MangaStatus.choices, default=MangaStatus.DRAFT, db_index=True)
     category            = models.CharField(max_length=20, choices=MangaCategory.choices, default=MangaCategory.OTHER, db_index=True)
     language            = models.CharField(max_length=20, choices=Language.choices, default=Language.ENGLISH, db_index=True)
@@ -104,8 +104,8 @@ class MangaPage(models.Model):
     manga = models.ForeignKey(Manga, on_delete=models.CASCADE)
     double = models.BooleanField(default=False)
     page = models.PositiveIntegerField()
-    image = models.FileField(upload_to=manga_page_upload_to)
-    name = models.CharField(max_length=100, null=True)
+    image = models.FileField(upload_to=manga_page_upload_to, max_length=255)
+    name = models.CharField(max_length=255, null=True)
 
     class Meta:
         db_table = 'manga_page'
@@ -116,7 +116,7 @@ class MangaArchive(models.Model):
 
     manga = models.ForeignKey(Manga, unique=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    file = models.FileField(upload_to=manga_archive_upload_to)
+    file = models.FileField(upload_to=manga_archive_upload_to, max_length=255)
     downloads = models.PositiveIntegerField(default=0)
 
     updated_on = models.DateTimeField(auto_now=True)
