@@ -102,7 +102,6 @@ DEFAULT_FILE_STORAGE = 'fufufuu.core.storage.FufufuuStorage'
 
 RESOURCE_VERSION = 'development'
 X_ACCEL = False
-MD2HTML = '/usr/local/bin/md2html'
 
 #-------------------------------------------------------------------------------
 # captcha settings

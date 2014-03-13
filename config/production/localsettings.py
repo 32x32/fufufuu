@@ -48,4 +48,3 @@ CACHES = {
 RESOURCE_VERSION = 'fabric:resource-version'
 
 X_ACCEL = True
-MD2HTML = '/usr/bin/md2html'

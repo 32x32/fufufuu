@@ -5,8 +5,9 @@ from django.forms.models import BaseModelFormSet
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
-from fufufuu.core.forms import BlankLabelSuffixMixin, convert_markdown
+from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
+from fufufuu.core.utils import convert_markdown
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_FIELDNAME_MAP

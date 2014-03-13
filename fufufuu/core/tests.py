@@ -17,7 +17,7 @@ from fufufuu import settings
 from fufufuu.account.models import User
 from fufufuu.core.filters import exclude_keys
 from fufufuu.core.models import DeletedFile
-from fufufuu.core.utils import slugify
+from fufufuu.core.utils import slugify, convert_markdown
 from fufufuu.datacreator import DataCreator
 from fufufuu.manga.models import Manga
 from fufufuu.settings import BASE_DIR
@@ -126,7 +126,6 @@ class CoreManagementTests(BaseTestCase):
             delete_after=timezone.now() - timezone.timedelta(hours=1),
         )
 
-
     def tearDown(self):
         super().tearDown()
 
@@ -162,3 +161,14 @@ class CoreFilterTests(BaseTestCase):
     def test_exclude_keys_long_names(self):
         qd = QueryDict('abc=1&page=2')
         self.assertEqual(exclude_keys(qd, 'page'), QueryDict('abc=1'))
+
+    def test_convert_markdown_empty(self):
+        self.assertEqual(convert_markdown('   '), '')
+
+    def test_convert_markdown_simple(self):
+        self.assertEqual(convert_markdown('abc'), '<p>abc</p>')
+
+    def test_convert_markdown_raw_html(self):
+        raw_html = '<script type="text/javascript>alert("woops!");</script>'
+        output_html = '<p>&lt;script type="text/javascript&gt;alert("woops!");&lt;/script&gt;</p>'
+        self.assertEqual(convert_markdown(raw_html), output_html)

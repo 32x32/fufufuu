@@ -3,6 +3,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, Page
 from django.shortcuts import _get_queryset
 from django.utils import timezone
 from django.utils.text import slugify as django_slugify
+import markdown
 from unidecode import unidecode
 
 
@@ -72,49 +73,25 @@ def get_object_or_none(klass, *args, **kwargs):
     except queryset.model.DoesNotExist:
         return None
 
-# def count_abbr(n):
-#     """
-#     Converts numbers to shorter forms, see CoreUtilTests.test_humanize_count
-#     for examples.
-#
-#     Up to "million" values are supported.
-#     """
-#
-#     THOUSAND = 1000
-#     MILLION = 1000 * 1000
-#
-#     if n < THOUSAND:
-#         return str(n)
-#     elif THOUSAND <= n < MILLION:      # thousands
-#         n /= float(THOUSAND)
-#         return '{0:.1f}k'.format(n)
-#     else:                              # millions
-#         n /= float(MILLION)
-#         return '{0:.1f}m'.format(n)
-
-
-
-#def email_alert(subject, template, context):
-#    """
-#    Send an email to ADMINS
-#    """
-#
-#    if DEBUG: return
-#
-#    from fufufuu.core.templates import loader
-#
-#    recipient_list = [email for _, email in ADMINS]
-#    email = EmailMultiAlternatives(
-#        subject=subject,
-#        body='Please enable HTML',
-#        from_email=EMAIL_HOST_USER,
-#        to=recipient_list
-#    )
-#    email.attach_alternative(loader.get_template(template).render(context), 'text/html')
-#    email.send(fail_silently=True)
-
 
 def get_ip_address(request):
+    """
+    Returns the user's ip address from the request
+    """
+
     ip_address = request.META.get('REMOTE_ADDR', '')
     ip_address = ip_address[:200]
     return ip_address
+
+
+def convert_markdown(markdown_text):
+    """
+    returns the markdown converted into HTML
+    """
+
+    markdown_text = markdown_text.strip()
+    if not markdown_text:
+        return ''
+
+    html = markdown.markdown(markdown_text, safe_mode='escape')
+    return html

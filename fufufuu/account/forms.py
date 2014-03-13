@@ -4,7 +4,8 @@ from django.contrib.auth import authenticate
 from django.utils.translation import ugettext as _
 
 from fufufuu.account.models import User
-from fufufuu.core.forms import BlankLabelSuffixMixin, convert_markdown
+from fufufuu.core.forms import BlankLabelSuffixMixin
+from fufufuu.core.utils import convert_markdown
 
 
 USERNAME_REGEX = r'^\w{4,20}$'
