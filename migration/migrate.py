@@ -16,7 +16,6 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.db.models.aggregates import Max
 from fufufuu.account.models import User
 from fufufuu.comment.models import Comment
 from fufufuu.core.utils import convert_markdown
@@ -188,7 +187,7 @@ class Migrator(object):
 
     @timed
     def migrate_tanks(self):
-        new_id = Tag.objects.all().aggregate(Max('id'))['id__max']
+        new_id = 5000
         tank_title_map = {}
 
         for old_tank in self.session.query(OldTank):

@@ -10,5 +10,5 @@ def email_admin_limit(record):
     if cache.get(CACHE_KEY, False):
         return False
 
-    cache.set(CACHE_KEY, True)
+    cache.set(CACHE_KEY, True, 60)
     return True

@@ -1,4 +1,5 @@
 import os
+from fufufuu.core.logging import email_admin_limit
 
 DEBUG = False
 DEBUG_TOOLBAR = False
@@ -48,3 +49,60 @@ CACHES = {
 RESOURCE_VERSION = 'fabric:resource-version'
 
 X_ACCEL = True
+
+#-------------------------------------------------------------------------------
+# logging settings
+#-------------------------------------------------------------------------------
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+
+    # formatters
+    'formatters': {
+        'simple': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+
+    # filters
+    'filters': {
+        'email_admin_limit': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': email_admin_limit,
+        }
+    },
+
+    # handlers
+    'handlers': {
+        'email_admin': {
+            'level': 'ERROR',
+            'filters': ['email_admin_limit'],
+            'class': 'django.utils.log.AdminEmailHandler',
+        },
+        'errors': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': '/var/www/fufufuu/logs/errors.log',
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 30,
+            'encoding': 'utf-8',
+        },
+    },
+
+    # loggers
+    'loggers': {
+        '': {
+            'handlers': ['email_admin', 'errors'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django': {
+            'handlers': ['email_admin', 'errors'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
