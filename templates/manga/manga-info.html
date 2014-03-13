@@ -45,12 +45,23 @@
             <div class="panel panel-thin">
                 <h5 class="panel-heading">{% trans %}Uploader{% endtrans %}</h5>
                 <div class="panel-body">
-                    <a href="{{ url('user', args=[manga.created_by.username]) }}">
-                        <span class="left space-right-10">{{ widgets.user_avatar(manga.created_by) }}</span>
-                        <strong>{{ manga.created_by }}</strong>
-                        <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
-                        <div class="clear"></div>
-                    </a>
+                    {% if manga.created_by %}
+                        <a href="{{ url('user', args=[manga.created_by.username]) }}">
+                            <span class="left space-right-10">{{ widgets.user_avatar(manga.created_by) }}</span>
+                            <strong>{{ manga.created_by }}</strong>
+                            <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
+                            <div class="clear"></div>
+                        </a>
+                    {% else %}
+                        <div>
+                            <span class="left space-right-10">
+                                <img src="{{ STATIC_URL }}images/no-avatar.png" class="account-avatar">
+                            </span>
+                            <strong>[---- {% trans %}User Deleted{% endtrans %} ----]</strong>
+                            <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
+                            <div class="clear"></div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="panel panel-thin">

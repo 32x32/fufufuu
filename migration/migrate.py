@@ -255,6 +255,7 @@ class Migrator(object):
                     tank_id=tank_id,
                     tank_chapter=old_manga.tank_chp,
                     published_on=old_manga.date_published,
+                    created_by_id=old_manga.uploader_id,
                     updated_on=old_manga.last_updated,
                 ))
             Manga.objects.bulk_create(manga_list)

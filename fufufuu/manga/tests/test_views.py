@@ -88,6 +88,14 @@ class MangaInfoViewTests(BaseTestCase):
         archive = MangaArchive.objects.get(manga=self.manga)
         self.assertTrue(os.path.exists(archive.file.path))
 
+    def test_manga_info_view_get_manga_no_user(self):
+        self.manga.created_by = None
+        self.manga.save(updated_by=None)
+
+        response = self.client.get(reverse('manga.info', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-info.html')
+
 
 class MangaThumbnailsViewTests(BaseTestCase):
 
