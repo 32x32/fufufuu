@@ -149,7 +149,7 @@ class Migrator(object):
                     markdown=markdown,
                     html=convert_markdown(markdown),
                     ip_address=old_comment.ip_address,
-                    created_by=old_comment.user_id,
+                    created_by_id=old_comment.user_id,
                 ))
             Comment.objects.bulk_create(comment_list)
 
