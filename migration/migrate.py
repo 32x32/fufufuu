@@ -1,7 +1,9 @@
 import datetime
 import logging
 import os
+import re
 import sys
+from jinja2.utils import urlize
 
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import sessionmaker
@@ -49,6 +51,13 @@ logger.setLevel(logging.DEBUG)
 #-------------------------------------------------------------------------------
 # helper methods
 #-------------------------------------------------------------------------------
+
+def convert_text_to_markdown(text):
+    text = text.replace('\n', '\n\n')
+    text = urlize(text)
+    text = re.sub(r'<a href="(.*?)">.*?</a>', r'[\1](\1)', text)
+    return text
+
 
 def timed(func):
     """
@@ -98,12 +107,13 @@ class Migrator(object):
             user_list = []
             for old_user in old_user_list:
                 is_moderator = 'MODERATOR' in old_user.permission_flags
+                markdown = convert_text_to_markdown(old_user.description)
                 user = User(
                     id=old_user.id,
                     username=old_user.username,
                     password=old_user.password,
-                    markdown=old_user.description,
-                    html=convert_markdown(old_user.description),
+                    markdown=markdown,
+                    html=convert_markdown(markdown),
                     avatar=self.get_file(old_user.picture),
                     is_moderator=is_moderator,
                     is_staff=old_user.is_staff,
@@ -131,11 +141,13 @@ class Migrator(object):
         def _migrate_comments(old_comment_list):
             comment_list = []
             for old_comment in old_comment_list:
+                markdown = convert_text_to_markdown(old_comment.comment)
                 comment_list.append(Comment(
                     id=old_comment.id,
                     content_type=content_type,
                     object_id=old_comment.object_pk,
-                    markdown=convert_markdown(old_comment.comment),
+                    markdown=markdown,
+                    html=convert_markdown(markdown),
                     ip_address=old_comment.ip_address,
                     created_by=old_comment.user_id,
                 ))
@@ -229,12 +241,13 @@ class Migrator(object):
                 language = old_manga.language
                 if language == 'zh-cn': language = 'zh'
 
+                markdown = convert_text_to_markdown(old_manga.description)
                 manga_list.append(Manga(
                     id=old_manga.id,
                     title=old_manga.title,
                     slug=old_manga.slug,
-                    markdown=old_manga.description,
-                    html=convert_markdown(old_manga.description),
+                    markdown=markdown,
+                    html=convert_markdown(markdown),
                     cover=self.get_file(old_manga.cover),
                     category=category,
                     status=old_manga.status,
