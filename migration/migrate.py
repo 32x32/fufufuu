@@ -3,7 +3,6 @@ import logging
 import os
 import sys
 
-import markdown
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import sessionmaker
 
@@ -13,9 +12,12 @@ PROJECT_PATH = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
 sys.path.append(PROJECT_PATH)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.aggregates import Max
 from fufufuu.account.models import User
+from fufufuu.comment.models import Comment
+from fufufuu.core.utils import convert_markdown
 from fufufuu.legacy.models import LegacyTank
 from fufufuu.manga.enums import MangaCategory
 from fufufuu.manga.models import Manga, MangaFavorite, MangaTag, MangaPage
@@ -78,9 +80,6 @@ class Migrator(object):
 
     #---------------------------------------------------------------------------
 
-    def convert_markdown(self, markdown_raw):
-        return markdown.markdown(markdown_raw)
-
     def get_file(self, path):
         if not path: return None
         try:
@@ -103,12 +102,11 @@ class Migrator(object):
                     username=old_user.username,
                     password=old_user.password,
                     markdown=old_user.description,
-                    html=self.convert_markdown(old_user.description),
+                    html=convert_markdown(old_user.description),
                     avatar=self.get_file(old_user.picture),
                     is_moderator=is_moderator,
                     is_staff=old_user.is_staff,
                     is_active=old_user.is_active,
-                    created_on=old_user.date_joined,
                     last_login=old_user.last_login,
                 )
                 user_list.append(user)
@@ -127,7 +125,31 @@ class Migrator(object):
 
     @timed
     def migrate_comments(self):
-        pass
+        content_type = ContentType.objects.get_for_model(Manga)
+
+        def _migrate_comments(old_comment_list):
+            comment_list = []
+            for old_comment in old_comment_list:
+                comment_list.append(Comment(
+                    id=old_comment.id,
+                    content_type=content_type,
+                    object_id=old_comment.object_pk,
+                    markdown=convert_markdown(old_comment.comment),
+                    ip_address=old_comment.ip_address,
+                    created_by=old_comment.user_id,
+                ))
+            Comment.objects.bulk_create(comment_list)
+
+            for old_comment in old_comment_list:
+                Comment.objects.filter(id=old_comment.id).update(created_on=old_comment.date_created)
+
+        query = self.session.query(OldComment).filter(OldComment.content_type_id==14)
+        count = query.count()
+        for i in range(0, count, CHUNK_SIZE):
+            logger.debug('migrated {} comments'.format(i))
+            _migrate_comments(query[i:i+CHUNK_SIZE])
+
+        logger.debug('migrate {} comments'.format(count))
 
     @timed
     def migrate_tags(self):
@@ -211,7 +233,7 @@ class Migrator(object):
                     title=old_manga.title,
                     slug=old_manga.slug,
                     markdown=old_manga.description,
-                    html=self.convert_markdown(old_manga.description),
+                    html=convert_markdown(old_manga.description),
                     cover=self.get_file(old_manga.cover),
                     category=category,
                     status=old_manga.status,
@@ -220,7 +242,6 @@ class Migrator(object):
                     tank_id=tank_id,
                     tank_chapter=old_manga.tank_chp,
                     published_on=old_manga.date_published,
-                    created_by_id=old_manga.uploader_id,
                     updated_on=old_manga.last_updated,
                 ))
             Manga.objects.bulk_create(manga_list)
