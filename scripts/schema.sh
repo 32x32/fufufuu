@@ -8,4 +8,5 @@ python manage.py schemamigration image --initial --update
 python manage.py schemamigration legacy --initial --update
 python manage.py schemamigration manga --initial --update
 python manage.py schemamigration revision --initial --update
+python manage.py schemamigration staff --initial --update
 python manage.py schemamigration tag --initial --update
