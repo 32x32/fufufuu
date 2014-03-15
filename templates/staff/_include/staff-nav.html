@@ -1,0 +1,10 @@
+{% import '_macros/utils.html' as utils with context %}
+
+{% set url_manga_list = url('manga.list') %}
+{% set url_staff = url('staff') %}
+
+<nav>
+    <a href="{{ url_manga_list }}" class="nav-link {{ utils.link_active(url_manga_list) }}"><span class="icon icon-left-circled"></span>{% trans %}Back to Fufufuu{% endtrans %}</a>
+    <hr class="nav-sep">
+    <a href="{{ url_staff }}" class="nav-link {{ utils.link_active(url_staff) }}"><span class="icon icon-tools"></span>{% trans %}Staff Tools{% endtrans %}</a>
+</nav>
