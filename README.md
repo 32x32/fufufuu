@@ -15,7 +15,7 @@ Developing for Fufufuu version 3 on OS X requires:
 Install the following brew packages
 
     > brew update
-    > brew install libjpeg libpng postgresql python3
+    > brew install libjpeg libpng freeetype postgresql python3 elasticsearch
 
 Install the following npm packages
 
