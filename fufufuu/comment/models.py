@@ -21,3 +21,4 @@ class Comment(models.Model):
 
     class Meta:
         db_table = 'comment'
+        index_together = [('content_type', 'object_id')]
