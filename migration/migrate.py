@@ -333,7 +333,7 @@ class Migrator(object):
 
     @timed
     def migrate_manga_archives(self):
-        manga_list = Manga.objects.all()
+        manga_list = Manga.all.all()
         manga_dict = dict([(m.id, m) for m in manga_list])
         def _migrate_manga_archive(old_manga_list):
             for old_manga in old_manga_list:
