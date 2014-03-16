@@ -21,7 +21,7 @@
                             {{ forms.field(form.password2) }}
                             {{ forms.field(form.captcha) }}
                             <div class="form-field form-buttons">
-                                <button type="submit" class="btn btn-primary">{% trans %}Create Account{% endtrans %}</button>
+                                <button type="submit" class="btn btn-primary"{% if not SITE_SETTINGS.ENABLE_REGISTRATION %} disabled{% endif %}>{% trans %}Create Account{% endtrans %}</button>
                             </div>
                         </div>
                     </form>
