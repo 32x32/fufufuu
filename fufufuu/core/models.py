@@ -1,9 +1,13 @@
 from django.db import models
 from django.utils import timezone
 from django.core.cache import cache
-from django.utils.functional import SimpleLazyObject
-from django.utils.translation import ugettext as _
+
 from fufufuu.account.models import User
+from fufufuu.core.enums import SiteSettingKey
+
+
+SITE_SETTING_CACHE_KEY = 'site_settings'
+SITE_SETTING_CACHE_TIMEOUT = 30 * 24 * 60 * 60
 
 
 class BaseAuditableModel(models.Model):
@@ -49,39 +53,30 @@ class DeletedFile(models.Model):
         db_table = 'deleted_file'
 
 
-
 class SiteSetting(models.Model):
 
-    choices = (
-        ('ANNOUNCEMENT',        _('Announcement')),
-        ('ENABLE_COMMENTS',     _('Enable Comments')),
-        ('ENABLE_UPLOADS',      _('Enable Uploads')),
-    )
-
-    choices_dict = dict(choices)
-
-    key = models.CharField(max_length=255, choices=choices)
-    val = models.CharField(max_length=255, blank=True, null=True)
+    key = models.CharField(max_length=255, choices=SiteSettingKey.choices, unique=True)
+    val = models.TextField(blank=True, null=True)
     updated_on = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+
+    revision_field_list = ['key', 'val']
 
     class Meta:
         db_table = 'site_setting'
 
-    revision_field_list = ['key', 'val']
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
+    @classmethod
+    def as_dict(cls):
+        _site_settings = cache.get(SITE_SETTING_CACHE_KEY)
+        if _site_settings: return _site_settings
 
-def _get_site_settings():
-    """
-    Try to get site_settings object from cache before going to the database.
-    """
+        _site_settings = dict([(s.key, s.val) for s in SiteSetting.objects.all()])
+        for k, v in _site_settings.items():
+            if SiteSettingKey.key_type[k] == bool:
+                _site_settings[k] = v == 'True'
 
-    _site_settings = cache.get('site_settings')
-    if _site_settings: return _site_settings
-
-    _site_settings = dict([(s.key, s.val) for s in SiteSetting.objects.all()])
-    cache.set('site_settings', _site_settings)
-    return _site_settings
-
-
-site_settings = SimpleLazyObject(_get_site_settings)
+        cache.set(SITE_SETTING_CACHE_KEY, _site_settings, SITE_SETTING_CACHE_TIMEOUT)
+        return _site_settings

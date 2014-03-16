@@ -1,6 +1,30 @@
 {% extends 'staff/staff-base.html' %}
 
+{% import '_macros/forms.html' as forms with context %}
+
 {% block title %}{% trans %}Staff Tools{% endtrans %}{% endblock %}
 
 {% block content %}
+    <div class="container">
+        <form action="" method="post">
+            {{ forms.csrf_input() }}
+            <table class="table-full-border space-bottom-10">
+                <tr>
+                    <td width="160">{{ form.announcement.label_tag() }}</td>
+                    <td>{{ form.announcement }}</td>
+                </tr>
+                <tr>
+                    <td width="160">{{ form.enable_comments.label_tag() }}</td>
+                    <td>{{ form.enable_comments }}</td>
+                </tr>
+                <tr>
+                    <td width="160">{{ form.enable_uploads.label_tag() }}</td>
+                    <td>{{ form.enable_uploads }}</td>
+                </tr>
+            </table>
+            <div>
+                <button class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+            </div>
+        </form>
+    </div>
 {% endblock %}
