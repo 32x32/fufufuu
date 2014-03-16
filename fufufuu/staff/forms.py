@@ -22,6 +22,11 @@ class SiteSettingForm(BlankLabelSuffixMixin, forms.Form):
         required=False,
     )
 
+    enable_registration = forms.BooleanField(
+        label=_('Enable Registration'),
+        required=False
+    )
+
     enable_uploads = forms.BooleanField(
         label=_('Enable Uploads'),
         required=False,

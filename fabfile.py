@@ -41,11 +41,6 @@ def production():
     use fufufuu as host (note: this is production)
     """
 
-    if not prompt('Please type in "production" to continue: ') == 'production':
-        import sys
-        print('"production" not entered, exiting...')
-        sys.exit()
-
     env.hosts = ['fufufuu3']
     env.config = 'production'
 

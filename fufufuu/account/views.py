@@ -7,6 +7,8 @@ from django.utils.translation import ugettext as _
 from django.views.generic.base import View
 from fufufuu.account.forms import AccountLoginForm, AccountRegisterForm, AccountSettingsForm, \
     AccountSettingsPasswordForm
+from fufufuu.core.enums import SiteSettingKey
+from fufufuu.core.models import SiteSetting
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 
 
@@ -40,11 +42,14 @@ class AccountRegisterView(AccountBaseView):
     template_name = 'account/account-register.html'
 
     def get(self, request):
+        if not SiteSetting.as_dict().get(SiteSettingKey.ENABLE_REGISTRATION):
+            messages.warning(request, _('Account registration at Fufufuu has been disabled.'))
+
         return self.render_to_response({'form': AccountRegisterForm()})
 
     def post(self, request):
         form = AccountRegisterForm(data=request.POST)
-        if form.is_valid():
+        if form.is_valid() and SiteSetting.as_dict().get(SiteSettingKey.ENABLE_REGISTRATION):
             user = form.save()
             login(request, user)
             next = request.POST.get('next', reverse('manga.list'))
