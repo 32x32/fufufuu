@@ -19,7 +19,7 @@ Install the following brew packages
 
 Install the following npm packages
 
-    > sudo npm install -g coffee-script less markdown
+    > sudo npm install -g coffee-script less markdown uglify-js
 
 Start by installing `pip`
 

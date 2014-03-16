@@ -60,11 +60,13 @@ def convert_text_to_markdown(text):
     return text
 
 
-def migration(old_model_cls, new_model_cls):
+def migration(old_model_cls, new_model_cls, clear=False):
     def wrapper(f):
         def inner(self, *args, **kwargs):
             logger.debug('{} started'.format(f.__name__).ljust(80, '-'))
             start_time = datetime.datetime.now()
+
+            if clear: new_model_cls.objects.all().delete()
 
             session = sessionmaker(bind=SQL_ENGINE)()
 
@@ -231,7 +233,7 @@ class Migrator(object):
         for old_manga in old_manga_list:
             Manga.objects.filter(id=old_manga.id).update(created_on=old_manga.date_created)
 
-    @migration(OldMangaFavoriteUser, MangaFavorite)
+    @migration(OldMangaFavoriteUser, MangaFavorite, clear=True)
     def migrate_manga_favorites(self, old_manga_favorites_list):
         manga_favorites_list = []
         for old_manga_favorites in old_manga_favorites_list:
@@ -242,7 +244,7 @@ class Migrator(object):
             ))
         MangaFavorite.objects.bulk_create(manga_favorites_list)
 
-    @migration(OldMangaTag, MangaTag)
+    @migration(OldMangaTag, MangaTag, clear=True)
     def migrate_manga_tags(self, old_manga_tag_list):
         manga_tag_list = []
         for old_manga_tag in old_manga_tag_list:
