@@ -5,26 +5,34 @@ from fufufuu.core.tests import BaseTestCase
 from fufufuu.staff.forms import SiteSettingForm
 
 
-class StaffViewTests(BaseTestCase):
+class StaffSiteMetricsViewTests(BaseTestCase):
+
+    def test_staff_site_metrics_view_get(self):
+        response = self.client.get(reverse('staff.site.metrics'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'staff/staff-site-metrics.html')
+
+
+class StaffSiteSettingsViewTests(BaseTestCase):
 
     def test_staff_view_get_non_staff(self):
         self.user.is_staff = False
         self.user.save()
 
-        response = self.client.get(reverse('staff'))
+        response = self.client.get(reverse('staff.site.settings'))
         self.assertEqual(response.status_code, 404)
 
     def test_staff_view_get(self):
-        response = self.client.get(reverse('staff'))
+        response = self.client.get(reverse('staff.site.settings'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'staff/staff.html')
+        self.assertTemplateUsed(response, 'staff/staff-site-settings.html')
 
     def test_staff_view_post(self):
         announcement = 'This is an important announcement update!'
-        response = self.client.post(reverse('staff'), {
+        response = self.client.post(reverse('staff.site.settings'), {
             'announcement': announcement,
         })
-        self.assertRedirects(response, reverse('staff'))
+        self.assertRedirects(response, reverse('staff.site.settings'))
         self.assertEqual(SiteSetting.objects.get(key=SiteSettingKey.ANNOUNCEMENT).val, announcement)
 
 

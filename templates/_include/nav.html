@@ -41,7 +41,7 @@
     {% endif %}
     <hr class="nav-sep">
     {% if user.is_staff %}
-        <a href="{{ url('staff') }}" class="nav-link"><span class="icon icon-tools"></span>{% trans %}Staff Tools{% endtrans %}</a>
+        <a href="{{ url('staff.site.metrics') }}" class="nav-link"><span class="icon icon-tools"></span>{% trans %}Staff Tools{% endtrans %}</a>
     {% endif %}
     <a href="{{ url_flat_help }}" class="nav-link {{ utils.link_active_starts_with(url_flat_help) }}"><span class="icon icon-help-circled"></span>{% trans %}Help{% endtrans %}</a>
 </nav>

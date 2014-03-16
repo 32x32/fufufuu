@@ -1,12 +1,14 @@
 {% import '_macros/utils.html' as utils with context %}
 
 {% set url_manga_list = url('manga.list') %}
-{% set url_staff = url('staff') %}
+{% set url_staff_site_metrics = url('staff.site.metrics') %}
+{% set url_staff_site_settings = url('staff.site.settings') %}
 
 <nav>
     <a href="{{ url_manga_list }}" class="nav-link {{ utils.link_active(url_manga_list) }}"><span class="icon icon-left-circled"></span>{% trans %}Back to Fufufuu{% endtrans %}</a>
     <hr class="nav-sep">
-    <a href="#" class="nav-link"><span class="icon icon-chart-area"></span>{% trans %}Site Metrics{% endtrans %}</a>
-    <a href="{{ url_staff }}" class="nav-link {{ utils.link_active(url_staff) }}"><span class="icon icon-tools"></span>{% trans %}Site Settings{% endtrans %}</a>
+    <a href="{{ url_staff_site_metrics }}" class="nav-link {{ utils.link_active(url_staff_site_metrics) }}"><span class="icon icon-chart-area"></span>{% trans %}Site Metrics{% endtrans %}</a>
+    <a href="{{ url_staff_site_settings }}" class="nav-link {{ utils.link_active(url_staff_site_settings) }}"><span class="icon icon-tools"></span>{% trans %}Site Settings{% endtrans %}</a>
+    <hr class="nav-sep">
     <a href="#" class="nav-link"><span class="icon icon-users"></span>{% trans %}User List{% endtrans %}</a>
 </nav>
