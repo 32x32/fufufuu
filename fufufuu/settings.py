@@ -150,6 +150,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.csrf',
     'django.contrib.messages.context_processors.messages',
     'fufufuu.core.context_processors.resource_version',
+    'fufufuu.core.context_processors.site_settings',
 )
 
 #-------------------------------------------------------------------------------

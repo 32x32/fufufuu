@@ -40,6 +40,9 @@
         <a href="{{ url_account_register }}" class="max-xs nav-link {{ utils.link_active(url_account_register) }}"><span class="icon icon-user-add"></span>{% trans %}Create Account{% endtrans %}</a>
     {% endif %}
     <hr class="nav-sep">
+    {% if user.is_moderator or user.is_staff %}
+        <a href="#" class="nav-link"><span class="icon icon-tools"></span>{% trans %}Mod Tools{% endtrans %}</a>
+    {% endif %}
     {% if user.is_staff %}
         <a href="{{ url('staff.site.metrics') }}" class="nav-link"><span class="icon icon-tools"></span>{% trans %}Staff Tools{% endtrans %}</a>
     {% endif %}
