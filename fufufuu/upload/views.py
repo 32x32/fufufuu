@@ -1,6 +1,8 @@
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
+from fufufuu.core.enums import SiteSettingKey
+from fufufuu.core.models import SiteSetting
 from fufufuu.core.utils import paginate, yesterday
 from fufufuu.core.views import ProtectedTemplateView
 from fufufuu.manga.enums import MangaStatus
@@ -18,6 +20,9 @@ class UploadListView(ProtectedTemplateView):
         return non_draft_uploads + draft_uploads
 
     def get(self, request):
+        if not SiteSetting.as_dict().get(SiteSettingKey.ENABLE_UPLOADS):
+            messages.warning(request, _('Uploading at Fufufuu has been disabled.'))
+
         manga_list = Manga.objects.filter(created_by=request.user).order_by('-created_on')
         manga_list = paginate(manga_list, self.page_size, request.GET.get('p'))
         upload_slots_used = min(self.get_upload_slots_used(), request.user.upload_limit)
@@ -27,6 +32,9 @@ class UploadListView(ProtectedTemplateView):
         })
 
     def post(self, request):
+        if not SiteSetting.as_dict().get(SiteSettingKey.ENABLE_UPLOADS):
+            return redirect('upload.list')
+
         if self.get_upload_slots_used() > request.user.upload_limit:
             messages.error(request, _('You have reached your limit of {} uploads within the past 24 hours.').format(request.user.upload_limit))
             return redirect('upload.list')

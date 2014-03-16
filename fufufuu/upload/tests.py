@@ -1,4 +1,6 @@
 from django.core.urlresolvers import reverse
+from fufufuu.core.enums import SiteSettingKey
+from fufufuu.core.models import SiteSetting
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.manga.models import Manga
 
@@ -17,7 +19,13 @@ class UploadListViewTests(BaseTestCase):
         response = self.client.post(reverse('upload.list'))
         self.assertRedirects(response, reverse('upload.list'))
 
+    def test_upload_list_view_post_disabled(self):
+        response = self.client.post(reverse('upload.list'))
+        self.assertRedirects(response, reverse('upload.list'))
+
     def test_upload_list_view_post(self):
+        SiteSetting.objects.create(key=SiteSettingKey.ENABLE_UPLOADS, val='True', updated_by=self.user)
+
         response = self.client.post(reverse('upload.list'))
         manga = Manga.objects.latest('created_on')
         self.assertRedirects(response, reverse('manga.edit.images', args=[manga.id, manga.slug]))

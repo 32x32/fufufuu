@@ -11,7 +11,7 @@
         </form>
         <form action="" method="post" target="_blank" class="min-md inline-block space-right-10">
             {{ forms.csrf_input() }}
-            <button type="submit" class="btn btn-primary space-bottom-0"{% if upload_slots_used >= user.upload_limit %} disabled{% endif %}><span class="icon icon-up-circled space-right"></span>{% trans %}New Upload{% endtrans %}</button>
+            <button type="submit" class="btn btn-primary space-bottom-0"{% if upload_slots_used >= user.upload_limit or not SITE_SETTINGS.ENABLE_UPLOADS %} disabled{% endif %}><span class="icon icon-up-circled space-right"></span>{% trans %}New Upload{% endtrans %}</button>
         </form>
         <span class="block-message {% if upload_slots_used >= user.upload_limit %}message-error{% else %}message-warning{% endif %} min-md">Using {{ upload_slots_used }} / {{ user.upload_limit }} slots for drafts, and uploads in the past 24 hours</span>
         <div class="clear"></div>
