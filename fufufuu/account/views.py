@@ -48,8 +48,11 @@ class AccountRegisterView(AccountBaseView):
         return self.render_to_response({'form': AccountRegisterForm()})
 
     def post(self, request):
+        if not SiteSetting.as_dict().get(SiteSettingKey.ENABLE_REGISTRATION):
+            return redirect('account.register')
+
         form = AccountRegisterForm(data=request.POST)
-        if form.is_valid() and SiteSetting.as_dict().get(SiteSettingKey.ENABLE_REGISTRATION):
+        if form.is_valid():
             user = form.save()
             login(request, user)
             next = request.POST.get('next', reverse('manga.list'))

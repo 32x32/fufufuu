@@ -59,6 +59,8 @@ class AccountRegisterViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'account/account-register.html')
 
     def test_account_register_view_post_invalid(self):
+        SiteSetting.objects.create(key=SiteSettingKey.ENABLE_REGISTRATION, val='True', updated_by=self.user)
+
         self.client.logout()
         response = self.client.post(reverse('account.register'), {
             'username': 'newuser',
@@ -82,8 +84,7 @@ class AccountRegisterViewTests(BaseTestCase):
             'captcha_1': store.response,
         })
 
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'account/account-register.html')
+        self.assertRedirects(response, reverse('account.register'))
 
     def test_account_register_view_post(self):
         SiteSetting.objects.create(key=SiteSettingKey.ENABLE_REGISTRATION, val='True', updated_by=self.user)
