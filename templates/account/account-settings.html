@@ -41,13 +41,15 @@
                 </div>
             </div>
         </form>
-        <form action="{{ url('account.settings.password') }}" method="post" class="panel width-400">
+        <form action="{{ url('account.settings.password') }}" method="post" class="panel">
             <h4 class="panel-heading">{% trans %}Change Password{% endtrans %}</h4>
             <div class="panel-body">
                 {{ forms.csrf_input() }}
-                {{ forms.field(password_form.old_password) }}
-                {{ forms.field(password_form.new_password1) }}
-                {{ forms.field(password_form.new_password2) }}
+                <div class="width-400">
+                    {{ forms.field(password_form.old_password) }}
+                    {{ forms.field(password_form.new_password1) }}
+                    {{ forms.field(password_form.new_password2) }}
+                </div>
                 <div class="form-field form-buttons">
                     <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
                 </div>
