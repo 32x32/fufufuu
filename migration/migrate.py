@@ -65,12 +65,22 @@ def migration(old_model_cls, new_model_cls, clear=False):
         def inner(self, *args, **kwargs):
             logger.debug('{} started'.format(f.__name__).ljust(80, '-'))
             start_time = datetime.datetime.now()
-
-            if clear: new_model_cls.objects.all().delete()
-
             session = sessionmaker(bind=SQL_ENGINE)()
-
             start = new_model_cls.objects.all().aggregate(Max('id'))['id__max'] or 0
+
+            # remove data that was deleted on the other database
+            if clear:
+                new_model_cls.objects.all().delete()
+            else:
+                for i in range(0, start+1, CHUNK_SIZE):
+                    old_id_list = set([o.id for o in session.query(old_model_cls.id).filter(old_model_cls.id > i, old_model_cls.id <= i+CHUNK_SIZE)])
+                    new_id_list = set(new_model_cls.objects.filter(id__gt=i, id__lte=i+CHUNK_SIZE).values_list('id', flat=True))
+
+                    remove_id_list = new_id_list - old_id_list
+                    logger.debug('removing ids: {}'.format(remove_id_list))
+                    new_model_cls.objects.filter(id__in=remove_id_list).delete()
+
+            # insert new data
             query = session.query(old_model_cls).filter(old_model_cls.id > start).order_by(old_model_cls.id)
             count = query.count()
             for i in range(0, count, CHUNK_SIZE):
@@ -79,7 +89,6 @@ def migration(old_model_cls, new_model_cls, clear=False):
 
             logger.debug('migrated {} {}'.format(count, old_model_cls.__name__))
             session.close()
-
             finish_time = datetime.datetime.now()
             logger.debug('{} finished in {}'.format(f.__name__, finish_time-start_time).ljust(80, '-'))
 
@@ -260,6 +269,7 @@ class Migrator(object):
         manga_page_list = []
         for old_manga_page in old_manga_page_list:
             manga_page_list.append(MangaPage(
+                id=old_manga_page.id,
                 manga_id=old_manga_page.manga_id,
                 double=old_manga_page.double,
                 page=old_manga_page.page,
