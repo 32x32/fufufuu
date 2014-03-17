@@ -5,7 +5,7 @@ from fabric.context_managers import cd, prefix
 from fabric.contrib.console import confirm
 from fabric.contrib.files import append, exists
 from fabric.contrib.project import rsync_project
-from fabric.operations import prompt, sudo, local, run, put
+from fabric.operations import prompt, sudo, local, run, put, get
 
 
 #-------------------------------------------------------------------------------
@@ -364,3 +364,14 @@ def manage(command):
     with virtualenv():
         with cd('{django_path}'.format(**env)):
             sudo('python3.3 manage.py {}'.format(command), user='www-data')
+
+
+def dump_db():
+    """
+    generate a SQL dump of the db
+    """
+
+    sudo('pg_dump -cO -h localhost -U fufufuu_user fufufuu -p 5432 > dump.sql')
+    sudo('rm -f dump.sql.gz')
+    sudo('gzip dump.sql')
+    get('dump.sql.gz', 'dump.sql.gz')
