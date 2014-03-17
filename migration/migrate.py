@@ -4,7 +4,6 @@ import os
 import re
 import sys
 
-from jinja2.utils import urlize
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import sessionmaker
 
@@ -17,6 +16,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.aggregates import Max
+from django.utils.html import urlize
 from fufufuu.account.models import User
 from fufufuu.comment.models import Comment
 from fufufuu.core.utils import convert_markdown
