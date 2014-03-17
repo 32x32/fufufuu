@@ -32,12 +32,12 @@ class MangaMixin:
         tag_dict = self.tag_dictionary
         scanlators  = ', '.join([t.name for t in tag_dict[TagType.SCANLATOR]])
 
-        filename = []
+        filename = ['[{}]'.format(str(self.id))]
         if scanlators:
             filename.append('[{}]'.format(scanlators))
-        filename.append('{}'.format(self.title))
+        filename.append(' {}'.format(self.title))
 
-        return ' '.join(filename)[:196] + '.zip'
+        return ''.join(filename)[:196] + '.zip'
 
     @property
     def cover_url(self):
