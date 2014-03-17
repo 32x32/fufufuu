@@ -174,6 +174,7 @@ class Migrator(object):
         tank_title_map = dict([(t.name, t) for t in tank_list])
 
         new_id = Tag.objects.all().aggregate(Max('id'))['id__max'] or 5000
+        new_id = max(new_id, 5000)
 
         session = sessionmaker(bind=SQL_ENGINE)()
 
