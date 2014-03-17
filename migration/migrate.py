@@ -71,6 +71,7 @@ def migration(old_model_cls, new_model_cls, clear=False):
             # remove data that was deleted on the other database
             if clear:
                 new_model_cls.objects.all().delete()
+                start = 0
             else:
                 for i in range(0, start+1, CHUNK_SIZE):
                     old_id_list = set([o.id for o in session.query(old_model_cls.id).filter(old_model_cls.id > i, old_model_cls.id <= i+CHUNK_SIZE)])
@@ -154,27 +155,53 @@ class Migrator(object):
         for old_comment in old_comment_list:
             Comment.objects.filter(id=old_comment.id).update(created_on=old_comment.date_created)
 
-    @migration(OldTag, Tag)
-    def migrate_tags(self, old_tag_list):
-        tag_list = []
-        for old_tag in old_tag_list:
-            tag_list.append(Tag(
-                id=old_tag.id,
-                tag_type=old_tag.tag_type,
-                name=old_tag.name,
-                slug=old_tag.slug,
-                created_by_id=self.user.id,
-                created_on=old_tag.date_created,
-            ))
-        Tag.objects.bulk_create(tag_list)
+    def migrate_tags(self):
+        # start logging
+        logger.debug('migrate_tags started'.ljust(80, '-'))
+        start_time = datetime.datetime.now()
+        session = sessionmaker(bind=SQL_ENGINE)()
+        start = Tag.objects.all().exclude(tag_type=TagType.TANK).aggregate(Max('id'))['id__max'] or 0
+
+        # clear out deleted tags
+        for i in range(0, start+1, CHUNK_SIZE):
+            old_id_list = set([o.id for o in session.query(OldTag.id).filter(OldTag.id > i, OldTag.id <= i+CHUNK_SIZE)])
+            new_id_list = set(Tag.objects.filter(id__gt=i, id__lte=i+CHUNK_SIZE).values_list('id', flat=True))
+
+            remove_id_list = new_id_list - old_id_list
+            logger.debug('removing ids: {}'.format(remove_id_list))
+            Tag.objects.filter(id__in=remove_id_list).delete()
+
+        # insert new data
+        query = session.query(OldTag).filter(OldTag.id > start).order_by(OldTag.id)
+        count = query.count()
+
+        for i in range(0, count, CHUNK_SIZE):
+            logger.debug('migrated {} {}'.format(i, OldTag.__name__))
+            tag_list = []
+            for old_tag in query[i:i+CHUNK_SIZE]:
+                tag_list.append(Tag(
+                    id=old_tag.id,
+                    tag_type=old_tag.tag_type,
+                    name=old_tag.name,
+                    slug=old_tag.slug,
+                    created_by_id=self.user.id,
+                    created_on=old_tag.date_created,
+                ))
+            Tag.objects.bulk_create(tag_list)
+
+        # finish logging
+        logger.debug('migrated {} {}'.format(count, OldTag.__name__))
+        session.close()
+        finish_time = datetime.datetime.now()
+        logger.debug('migrate_tags finished in {}'.format(finish_time-start_time).ljust(80, '-'))
 
     @migration(OldTank, LegacyTank)
     def migrate_tanks(self, old_tank_list):
         tank_list = Tag.objects.filter(tag_type=TagType.TANK)
         tank_title_map = dict([(t.name, t) for t in tank_list])
 
-        new_id = Tag.objects.all().aggregate(Max('id'))['id__max'] or 5000
-        new_id = max(new_id, 5000)
+        new_id = Tag.objects.all().aggregate(Max('id'))['id__max'] or 10000
+        new_id = max(new_id, 10000)
 
         session = sessionmaker(bind=SQL_ENGINE)()
 
