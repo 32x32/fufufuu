@@ -82,10 +82,10 @@ LOGGING = {
             'filters': ['email_admin_limit'],
             'class': 'django.utils.log.AdminEmailHandler',
         },
-        'errors': {
+        'fufufuu': {
             'level': 'WARNING',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': '/var/www/fufufuu/logs/errors.log',
+            'filename': '/var/www/fufufuu/logs/fufufuu.log',
             'when': 'D',
             'interval': 1,
             'backupCount': 30,
@@ -96,12 +96,12 @@ LOGGING = {
     # loggers
     'loggers': {
         '': {
-            'handlers': ['email_admin', 'errors'],
+            'handlers': ['fufufuu'],
             'level': 'INFO',
             'propagate': True,
         },
         'django': {
-            'handlers': ['email_admin', 'errors'],
+            'handlers': ['email_admin', 'fufufuu'],
             'level': 'INFO',
             'propagate': True,
         },
