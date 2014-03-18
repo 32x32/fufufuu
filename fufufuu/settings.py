@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'fufufuu.image',
     'fufufuu.legacy',
     'fufufuu.manga',
+    'fufufuu.report',
     'fufufuu.revision',
     'fufufuu.search',
     'fufufuu.staff',
