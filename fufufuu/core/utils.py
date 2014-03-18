@@ -1,10 +1,13 @@
 from PIL import Image
+from django.core.mail.message import EmailMultiAlternatives
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, Page
 from django.shortcuts import _get_queryset
 from django.utils import timezone
 from django.utils.text import slugify as django_slugify
 import markdown
 from unidecode import unidecode
+
+from fufufuu.settings import DEBUG, ADMINS, EMAIL_HOST_USER
 
 
 IMAGE_FORMAT_EXTENSION = {
@@ -95,3 +98,23 @@ def convert_markdown(markdown_text):
 
     html = markdown.markdown(markdown_text, safe_mode='escape')
     return html
+
+
+def email_alert(subject, template, context):
+    """
+    Send an email to ADMINS
+    """
+
+    if DEBUG: return
+
+    from fufufuu.core.templates import TEMPLATE_ENV
+
+    recipient_list = [email for _, email in ADMINS]
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body='Please enable HTML',
+        from_email=EMAIL_HOST_USER,
+        to=recipient_list
+    )
+    email.attach_alternative(TEMPLATE_ENV.get_template(template).render(context), 'text/html')
+    email.send(fail_silently=True)
