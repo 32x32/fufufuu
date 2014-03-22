@@ -1,5 +1,4 @@
 from django.conf.urls import patterns, include, url
-from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.views.decorators.cache import cache_page
 
@@ -8,8 +7,6 @@ from fufufuu.manga.views import MangaListView, MangaListFavoritesView
 from fufufuu.settings import DEBUG, DEBUG_TOOLBAR_PATCH_SETTINGS, MEDIA_ROOT
 from fufufuu.sitemaps import SITEMAPS
 
-
-admin.autodiscover()
 
 handler404 = PageNotFoundView.as_view()
 handler500 = ServerErrorView.as_view()

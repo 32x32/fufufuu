@@ -1,4 +1,3 @@
-from multiprocessing import Pool
 import os
 import tempfile
 import zipfile
@@ -82,10 +81,7 @@ def process_images(manga, file_list, user):
         process_list.append((mp.image.path, image_key_type, mp.id))
         process_list.append((mp.image.path, ImageKeyType.MANGA_THUMB, mp.id))
 
-    pool = Pool()
-    pool.starmap(image_resize, process_list)
-    pool.close()
-    pool.join()
+    for args in process_list: image_resize(*args)
 
     return errors
 

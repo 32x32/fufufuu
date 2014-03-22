@@ -41,7 +41,7 @@ class EventHandler(FileSystemEventHandler):
 
 
 if __name__ == '__main__':
-    EventHandler().dispatch(FileSystemEvent('initial compile', 'static/css-jinja/app.less'))
+    EventHandler().dispatch(FileSystemEvent('initial compile', 'static/css/app.less'))
 
     if len(sys.argv) > 1 and sys.argv[1] == '--no-watch':
         sys.exit(0)
