@@ -8,6 +8,8 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 from django.utils import timezone
 from fufufuu.account.models import User
 from fufufuu.core.languages import Language
+from fufufuu.core.enums import SiteSettingKey
+from fufufuu.core.models import SiteSetting
 from fufufuu.core.utils import slugify
 from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.models import Manga, MangaTag, MangaPage
@@ -103,7 +105,7 @@ class DataCreator:
                     html='Tag Data - {} - {}'.format(tag.name, language),
                     created_by=self.user,
                     updated_by=self.user,
-                ))
+                    ))
             TagData.objects.bulk_create(tag_data_list)
 
     @timed
@@ -128,7 +130,7 @@ class DataCreator:
                 published_on=timezone.now(),
                 created_by=self.user,
                 updated_by=self.user,
-            )
+                )
             if random.random() < 0.1:
                 manga.tank = random.choice(tank_list)
                 manga.tank_chapter = tank_chapter[manga.tank.id] + 1
@@ -171,8 +173,17 @@ class DataCreator:
                 manga=manga,
                 page=1,
                 name='001.jpg',
-            ))
+                ))
         MangaPage.objects.bulk_create(manga_page_list)
+
+    @timed
+    def create_settings(self):
+        settings = (
+            (SiteSettingKey.ENABLE_COMMENTS, 'True'),
+            (SiteSettingKey.ENABLE_REGISTRATION, 'True'),
+            (SiteSettingKey.ENABLE_UPLOADS, 'True'),
+        )
+        for k, v in settings: SiteSetting.objects.create(key=k, val=v, updated_by=self.user)
 
     def run(self):
         print('-'*80)
@@ -186,6 +197,7 @@ class DataCreator:
         self.create_manga()
         self.create_manga_tags()
         self.create_manga_pages()
+        self.create_settings()
 
         finish = datetime.datetime.now()
         print('datacreator.py finished in {}'.format(finish-start))
