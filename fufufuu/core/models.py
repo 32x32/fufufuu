@@ -6,10 +6,6 @@ from fufufuu.account.models import User
 from fufufuu.core.enums import SiteSettingKey
 
 
-SITE_SETTING_CACHE_KEY = 'site_settings'
-SITE_SETTING_CACHE_TIMEOUT = 30 * 24 * 60 * 60
-
-
 class BaseAuditableModel(models.Model):
 
     created_on = models.DateTimeField(auto_now_add=True)
@@ -55,6 +51,9 @@ class DeletedFile(models.Model):
 
 class SiteSetting(models.Model):
 
+    __SITE_SETTING_CACHE_KEY = 'site_settings'
+    __SITE_SETTING_CACHE_TIMEOUT = 30 * 24 * 60 * 60
+
     key = models.CharField(max_length=255, choices=SiteSettingKey.choices, unique=True)
     val = models.TextField(blank=True, null=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -65,18 +64,35 @@ class SiteSetting(models.Model):
     class Meta:
         db_table = 'site_setting'
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+    @classmethod
+    def clear_cache(cls):
+        cache.delete(cls.__SITE_SETTING_CACHE_KEY)
 
     @classmethod
     def as_dict(cls):
-        _site_settings = cache.get(SITE_SETTING_CACHE_KEY)
+        _site_settings = cache.get(cls.__SITE_SETTING_CACHE_KEY)
         if _site_settings: return _site_settings
 
-        _site_settings = dict([(s.key, s.val) for s in SiteSetting.objects.all()])
+        _site_settings = dict([(s.key, s.val) for s in SiteSetting.objects.all().only('key', 'val')])
         for k, v in _site_settings.items():
             if SiteSettingKey.key_type[k] == bool:
                 _site_settings[k] = v == 'True'
 
-        cache.set(SITE_SETTING_CACHE_KEY, _site_settings, SITE_SETTING_CACHE_TIMEOUT)
+        cache.set(cls.__SITE_SETTING_CACHE_KEY, _site_settings, cls.__SITE_SETTING_CACHE_TIMEOUT)
         return _site_settings
+
+    @classmethod
+    def set_val(cls, key, val, user):
+        try:
+            site_setting = cls.objects.get(key=key)
+        except cls.DoesNotExist:
+            site_setting = cls(key=key)
+        site_setting.val = val
+        site_setting.updated_by = user
+        site_setting.save()
+        cls.clear_cache()
+        return site_setting
+
+    @classmethod
+    def get_val(cls, key):
+        return cls.as_dict().get(key)

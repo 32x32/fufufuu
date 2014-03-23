@@ -183,7 +183,7 @@ class DataCreator:
             (SiteSettingKey.ENABLE_REGISTRATION, 'True'),
             (SiteSettingKey.ENABLE_UPLOADS, 'True'),
         )
-        for k, v in settings: SiteSetting.objects.create(key=k, val=v, updated_by=self.user)
+        for k, v in settings: SiteSetting.set_val(k, v, self.user)
 
     def run(self):
         print('-'*80)

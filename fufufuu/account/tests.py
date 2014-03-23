@@ -59,7 +59,7 @@ class AccountRegisterViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'account/account-register.html')
 
     def test_account_register_view_post_invalid(self):
-        SiteSetting.objects.create(key=SiteSettingKey.ENABLE_REGISTRATION, val='True', updated_by=self.user)
+        SiteSetting.set_val(SiteSettingKey.ENABLE_REGISTRATION, 'True', self.user)
 
         self.client.logout()
         response = self.client.post(reverse('account.register'), {
@@ -71,6 +71,7 @@ class AccountRegisterViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'account/account-register.html')
 
     def test_account_register_view_post_disabled(self):
+        SiteSetting.set_val(SiteSettingKey.ENABLE_REGISTRATION, 'False', self.user)
         challenge, response = settings.get_challenge()()
         store = CaptchaStore.objects.create(challenge=challenge, response=response)
 
@@ -87,8 +88,6 @@ class AccountRegisterViewTests(BaseTestCase):
         self.assertRedirects(response, reverse('account.register'))
 
     def test_account_register_view_post(self):
-        SiteSetting.objects.create(key=SiteSettingKey.ENABLE_REGISTRATION, val='True', updated_by=self.user)
-
         challenge, response = settings.get_challenge()()
         store = CaptchaStore.objects.create(challenge=challenge, response=response)
 

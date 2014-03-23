@@ -1,9 +1,9 @@
 from django import forms
-from django.core.cache import cache
 from django.utils.translation import ugettext as _
+
 from fufufuu.core.enums import SiteSettingKey
 from fufufuu.core.forms import BlankLabelSuffixMixin
-from fufufuu.core.models import SiteSetting, SITE_SETTING_CACHE_KEY
+from fufufuu.core.models import SiteSetting
 
 
 class SiteSettingForm(BlankLabelSuffixMixin, forms.Form):
@@ -44,19 +44,9 @@ class SiteSettingForm(BlankLabelSuffixMixin, forms.Form):
 
     def save_setting(self, key, user):
         val = self.cleaned_data.get(key.lower())
-        try:
-            site_setting = SiteSetting.objects.get(key=key)
-            site_setting.val = val
-            site_setting.updated_by = user
-            site_setting.save()
-        except SiteSetting.DoesNotExist:
-            SiteSetting.objects.create(
-                key=key,
-                val=val,
-                updated_by=user
-            )
+        SiteSetting.set_val(key, val, user)
 
     def save(self, user):
         for key in SiteSettingKey.choices_dict.keys():
             self.save_setting(key, user)
-        cache.delete(SITE_SETTING_CACHE_KEY)
+        SiteSetting.clear_cache()

@@ -33,7 +33,7 @@ class StaffSiteSettingsViewTests(BaseTestCase):
             'announcement': announcement,
         })
         self.assertRedirects(response, reverse('staff.site.settings'))
-        self.assertEqual(SiteSetting.objects.get(key=SiteSettingKey.ANNOUNCEMENT).val, announcement)
+        self.assertEqual(SiteSetting.get_val(SiteSettingKey.ANNOUNCEMENT), announcement)
 
 
 class SiteSettingFormTests(BaseTestCase):
@@ -41,13 +41,13 @@ class SiteSettingFormTests(BaseTestCase):
     def test_site_setting_form_no_settings(self):
         form = SiteSettingForm()
         self.assertEqual(form.fields['announcement'].initial, None)
-        self.assertEqual(form.fields['enable_comments'].initial, None)
-        self.assertEqual(form.fields['enable_uploads'].initial, None)
+        self.assertEqual(form.fields['enable_comments'].initial, True)
+        self.assertEqual(form.fields['enable_uploads'].initial, True)
 
     def test_site_setting_form(self):
-        SiteSetting.objects.create(key=SiteSettingKey.ANNOUNCEMENT, val='This is a sample announcement', updated_by=self.user)
-        SiteSetting.objects.create(key=SiteSettingKey.ENABLE_COMMENTS, val='True', updated_by=self.user)
-        SiteSetting.objects.create(key=SiteSettingKey.ENABLE_UPLOADS, val='False', updated_by=self.user)
+        SiteSetting.set_val(SiteSettingKey.ANNOUNCEMENT, 'This is a sample announcement', self.user)
+        SiteSetting.set_val(SiteSettingKey.ENABLE_COMMENTS, 'True', self.user)
+        SiteSetting.set_val(SiteSettingKey.ENABLE_UPLOADS, 'False', self.user)
 
         form = SiteSettingForm()
         self.assertEqual(form.fields['announcement'].initial, 'This is a sample announcement')
