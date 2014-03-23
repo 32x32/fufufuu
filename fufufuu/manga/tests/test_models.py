@@ -87,10 +87,6 @@ class MangaModelTests(BaseTestCase):
 
         image1 = Image(key_type=ImageKeyType.MANGA_COVER, key_id=self.manga.id)
         image1.save(self.manga.cover.path)
-        image2 = Image(key_type=ImageKeyType.MANGA_INFO_COVER, key_id=self.manga.id)
-        image2.save(self.manga.cover.path)
 
         self.manga.save(updated_by=self.user)
-
         self.assertFalse(Image.objects.filter(id=image1.id).exists())
-        self.assertFalse(Image.objects.filter(id=image2.id).exists())

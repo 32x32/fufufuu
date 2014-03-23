@@ -162,7 +162,7 @@ class MangaEditFormTests(BaseTestCase):
     def test_manga_edit_form_cover_update(self):
         self.manga.cover = SimpleUploadedFile('test1.jpg', self.create_test_image_file().getvalue())
         self.manga.save(self.user)
-        old_cover = self.manga.cover
+        old_cover = self.manga.cover.file.read()
 
         form = MangaEditForm(request=self.request, instance=self.manga, data={
             'title': 'Test Manga Title',
@@ -170,13 +170,13 @@ class MangaEditFormTests(BaseTestCase):
             'language': Language.ENGLISH,
             'action': 'save',
         }, files={
-            'cover': SimpleUploadedFile('test2.jpg', self.create_test_image_file().getvalue())
+            'cover': SimpleUploadedFile('test2.jpg', self.create_test_image_file(format='JPEG').getvalue())
         })
         self.assertTrue(form.is_valid())
         form.save()
 
         manga = Manga.objects.get(id=self.manga.id)
-        self.assertEqual(old_cover, manga.cover)
+        self.assertNotEqual(old_cover, manga.cover.file.read())
 
     def test_manga_edit_form_no_changes(self):
         data = {

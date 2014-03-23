@@ -152,5 +152,3 @@ def manga_archive_post_delete(instance, **kwargs):
 def manga_post_save(instance, **kwargs):
     Image.objects.filter(key_type=ImageKeyType.MANGA_COVER, key_id=instance.id).delete()
     cache.delete(get_cache_key(ImageKeyType.MANGA_COVER, instance.id))
-    Image.objects.filter(key_type=ImageKeyType.MANGA_INFO_COVER, key_id=instance.id).delete()
-    cache.delete(get_cache_key(ImageKeyType.MANGA_INFO_COVER, instance.id))

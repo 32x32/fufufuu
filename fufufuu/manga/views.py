@@ -119,24 +119,6 @@ class MangaView(TemplateView):
         return self.render_to_response(context)
 
 
-class MangaInfoView(TemplateView):
-
-    template_name = 'manga/manga-info.html'
-
-    def get(self, request, id, slug):
-        manga = get_object_or_404(Manga.published, id=id)
-        try:
-            archive = MangaArchive.objects.get(manga=manga)
-        except MangaArchive.DoesNotExist:
-            archive = generate_manga_archive(manga)
-        if not os.path.exists(archive.file.path):
-            archive = generate_manga_archive(manga)
-        return self.render_to_response({
-            'archive': archive,
-            'manga': manga,
-        })
-
-
 class MangaThumbnailsView(TemplateView):
 
     template_name = 'manga/manga-thumbnails.html'
@@ -204,7 +186,7 @@ class MangaReportView(TemplateView):
 class MangaFavoriteView(ProtectedTemplateView):
 
     def get(self, request, id, slug):
-        return redirect(reverse('manga.info', args=[id, slug]))
+        return redirect(reverse('manga', args=[id, slug]))
 
     def post(self, request, id, slug):
         manga = get_object_or_404(Manga.published, id=id)
@@ -213,7 +195,7 @@ class MangaFavoriteView(ProtectedTemplateView):
             mf.delete()
         except MangaFavorite.DoesNotExist:
             MangaFavorite.objects.create(user=request.user, manga=manga)
-        next = request.POST.get('next') or reverse('manga.info', args=[id, slug])
+        next = request.POST.get('next') or reverse('manga', args=[id, slug])
         return redirect(next)
 
 

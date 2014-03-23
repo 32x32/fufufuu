@@ -70,7 +70,6 @@ def process_images(manga, file_list, user):
             manga.cover = f
             manga.save(updated_by=user)
             process_list.append((manga.cover.path, ImageKeyType.MANGA_COVER, manga.id))
-            process_list.append((manga.cover.path, ImageKeyType.MANGA_INFO_COVER, manga.id))
 
     MangaPage.objects.bulk_create(manga_page_list)
 

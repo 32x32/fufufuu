@@ -25,7 +25,7 @@ Tank:            {% for tag in tag_dict.TANK %}{{ tag.name }}{% if not loop.last
 
 #-------------------------------------------------------------------------------
 
-Read this online at: http://fufufuu.net{{ url('manga.info', args=[manga.id, manga.slug]) }}
+Read this online at: http://fufufuu.net{{ url('manga', args=[manga.id, manga.slug]) }}
 
 The Fufufuu team
 Visit us at http://fufufuu.net

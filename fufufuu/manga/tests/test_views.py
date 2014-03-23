@@ -1,8 +1,6 @@
-import os
 import zipfile
 from io import BytesIO
 
-from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
@@ -12,8 +10,7 @@ from fufufuu.core.tests import BaseTestCase
 from fufufuu.core.utils import slugify
 from fufufuu.download.models import DownloadLink
 from fufufuu.manga.enums import MangaStatus, MangaCategory
-from fufufuu.manga.models import Manga, MangaFavorite, MangaArchive
-from fufufuu.manga.utils import generate_manga_archive
+from fufufuu.manga.models import Manga, MangaFavorite
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 
@@ -68,33 +65,6 @@ class MangaViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 404)
 
 
-class MangaInfoViewTests(BaseTestCase):
-
-    def test_manga_info_view_get(self):
-        response = self.client.get(reverse('manga.info', args=[self.manga.id, self.manga.slug]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'manga/manga-info.html')
-
-    def test_manga_info_view_get_no_archive_file(self):
-        archive = generate_manga_archive(self.manga)
-        os.remove(archive.file.path)
-
-        response = self.client.get(reverse('manga.info', args=[self.manga.id, self.manga.slug]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'manga/manga-info.html')
-
-        archive = MangaArchive.objects.get(manga=self.manga)
-        self.assertTrue(os.path.exists(archive.file.path))
-
-    def test_manga_info_view_get_manga_no_user(self):
-        self.manga.created_by = None
-        self.manga.save(updated_by=None)
-
-        response = self.client.get(reverse('manga.info', args=[self.manga.id, self.manga.slug]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'manga/manga-info.html')
-
-
 class MangaThumbnailsViewTests(BaseTestCase):
 
     def test_manga_thumbnails_view_get(self):
@@ -143,13 +113,13 @@ class MangaFavoriteViewTests(BaseTestCase):
 
     def test_manga_favorite_view_get(self):
         response = self.client.get(reverse('manga.favorite', args=[self.manga.id, self.manga.slug]))
-        self.assertRedirects(response, reverse('manga.info', args=[self.manga.id, self.manga.slug]))
+        self.assertRedirects(response, reverse('manga', args=[self.manga.id, self.manga.slug]))
 
     def test_manga_favorite_view_post(self):
         self.assertFalse(MangaFavorite.objects.filter(manga=self.manga, user=self.user).exists())
 
         response = self.client.post(reverse('manga.favorite', args=[self.manga.id, self.manga.slug]))
-        self.assertRedirects(response, reverse('manga.info', args=[self.manga.id, self.manga.slug]))
+        self.assertRedirects(response, reverse('manga', args=[self.manga.id, self.manga.slug]))
         self.assertTrue(MangaFavorite.objects.filter(manga=self.manga, user=self.user).exists())
 
         response = self.client.post(reverse('manga.favorite', args=[self.manga.id, self.manga.slug]), {

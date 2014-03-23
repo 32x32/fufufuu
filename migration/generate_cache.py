@@ -87,7 +87,6 @@ class CacheGenerator(Migrator):
                     logger.warning('manga {} has no cover'.format(manga.id))
                     continue
                 process_list.append((manga.cover.path, ImageKeyType.MANGA_COVER, manga.id))
-                process_list.append((manga.cover.path, ImageKeyType.MANGA_INFO_COVER, manga.id))
             process_image_list(process_list)
 
         count = Manga.all.all().count()

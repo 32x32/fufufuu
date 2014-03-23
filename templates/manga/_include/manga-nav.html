@@ -2,7 +2,6 @@
 {% import '_macros/utils.html' as utils with context %}
 
 {% if manga.status == 'PUBLISHED' %}
-    {% set url_manga_info = url('manga.info', args=[manga.id, manga.slug]) %}
     {% set url_manga = url('manga', args=[manga.id, manga.slug]) %}
     {% set url_manga_thumbnails = url('manga.thumbnails', args=[manga.id, manga.slug]) %}
     {% set url_manga_comments = url('manga.comments', args=[manga.id, manga.slug]) %}
@@ -10,7 +9,6 @@
     {% set url_manga_favorite = url('manga.favorite', args=[manga.id, manga.slug]) %}
     {% set url_manga_report = url('manga.report', args=[manga.id, manga.slug]) %}
 {% else %}
-    {% set url_manga_info = '#' %}
     {% set url_manga = '#' %}
     {% set url_manga_thumbnails = '#' %}
     {% set url_manga_comments = '#' %}
@@ -43,7 +41,6 @@
         {% endif %}
     </div>
     <div class="m-nav-main">
-        {{ manga_nav_item(request, url_manga_info, 'icon-doc-text', gettext('Info')) }}
         {{ manga_nav_item(request, url_manga, 'icon-docs', gettext('Read')) }}
         {{ manga_nav_item(request, url_manga_thumbnails, 'icon-sweden', gettext('Thumbs')) }}
         {% if manga.status == 'PUBLISHED' %}
