@@ -162,7 +162,7 @@ class MangaEditFormTests(BaseTestCase):
     def test_manga_edit_form_cover_update(self):
         self.manga.cover = SimpleUploadedFile('test1.jpg', self.create_test_image_file().getvalue())
         self.manga.save(self.user)
-        old_cover_path = self.manga.cover.path
+        old_cover = self.manga.cover
 
         form = MangaEditForm(request=self.request, instance=self.manga, data={
             'title': 'Test Manga Title',
@@ -176,8 +176,7 @@ class MangaEditFormTests(BaseTestCase):
         form.save()
 
         manga = Manga.objects.get(id=self.manga.id)
-        new_cover_path = manga.cover.path
-        self.assertNotEqual(old_cover_path, new_cover_path)
+        self.assertEqual(old_cover, manga.cover)
 
     def test_manga_edit_form_no_changes(self):
         data = {
@@ -211,22 +210,6 @@ class MangaEditFormTests(BaseTestCase):
 
         manga = Manga.objects.get(id=self.manga.id)
         self.assertEqual(manga.markdown, '北京')
-
-    def test_manga_edit_form_edit_limit(self):
-        user = self.create_test_user('testuser2')
-        user.revision_limit = 0
-        self.client.login(username='testuser2', password='password')
-
-        self.request.user = user
-
-        form = MangaEditForm(request=self.request, instance=self.manga, data={
-            'title': self.manga.title,
-            'language': self.manga.language,
-            'category': self.manga.category,
-            'action': 'save',
-        })
-        self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['__all__'], ['You have reached your edit limit for the day, please try again later.'])
 
 
 class MangaPageFormsetTests(BaseTestCase):

@@ -3,25 +3,22 @@ import json
 import os
 
 from django.contrib import messages
-from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
-from fufufuu.core.response import HttpResponseXAccel
 
+from fufufuu.core.response import HttpResponseXAccel
 from fufufuu.core.utils import paginate, get_ip_address
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
-from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction, MANGA_FIELDNAME_MAP
+from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet, MangaListFilterForm
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
-from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive, attach_revision_tags
-from fufufuu.revision.enums import RevisionStatus
-from fufufuu.revision.models import Revision
+from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive
 
 
 class MangaListMixin:
@@ -254,32 +251,12 @@ class MangaEditView(MangaEditMixin, ProtectedTemplateView):
 
     template_name = 'manga/manga-edit.html'
 
-    def get_revision(self, manga, request):
-        ct = ContentType.objects.get_for_model(manga)
-        try:
-            revision = Revision.objects.get(
-                content_type__id=ct.id,
-                object_id=manga.id,
-                status=RevisionStatus.PENDING,
-                created_by=request.user,
-            )
-        except Revision.DoesNotExist:
-            revision = None
-        return revision
-
     def get(self, request, id, slug):
         manga = self.get_manga(id)
 
-        revision = self.get_revision(manga, request)
-        if revision:
-            manga, m2m = revision.apply()
-            messages.info(request, _('The current changes are only visible to you. When a moderator or the uploader approves your changes, they will become visible to everyone.'))
-        else:
-            m2m = {}
-
         return self.render_to_response({
             'manga': manga,
-            'form': MangaEditForm(request=request, tag_id_list=m2m.get('tags'), instance=manga),
+            'form': MangaEditForm(request=request, instance=manga),
         })
 
     def post(self, request, id, slug):
@@ -291,9 +268,6 @@ class MangaEditView(MangaEditMixin, ProtectedTemplateView):
 
         form = MangaEditForm(request=request, instance=manga, data=request.POST, files=request.FILES)
         if form.is_valid():
-            revision = self.get_revision(manga, request)
-            if revision: revision.delete()
-
             manga = form.save()
             messages.success(request, _('{} has been updated').format(manga.title))
             for message in form.messages:
@@ -378,23 +352,3 @@ class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
             messages.error(request, '\n'.join(errors))
 
         return redirect('manga.edit.images', id=manga.id, slug=manga.slug)
-
-
-class MangaRevisionsView(MangaEditMixin, TemplateView):
-
-    template_name = 'manga/manga-revisions.html'
-    page_size = 10
-
-    def get(self, request, id, slug):
-        manga = self.get_manga(id)
-        ct = ContentType.objects.get_for_model(manga)
-
-        revision_list = Revision.objects.filter(content_type__id=ct.id, object_id=manga.id).select_related('created_by').order_by('-created_on')
-        revision_list = paginate(revision_list, self.page_size, request.GET.get('p'))
-        attach_revision_tags(revision_list)
-
-        return self.render_to_response({
-            'manga': manga,
-            'MANGA_FIELDNAME_MAP': MANGA_FIELDNAME_MAP,
-            'revision_list': revision_list,
-        })

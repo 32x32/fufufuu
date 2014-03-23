@@ -13,10 +13,7 @@ from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_FIELDNAME_MAP
 from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import generate_manga_archive
-from fufufuu.revision.enums import RevisionStatus
-from fufufuu.revision.models import Revision
 from fufufuu.tag.enums import TagType
-from fufufuu.tag.models import Tag
 from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
 
 
@@ -89,7 +86,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         model = Manga
         fields = ('title', 'markdown', 'cover', 'category', 'language', 'uncensored')
 
-    def __init__(self, request, tag_id_list=None, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.messages = []
         self.request = request
@@ -105,18 +102,14 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         self.fields['cover'].required = bool(manga.cover)
 
         if 'data' not in kwargs:
-            self.initialize_tag_fields(manga, tag_id_list)
+            self.initialize_tag_fields(manga)
             self.fields['tank'].initial             = manga.tank_id and manga.tank.name or ''
             self.fields['tank_chapter'].initial     = manga.tank_chapter
             self.fields['collection'].initial       = manga.collection_id and manga.collection.name or ''
             self.fields['collection_part'].initial  = manga.collection_part
 
-    def initialize_tag_fields(self, manga, tag_id_list):
-        if tag_id_list:
-            tag_list = Tag.objects.filter(id__in=tag_id_list)
-        else:
-            tag_list = manga.tags.all()
-
+    def initialize_tag_fields(self, manga):
+        tag_list = manga.tags.all()
         tag_dict = defaultdict(list)
         for tag in tag_list: tag_dict[tag.tag_type].append(tag.name)
 
@@ -180,9 +173,6 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         if bool(collection_name) != bool(collection_part):
             raise forms.ValidationError(_('Please specify both collection and collection part (or leave them both blank).'))
 
-        if not Revision.can_create(self.request.user):
-            raise forms.ValidationError(_('You have reached your edit limit for the day, please try again later.'))
-
         return cd
 
     def get_tag_list(self):
@@ -218,25 +208,16 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         if self.html:
             manga.html = self.html
 
-        original_status = manga.status
         if cd.get('action') == MangaAction.PUBLISH:
             manga.status = MangaStatus.PUBLISHED
             manga.published_on = timezone.now()
 
-        tag_list = self.get_tag_list()
-        if original_status == MangaStatus.DRAFT:
-            manga.save(self.request.user)
-            manga.tags.clear()
-            manga.tags.add(*tag_list)
-            if manga.status == MangaStatus.PUBLISHED: generate_manga_archive(manga)
-        else:
-            revision = manga.create_revision(self.request.user, tag_list)
-            if revision and (self.request.user == manga.created_by or self.request.user.is_moderator):
-                manga, m2m = revision.apply()
-                manga.save(self.request.user)
-                if 'tags' in m2m: manga.tags = m2m['tags']
-                revision.status = RevisionStatus.APPROVED
-                revision.save()
+        manga.save(self.request.user)
+        manga.tags.clear()
+        manga.tags.add(*self.get_tag_list())
+
+        if manga.status == MangaStatus.PUBLISHED:
+            generate_manga_archive(manga)
 
         if manga.tank and not manga.tank.cover:
             manga.tank.set_default_cover()
