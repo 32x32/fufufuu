@@ -134,17 +134,6 @@ class MangaThumbnailsView(TemplateView):
         })
 
 
-class MangaCommentsView(TemplateView):
-
-    template_name = 'manga/manga-comments.html'
-
-    def get(self, request, id, slug):
-        manga = get_object_or_404(Manga.published, id=id)
-        return self.render_to_response({
-            'manga': manga,
-        })
-
-
 class MangaDownloadView(TemplateView):
 
     def get(self, request, id, slug):

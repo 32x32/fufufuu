@@ -73,14 +73,6 @@ class MangaThumbnailsViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'manga/manga-thumbnails.html')
 
 
-class MangaCommentsViewTests(BaseTestCase):
-
-    def test_manga_comments_view_get(self):
-        response = self.client.get(reverse('manga.comments', args=[self.manga.id, self.manga.slug]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'manga/manga-comments.html')
-
-
 class MangaDownloadViewTests(BaseTestCase):
 
     def test_manga_download_view_get(self):

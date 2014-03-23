@@ -4,14 +4,12 @@
 {% if manga.status == 'PUBLISHED' %}
     {% set url_manga = url('manga', args=[manga.id, manga.slug]) %}
     {% set url_manga_thumbnails = url('manga.thumbnails', args=[manga.id, manga.slug]) %}
-    {% set url_manga_comments = url('manga.comments', args=[manga.id, manga.slug]) %}
     {% set url_manga_download = url('manga.download', args=[manga.id, manga.slug]) %}
     {% set url_manga_favorite = url('manga.favorite', args=[manga.id, manga.slug]) %}
     {% set url_manga_report = url('manga.report', args=[manga.id, manga.slug]) %}
 {% else %}
     {% set url_manga = '#' %}
     {% set url_manga_thumbnails = '#' %}
-    {% set url_manga_comments = '#' %}
     {% set url_manga_download = '#' %}
     {% set url_manga_favorite = '#' %}
     {% set url_manga_report = '#' %}
