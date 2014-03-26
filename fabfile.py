@@ -231,9 +231,6 @@ def _install_requirements():
     install requirements
     """
 
-
-    sudo('npm install -g markdown')
-
     with virtualenv():
         with cd('{django_path}'.format(**env)):
             sudo('pip install -r requirements.txt')
