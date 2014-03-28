@@ -124,6 +124,7 @@ def setup():
     sudo('mkdir -p {media_path}'.format(**env))
     sudo('touch {django_path}/static/maintenance.html'.format(**env))
     sudo('chown -R www-data:www-data {deploy_path}'.format(**env))
+    sudo('chmod 777 /mnt')
 
     sudo('apt-get update')
     sudo('apt-get install -y python-software-properties')
@@ -144,9 +145,10 @@ def setup():
 
     if not exists('/usr/local/bin/python3.3'): install_python()
 
-    sudo('pip install supervisor==3.0')
+    sudo('pip install supervisor==3.0 awscli==1.3.4')
     sudo('pip install virtualenv')
     sudo('virtualenv {venv_path} --python=/usr/local/bin/python3.3'.format(**env), user='www-data')
+    run('aws configure')
 
 
 #-------------------------------------------------------------------------------
