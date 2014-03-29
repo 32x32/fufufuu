@@ -16,8 +16,9 @@ $ ->
             i++
 
         foundText = (q, tag) ->
+            q = q.toLowerCase()
             for text in tag.text
-                if text.indexOf(q) > -1
+                if text.toLowerCase().indexOf(q) > -1
                     return true
             return false
 
