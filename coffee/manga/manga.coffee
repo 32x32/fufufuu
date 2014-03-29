@@ -63,8 +63,8 @@ $ ->
                     return "#{nextChapter}#/page/1/"
                 return "#/page/#{self.nextNum()}/"
 
-            self.jumpPage = ->
-                targetPage = $("#m-page-jump").val()
+            self.jumpPage = (_, el) ->
+                targetPage = el.currentTarget.value
                 window.location.hash = "#/page/#{targetPage}/"
 
             self.preload = ->
