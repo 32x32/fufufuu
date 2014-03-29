@@ -1,5 +1,5 @@
 <div class="manga-controls">
-    <select id="m-page-jump" data-bind="event: { change: jumpPage }, value: pageNum()">
+    <select id="m-page-jump" data-bind="event: { change: jumpPage }, value: pageNum()" class="space-right-10">
         {% for i in range(1, manga.mangapage_set.count() + 1) %}
             <option value="{{ i }}">{% trans %}Page {{ i }}{% endtrans %}</option>
         {% endfor %}
@@ -12,7 +12,7 @@
         </select>
     {% endif %}
     {% if collection_list %}
-        <select class="space-right-10 m-chapter-jump">
+        <select class="m-chapter-jump">
             {% for manga_ in collection_list %}
                 <option value="{{ url('manga', args=[manga_.id, manga_.slug]) }}"{% if manga_.id == manga_.id %} selected{% endif %}>{% trans number=manga_.collection_part %}Part {{ number }}{% endtrans %}</option>
             {% endfor %}
