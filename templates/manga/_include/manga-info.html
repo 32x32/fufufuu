@@ -1,0 +1,89 @@
+{% import '_macros/widgets.html' as widgets with context %}
+{% import '_macros/forms.html' as forms with context %}
+
+{% macro tag_widget(tag_list, title) %}
+    {% if tag_list %}
+        <tr>
+            <td width="100"><label class="label-normalized">{{ title }}</label></td>
+            <td>
+                <div class="manga-info-tag-list">
+                    {% for tag in tag_list %}
+                        <a href="{{ url('tag', args=[tag.id, tag.slug]) }}" class="manga-info-tag-item">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+{% endmacro %}
+
+<div class="manga-info">
+    <div class="manga-info-section">
+        {% if manga.created_by %}
+            <a href="{{ url('user', args=[manga.created_by.username]) }}">
+                <span class="left space-right-10">{{ widgets.user_avatar(manga.created_by) }}</span>
+                <strong>{{ manga.created_by }}</strong>
+                <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
+                <div class="clear"></div>
+            </a>
+        {% else %}
+            <div>
+                <span class="left space-right-10">
+                    <img src="{{ STATIC_URL }}images/no-avatar.png" class="account-avatar">
+                </span>
+                <strong>[---- {% trans %}User Deleted{% endtrans %} ----]</strong>
+                <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
+                <div class="clear"></div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="manga-info-section markdown">
+        {% if manga.markdown %}
+            {{ manga.html }}
+        {% else %}
+            <p>{% trans %}No Description Available{% endtrans %}</p>
+        {% endif %}
+    </div>
+    <div class="min-lg">{% include 'manga/_include/manga-controls.html' %}</div>
+    <table class="manga-info-table">
+        {{ tag_widget(manga.tag_dictionary.SCANLATOR, gettext('Scanlators')) }}
+        {{ tag_widget(manga.tag_dictionary.AUTHOR, gettext('Authors')) }}
+        {{ tag_widget(manga.tag_dictionary.CIRCLE, gettext('Circles')) }}
+        {{ tag_widget(manga.tag_dictionary.CONTENT, gettext('Content')) }}
+        {{ tag_widget(manga.tag_dictionary.EVENT, gettext('Event')) }}
+        {{ tag_widget(manga.tag_dictionary.MAGAZINE, gettext('Magazine')) }}
+        {{ tag_widget(manga.tag_dictionary.PARODY, gettext('Parody')) }}
+        {% if manga.tank_id %}
+            <tr>
+                <td width="100"><label class="label-normalized">{% trans %}Tank{% endtrans %}</label></td>
+                {% with tag = manga.tank %}
+                    <td>
+                        <div class="inline-block space-right-10">
+                            <div class="manga-info-tag-list"><a href="{{ url('tag', args=[tag.id, tag.slug]) }}" class="manga-info-tag-item">{{ tag.name }}</a></div>
+                        </div>
+                        <span class="inline-block text-xsmall text-normalized">{% trans number=manga.tank_chapter %}Chapter {{ number }}{% endtrans %}</span>
+                    </td>
+                {% endwith %}
+            </tr>
+        {% endif %}
+        {% if manga.collection_id %}
+            <tr>
+                <td width="100"><label class="label-normalized">{% trans %}Collection{% endtrans %}</label></td>
+                {% with tag = manga.collection %}
+                    <td>
+                        <div class="inline-block space-right-10">
+                            <div class="manga-info-tag-list"><a href="{{ url('tag', args=[tag.id, tag.slug]) }}" class="manga-info-tag-item">{{ tag.name }}</a></div>
+                        </div>
+                        <span class="inline-block text-xsmall text-normalized">{% trans number=manga.collection_part %}Part {{ number }}{% endtrans %}</span>
+                    </td>
+                {% endwith %}
+            </tr>
+        {% endif %}
+    </table>
+    <form action="{{ url('manga.download', args=[manga.id, manga.slug]) }}" method="post">
+        {{ forms.csrf_input() }}
+        <button class="btn btn-warning btn-block manga-info-cover-action">
+            <span class="icon icon-down-circled space-right"></span>
+            <span>{% trans %}Download{% endtrans %} ({{ archive.file.size|filesizeformat }})</span>
+        </button>
+    </form>
+</div>

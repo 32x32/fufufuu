@@ -67,10 +67,9 @@ class FufufuuTestSuiteRunner(DiscoverRunner):
 class BaseTestCase(TestCase):
 
     def setUp(self):
-        cache.clear()
-        settings.DEBUG = False
-
         super().setUp()
+
+        cache.clear()
 
         User.set_password = fast_set_password
         User.check_password = fast_check_password

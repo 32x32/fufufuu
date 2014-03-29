@@ -39,6 +39,10 @@
         {% endif %}
     </div>
     <div class="m-nav-main">
+        <a class="max-lg{% if request.path != url_manga %} disabled{% endif %}" id="m-nav-info-toggle">
+            <span class="icon icon-info-circled"></span>
+            <span class="min-xs">{% trans %}Info{% endtrans %}</span>
+        </a>
         {{ manga_nav_item(request, url_manga, 'icon-docs', gettext('Read')) }}
         {{ manga_nav_item(request, url_manga_thumbnails, 'icon-sweden', gettext('Thumbs')) }}
         {% if manga.status == 'PUBLISHED' %}

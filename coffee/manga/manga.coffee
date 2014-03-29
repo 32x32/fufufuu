@@ -125,4 +125,13 @@ $ ->
                 window.location = mangaModelView.nextUrl()
             return
 
+        #-----------------------------------------------------------------------
+        # info menu
+        #-----------------------------------------------------------------------
+
+        $('#m-nav-info-toggle').click ->
+            $(this).toggleClass('active')
+            $('.manga-info').toggleClass('active')
+            $('.manga-container').toggleClass('active')
+
         return

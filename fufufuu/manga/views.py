@@ -112,7 +112,15 @@ class MangaView(TemplateView):
         if manga.collection_id:
             context['collection_list'] = Manga.published.filter(collection_id=manga.collection_id).order_by('collection_part')
 
+        try:
+            archive = MangaArchive.objects.get(manga=manga)
+        except MangaArchive.DoesNotExist:
+            archive = generate_manga_archive(manga)
+        if not os.path.exists(archive.file.path):
+            archive = generate_manga_archive(manga)
+
         context.update({
+            'archive': archive,
             'manga': manga,
             'payload': payload,
         })
