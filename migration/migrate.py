@@ -312,7 +312,7 @@ class Migrator(object):
         cursor.execute("select setval('manga_id_seq', max(id)) from manga;")
         cursor.execute("select setval('manga_page_id_seq', max(id)) from manga_page;")
         cursor.execute("select setval('tag_id_seq', max(id)) from tag;")
-        cursor.execute("select setval('user_id_seq', max(id)) from user;")
+        cursor.execute("select setval('user_id_seq', max(id)) from \"user\";")
         logger.debug('migrate_sequence finished'.ljust(80, '-'))
 
     def run(self):
