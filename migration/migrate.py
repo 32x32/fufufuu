@@ -15,6 +15,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db import connection
 from django.db.models.aggregates import Max
 from django.utils.html import urlize
 from fufufuu.account.models import User
@@ -31,7 +32,7 @@ from fufufuu.tag.models import Tag
 #-------------------------------------------------------------------------------
 
 CHUNK_SIZE = 1000
-OLD_MEDIA_ROOT = '/home/derekkwok/media/'
+OLD_MEDIA_ROOT = '/var/www/fufufuu2/media/'
 CONNECTION_STRING = 'postgresql://derekkwok:password@localhost/fufufuu_old'
 
 SQL_ENGINE = create_engine(CONNECTION_STRING)
@@ -275,7 +276,6 @@ class Migrator(object):
         manga_favorites_list = []
         for old_manga_favorites in old_manga_favorites_list:
             manga_favorites_list.append(MangaFavorite(
-                id=old_manga_favorites.id,
                 manga_id=old_manga_favorites.manga_id,
                 user_id=old_manga_favorites.user_id,
             ))
@@ -286,7 +286,6 @@ class Migrator(object):
         manga_tag_list = []
         for old_manga_tag in old_manga_tag_list:
             manga_tag_list.append(MangaTag(
-                id=old_manga_tag.id,
                 manga_id=old_manga_tag.manga_id,
                 tag_id=old_manga_tag.tag_id,
             ))
@@ -306,6 +305,16 @@ class Migrator(object):
             ))
         MangaPage.objects.bulk_create(manga_page_list)
 
+    def migrate_sequences(self):
+        logger.debug('migrate_sequence started'.ljust(80, '-'))
+        cursor = connection.cursor()
+        cursor.execute("select setval('comment_id_seq', max(id)) from comment;")
+        cursor.execute("select setval('manga_id_seq', max(id)) from manga;")
+        cursor.execute("select setval('manga_page_id_seq', max(id)) from manga_page;")
+        cursor.execute("select setval('tag_id_seq', max(id)) from tag;")
+        cursor.execute("select setval('user_id_seq', max(id)) from user;")
+        logger.debug('migrate_sequence finished'.ljust(80, '-'))
+
     def run(self):
         self.migrate_users()
         self.user = User.objects.get(username='ParadigmShift')
@@ -317,6 +326,7 @@ class Migrator(object):
         self.migrate_manga_favorites()
         self.migrate_manga_tags()
         self.migrate_manga_pages()
+        self.migrate_sequences()
 
 
 if __name__ == '__main__':

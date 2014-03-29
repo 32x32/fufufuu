@@ -41,7 +41,7 @@ def production():
     use fufufuu as host (note: this is production)
     """
 
-    env.hosts = ['fufufuu3']
+    env.hosts = ['fufufuu-beta']
     env.config = 'production'
 
 #-------------------------------------------------------------------------------
@@ -60,20 +60,22 @@ def virtualenv():
 
 def install_python():
     """
-    builds and installs python 3.3.4
+    builds and installs python
     """
 
-    run('wget http://legacy.python.org/ftp//python/3.3.4/Python-3.3.4.tgz')
-    run('tar xvf ./Python-3.3.4.tgz')
-    with cd('./Python-3.3.4'):
+    VERSION = '3.3.5'
+
+    run('wget http://legacy.python.org/ftp//python/{VERSION}/Python-{VERSION}.tgz'.format(VERSION=VERSION))
+    run('tar xvf ./Python-{VERSION}.tgz'.format(VERSION=VERSION))
+    with cd('./Python-{VERSION}'.format(VERSION=VERSION)):
         sudo('rm -fr /opt/python3.3')
         run('./configure --prefix=/opt/python3.3 --with-bz2')
         run('make')
         sudo('make install')
         sudo('rm -f /usr/local/bin/python3.3')
         sudo('ln -s /opt/python3.3/bin/python3.3 /usr/local/bin/python3.3')
-    sudo('rm -f Python-3.3.4.tgz')
-    sudo('rm -fr Python-3.3.4')
+    sudo('rm -f Python-{VERSION}.tgz'.format(VERSION=VERSION))
+    sudo('rm -fr Python-{VERSION}'.format(VERSION=VERSION))
 
 
 def install_elasticsearch():
