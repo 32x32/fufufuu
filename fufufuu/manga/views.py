@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 
 from fufufuu.core.response import HttpResponseXAccel
-from fufufuu.core.utils import paginate, get_ip_address
+from fufufuu.core.utils import paginate, get_ip_address, natural_sort
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
@@ -107,10 +107,12 @@ class MangaView(TemplateView):
         payload = self.get_payload(manga)
 
         if manga.tank_id:
-            context['chapter_list'] = Manga.published.filter(tank_id=manga.tank_id).order_by('tank_chapter')
+            manga_list = Manga.published.filter(tank_id=manga.tank_id)
+            context['chapter_list'] = natural_sort(manga_list, 'tank_chapter')
 
         if manga.collection_id:
-            context['collection_list'] = Manga.published.filter(collection_id=manga.collection_id).order_by('collection_part')
+            manga_list = Manga.published.filter(collection_id=manga.collection_id)
+            context['collection_list'] = natural_sort(manga_list, 'collection_part')
 
         try:
             archive = MangaArchive.objects.get(manga=manga)

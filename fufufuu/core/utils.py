@@ -1,3 +1,5 @@
+import re
+
 from PIL import Image
 from django.core.mail.message import EmailMultiAlternatives
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, Page
@@ -118,3 +120,14 @@ def email_alert(subject, template, context):
     )
     email.attach_alternative(TEMPLATE_ENV.get_template(template).render(context), 'text/html')
     email.send(fail_silently=True)
+
+
+def natural_sort(l, key_attr):
+    """
+    sort a list in the way humans expect
+    http://stackoverflow.com/questions/4836710/does-python-have-a-built-in-function-for-string-natural-sort
+    """
+
+    convert = lambda text: int(text) if text.isdigit() else text.lower()
+    key = lambda item: [convert(c) for c in re.split('([0-9]+)', getattr(item, key_attr))]
+    return sorted(l, key=key)

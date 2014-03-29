@@ -1,3 +1,4 @@
+from itertools import permutations
 import os
 import shutil
 import sys
@@ -17,7 +18,7 @@ from fufufuu import settings
 from fufufuu.account.models import User
 from fufufuu.core.filters import exclude_keys
 from fufufuu.core.models import DeletedFile
-from fufufuu.core.utils import slugify, convert_markdown
+from fufufuu.core.utils import slugify, convert_markdown, natural_sort
 from fufufuu.datacreator import DataCreator
 from fufufuu.manga.models import Manga
 from fufufuu.settings import BASE_DIR
@@ -105,6 +106,23 @@ class CoreUtilTests(BaseTestCase):
     def test_slugify(self):
         self.assertEqual(slugify('北京'), 'bei-jing')
         self.assertEqual(slugify('~'), '')
+
+    def test_natural_sort(self):
+        class TestObj:
+            def __init__(self, value): self.value = value
+
+        expected_list = [
+            TestObj('5'),
+            TestObj('007'),
+            TestObj('08'),
+            TestObj('9'),
+            TestObj('10'),
+            TestObj('011'),
+            TestObj('12'),
+        ]
+
+        for test_list in permutations(expected_list):
+            self.assertEqual(natural_sort(test_list, 'value'), expected_list)
 
 
 class CoreManagementTests(BaseTestCase):
