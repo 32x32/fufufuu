@@ -1,7 +1,15 @@
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+
 from fufufuu.account.models import User
+
+
+class CommentManager(models.Manager):
+
+    def filter_content_object(self, content_object):
+        content_type = ContentType.objects.get_for_model(content_object)
+        return self.get_queryset().filter(content_type=content_type, object_id=content_object.id)
 
 
 class Comment(models.Model):
@@ -18,6 +26,8 @@ class Comment(models.Model):
 
     created_by      = models.ForeignKey(User, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
     created_on      = models.DateTimeField(auto_now_add=True)
+
+    objects         = CommentManager()
 
     class Meta:
         db_table = 'comment'

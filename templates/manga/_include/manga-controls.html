@@ -1,6 +1,6 @@
 <div class="manga-controls">
     <select data-bind="event: { change: jumpPage }, value: pageNum()" class="m-page-jump space-right-10">
-        {% for i in range(1, manga.mangapage_set.count() + 1) %}
+        {% for i in range(1, page_count + 1) %}
             <option value="{{ i }}">{% trans %}Page {{ i }}{% endtrans %}</option>
         {% endfor %}
     </select>

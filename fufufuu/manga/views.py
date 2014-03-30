@@ -8,6 +8,7 @@ from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
+from fufufuu.comment.models import Comment
 
 from fufufuu.core.response import HttpResponseXAccel
 from fufufuu.core.utils import paginate, get_ip_address, natural_sort
@@ -82,13 +83,13 @@ class MangaView(TemplateView):
 
     template_name = 'manga/manga.html'
 
-    def get_payload(self, manga):
+    def get_payload(self, manga_page_list):
         """
         returns a base 64 encoded json dump of the data needed for manga page
         """
 
         page_list = []
-        for page in manga.mangapage_set.order_by('page'):
+        for page in manga_page_list:
             key_type = page.double and ImageKeyType.MANGA_PAGE_DOUBLE or ImageKeyType.MANGA_PAGE
             page_list.append({
                 'double': page.double,
@@ -104,7 +105,9 @@ class MangaView(TemplateView):
     def get(self, request, id, slug):
         context = {}
         manga = get_object_or_404(Manga.published, id=id)
-        payload = self.get_payload(manga)
+
+        manga_page_list = list(manga.mangapage_set.order_by('page'))
+        payload = self.get_payload(manga_page_list)
 
         if manga.tank_id:
             manga_list = Manga.published.filter(tank_id=manga.tank_id)
@@ -121,9 +124,12 @@ class MangaView(TemplateView):
         if not os.path.exists(archive.file.path):
             archive = generate_manga_archive(manga)
 
+        comment_list = Comment.objects.filter_content_object(manga).order_by('-created_on')
         context.update({
             'archive': archive,
+            'comment_list': comment_list,
             'manga': manga,
+            'page_count': len(manga_page_list),
             'payload': payload,
         })
         return self.render_to_response(context)
