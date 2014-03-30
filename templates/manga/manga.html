@@ -9,7 +9,7 @@
         <div class="manga-main" data-bind="css: { double: double() }">
             <a id="manga-prev-page" data-bind="attr: { href: prevUrl() }"></a>
             <a id="manga-next-page" data-bind="attr: { href: nextUrl() }"></a>
-            <div data-bind="html: image()"></div>
+            <div data-bind="html: image()" class="manga-image-container"></div>
         </div>
     </div>
     {% include 'manga/_include/manga-info.html' %}

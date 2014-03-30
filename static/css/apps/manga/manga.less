@@ -46,6 +46,11 @@
     }
 
 }
+.manga-info-table-label {
+    font-size: 14px;
+    line-height: 24px;
+    vertical-align: top;
+}
 
 .manga-info-tag-list {
     margin: -3px;
@@ -85,8 +90,11 @@
     }
 }
 
+.manga-image-container {
+    min-height: 200px;
+}
+
 .manga-image {
-    .inline-block();
     border: 1px solid #ddd;
     width: auto;
 }
@@ -123,6 +131,16 @@
 /* --------------------------------------------------
     manga responsive design
 ---------------------------------------------------*/
+
+@media screen and (min-width: @screen-lg) {
+    .manga-container {
+        max-width: ~"calc(100% - 310px)";
+    }
+}
+
+@media screen and (min-width: @manga-width) {
+    .manga-container { min-width: @manga-width; }
+}
 
 @media screen and (min-width: @screen-md) and (max-width: @screen-lg1) {
     .manga-info {

@@ -4,7 +4,7 @@
 {% macro tag_widget(tag_list, title) %}
     {% if tag_list %}
         <tr>
-            <td width="100"><label class="label-normalized">{{ title }}</label></td>
+            <td width="100" class="manga-info-table-label">{{ title }}</td>
             <td>
                 <div class="manga-info-tag-list">
                     {% for tag in tag_list %}
@@ -54,7 +54,7 @@
         {{ tag_widget(manga.tag_dictionary.PARODY, gettext('Parody')) }}
         {% if manga.tank_id %}
             <tr>
-                <td width="100"><label class="label-normalized">{% trans %}Tank{% endtrans %}</label></td>
+                <td width="100" class="manga-info-table-label">{% trans %}Tank{% endtrans %}</td>
                 {% with tag = manga.tank %}
                     <td>
                         <div class="inline-block space-right-10">
@@ -66,7 +66,7 @@
         {% endif %}
         {% if manga.collection_id %}
             <tr>
-                <td width="100"><label class="label-normalized">{% trans %}Collection{% endtrans %}</label></td>
+                <td width="100" class="manga-info-table-label">{% trans %}Collection{% endtrans %}</td>
                 {% with tag = manga.collection %}
                     <td>
                         <div class="inline-block space-right-10">
