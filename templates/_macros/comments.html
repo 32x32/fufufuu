@@ -1,0 +1,30 @@
+{% import '_macros/forms.html' as forms with context %}
+{% import '_macros/widgets.html' as widgets with context %}
+
+{% macro comments_widget(content_object) %}
+    {% set comment_list = content_object|comment_list %}
+    <h2>{% trans count=comment_list|length %}{{ count }} comments{% endtrans %}</h2>
+    {% if user.is_authenticated() %}
+        <form action="#" method="post">
+            {{ forms.csrf_input() }}
+            <input type="hidden" name="content_type" id="id_content_type" value="">
+            <input type="hidden" name="object_id" id="id_object_id" value="{{ content_object.id }}">
+            <div class="left">
+                {% if user and user.avatar %}
+                    <img src="{{ user.avatar_url }}" alt="{{ user.username }}" class="comment-form-account-avatar">
+                {% else %}
+                    <img src="{{ STATIC_URL }}images/no-avatar.png" alt="{{ user.username }}" class="comment-form-account-avatar">
+                {% endif %}
+            </div>
+            <textarea name="markdown" class="comment-textarea" rows=""></textarea>
+            <div class="form-field space-top-10">
+                <button class="btn btn-primary">{% trans %}Post Comment{% endtrans %}</button>
+            </div>
+        </form>
+    {% else %}
+
+    {% endif %}
+    {% for comment in comment_list %}
+
+    {% endfor %}
+{% endmacro %}

@@ -1,4 +1,5 @@
 {% extends 'manga/manga-base.html' %}
+{% import '_macros/comments.html' as comments with context %}
 {% import '_macros/widgets.html' as widgets with context %}
 
 {% block title %}{{ manga.title }}{% endblock %}
@@ -10,6 +11,10 @@
             <a id="manga-prev-page" data-bind="attr: { href: prevUrl() }"></a>
             <a id="manga-next-page" data-bind="attr: { href: nextUrl() }"></a>
             <div data-bind="html: image()" class="manga-image-container"></div>
+        </div>
+        <div class="manga-comments">
+            <hr>
+            {{ comments.comments_widget(manga) }}
         </div>
     </div>
     {% include 'manga/_include/manga-info.html' %}
