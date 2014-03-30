@@ -59,8 +59,6 @@ class SiteSetting(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
 
-    revision_field_list = ['key', 'val']
-
     class Meta:
         db_table = 'site_setting'
 

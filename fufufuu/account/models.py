@@ -32,9 +32,10 @@ class User(AbstractBaseUser):
     is_active           = models.BooleanField(default=True)
 
     # 24 hour limits
-    revision_limit      = models.IntegerField(default=10)
+    comment_limit       = models.IntegerField(default=30)
+    edit_limit          = models.IntegerField(default=30)
+    report_limit        = models.IntegerField(default=30)
     upload_limit        = models.IntegerField(default=10)
-    comment_limit       = models.IntegerField(default=100)
 
     created_on          = models.DateTimeField(auto_now_add=True)
     updated_on          = models.DateTimeField(auto_now=True)

@@ -33,7 +33,7 @@ class Migration(SchemaMigration):
 
     models = {
         'image.image': {
-            'Meta': {'db_table': "'image'", 'unique_together': "[('key_type', 'key_id')]", 'object_name': 'Image'},
+            'Meta': {'db_table': "'image'", 'object_name': 'Image', 'unique_together': "[('key_type', 'key_id')]"},
             'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'file': ('django.db.models.fields.files.FileField', [], {'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
