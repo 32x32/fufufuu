@@ -2,9 +2,9 @@
 {% import '_macros/widgets.html' as widgets with context %}
 
 {% macro comments_widget(content_object) %}
+    <h2>{% trans count=comment_list|length %}{{ count }} comments{% endtrans %}</h2>
     {% set comment_list = content_object|get_comment_list %}
     {% set comment_form = content_object|get_comment_form %}
-    <h2>{% trans count=comment_list|length %}{{ count }} comments{% endtrans %}</h2>
     {% if user.is_authenticated() %}
         <form action="{{ url('comment.post') }}" method="post">
             {{ forms.csrf_input() }}
@@ -27,7 +27,20 @@
     {% else %}
         <p><a href="{{ url('account.login') }}">{% trans %}Please login or create an account to post a comment.{% endtrans %}</a></p>
     {% endif %}
+    <hr>
     {% for comment in comment_list %}
-
+        <div class="comment-block">
+            <span class="left space-right-10">{{ widgets.user_avatar(comment.created_by) }}</span>
+            <div class="comment-main">
+                <div>
+                    <a href="{{ url('user', args=[comment.created_by.username]) }}"><strong class="text-small">{{ comment.created_by.username }}</strong></a>
+                    <span class="icon icon-dot text-small text-secondary"></span>
+                    <span class="text-secondary text-small">{{ comment.created_on|naturaltime }}</span>
+                </div>
+                {{ comment.html }}
+            </div>
+        </div>
+    {% else %}
+        <p>{% trans %}There are no comments here yet.{% endtrans %}</p>
     {% endfor %}
 {% endmacro %}
