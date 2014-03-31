@@ -17,6 +17,18 @@ IMAGE_FORMAT_EXTENSION = {
     'JPEG': 'jpg',
 }
 
+class MarkdownExtension(markdown.Extension):
+    """
+    Taken from http://blog.magicalhobo.com/2011/05/05/disabling-images-in-python-markdown/
+    """
+
+    def extendMarkdown(self, md, md_globals):
+        del md.inlinePatterns['image_link']
+        del md.inlinePatterns['image_reference']
+
+
+markdown_extension = MarkdownExtension()
+
 
 def slugify(s):
     """
@@ -64,7 +76,6 @@ def get_image_extension(f):
     return IMAGE_FORMAT_EXTENSION.get(im.format, 'unknown')
 
 
-
 def get_object_or_none(klass, *args, **kwargs):
     """
     This function is equivalent to django's get_object_or_404. None is returned
@@ -98,7 +109,7 @@ def convert_markdown(markdown_text):
     if not markdown_text:
         return ''
 
-    html = markdown.markdown(markdown_text, safe_mode='escape').strip()
+    html = markdown.markdown(markdown_text, [markdown_extension], safe_mode='escape').strip()
     return html
 
 

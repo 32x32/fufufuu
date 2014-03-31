@@ -7,13 +7,13 @@
         <div class="panel">
             <h4 class="panel-heading">{% trans %}Markdown Playground{% endtrans %}</h4>
             <div class="panel-body">
-                <p>{% trans %}Welcome to the markdown playground. Try out what you can do with markdown here!{% endtrans %}</p>
+                <p><a href="http://en.wikipedia.org/wiki/Markdown" target="_blank">{% trans %}What is Markdown?{% endtrans %}</a></p>
+                <p class="space-bottom-0">{% trans %}Markdown is used throughout this site for commenting, writing descriptions, editing tags and much more.{% endtrans %}</p>
+                <p>{% trans %}Try out what you can do with markdown below!{% endtrans %}</p>
             </div>
         </div>
-        <hr>
         <div class="half-wrapper">
             <div class="half half-sm">
-                <label>{% trans %}Input{% endtrans %}</label>
                 <textarea id="markdown-playground" rows="40">みなさん、こんにちは
 
 # H1 Heading
@@ -25,9 +25,7 @@
 
 ---
 
-[Link to Fufufuu](https://www.wikipedia.org/)
-
-![Picture of a cat giving thumbs up!](/static/images/test.jpg)
+[Link to Fufufuu](https://fufufuu.net/)
 
 This is a simple paragraph.
 
@@ -53,7 +51,6 @@ Below is a code block:
 <script type="text/javascript">alert('hello world!');</script></textarea>
             </div>
             <div class="half half-sm">
-                <label>{% trans %}Output{% endtrans %}</label>
                 <div class="markdown markdown-preview" data-for="markdown-playground"></div>
             </div>
         </div>

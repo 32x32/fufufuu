@@ -125,6 +125,22 @@ class CoreUtilTests(BaseTestCase):
         for test_list in permutations(expected_list):
             self.assertEqual(natural_sort(test_list, 'value'), expected_list)
 
+    def test_convert_markdown_empty(self):
+        self.assertEqual(convert_markdown('   '), '')
+
+    def test_convert_markdown_simple(self):
+        self.assertEqual(convert_markdown('abc'), '<p>abc</p>')
+
+    def test_convert_markdown_raw_html(self):
+        markdown = '<script type="text/javascript>alert("woops!");</script>'
+        expected_html = '<p>&lt;script type="text/javascript&gt;alert("woops!");&lt;/script&gt;</p>'
+        self.assertEqual(convert_markdown(markdown), expected_html)
+
+    def test_convert_markdown_images(self):
+        markdown = '![Google Logo](http://localhost:8000/static/images/no-avatar.png)'
+        expected_html = '<p>![Google Logo](http://localhost:8000/static/images/no-avatar.png)</p>'
+        self.assertEqual(convert_markdown(markdown), expected_html)
+
 
 class CoreManagementTests(BaseTestCase):
 
@@ -179,14 +195,3 @@ class CoreFilterTests(BaseTestCase):
     def test_exclude_keys_long_names(self):
         qd = QueryDict('abc=1&page=2')
         self.assertEqual(exclude_keys(qd, 'page'), QueryDict('abc=1'))
-
-    def test_convert_markdown_empty(self):
-        self.assertEqual(convert_markdown('   '), '')
-
-    def test_convert_markdown_simple(self):
-        self.assertEqual(convert_markdown('abc'), '<p>abc</p>')
-
-    def test_convert_markdown_raw_html(self):
-        raw_html = '<script type="text/javascript>alert("woops!");</script>'
-        output_html = '<p>&lt;script type="text/javascript&gt;alert("woops!");&lt;/script&gt;</p>'
-        self.assertEqual(convert_markdown(raw_html), output_html)
