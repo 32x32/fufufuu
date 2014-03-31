@@ -98,7 +98,7 @@ def convert_markdown(markdown_text):
     if not markdown_text:
         return ''
 
-    html = markdown.markdown(markdown_text, safe_mode='escape')
+    html = markdown.markdown(markdown_text, safe_mode='escape').strip()
     return html
 
 

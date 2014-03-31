@@ -8,7 +8,7 @@ from jinja2.environment import Environment
 from jinja2.ext import Extension
 from jinja2.loaders import FileSystemLoader
 
-from fufufuu.comment.filters import comment_list
+from fufufuu.comment.filters import get_comment_list, get_comment_form
 from fufufuu.core.filters import exclude_keys, startswith, language_display
 from fufufuu.manga.filters import manga_category_display, manga_status_display
 from fufufuu.tag.filters import tag_type_display
@@ -65,8 +65,9 @@ TEMPLATE_ENV.globals.update(**{
     'url':                      reverse,
 })
 TEMPLATE_ENV.filters.update(**{
-    'comment_list':             comment_list,
     'exclude_keys':             exclude_keys,
+    'get_comment_form':         get_comment_form,
+    'get_comment_list':         get_comment_list,
     'language_display':         language_display,
     'manga_category_display':   manga_category_display,
     'manga_status_display':     manga_status_display,
