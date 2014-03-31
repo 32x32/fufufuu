@@ -24,7 +24,7 @@
             {% block content_upper %}{% endblock %}
             {% include '_include/messages.html' %}
             {% block content %}{% endblock %}
-            {% include '_include/footer.html' %}
+            {% block footer %}{% include '_include/footer.html' %}{% endblock %}
         </div>
     {% endblock %}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
