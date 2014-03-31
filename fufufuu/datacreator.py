@@ -1,4 +1,8 @@
-import argparse, datetime, os, random, sys
+import argparse
+import datetime
+import os
+import random
+import sys
 from collections import defaultdict
 
 PROJECT_PATH = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
@@ -6,6 +10,9 @@ sys.path.append(PROJECT_PATH)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
 
 from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.webdesign import lorem_ipsum
+from fufufuu.comment.models import Comment
 from fufufuu.account.models import User
 from fufufuu.core.languages import Language
 from fufufuu.core.enums import SiteSettingKey
@@ -20,11 +27,13 @@ from fufufuu.tag.models import Tag, TagData, TagAlias
 
 CONFIGURATION = {
     'default': {
+        'COMMENTS': lambda: random.choice([0, 0, 0, 0, 0, 1, 2, 3]),
         'MANGA': 3000,
         'TAGS': 600,
         'USERS': 5,
     },
     'test': {
+        'COMMENTS': lambda: 1,
         'MANGA': 1,
         'TAGS': 1,
         'USERS': 1,
@@ -173,8 +182,25 @@ class DataCreator:
                 manga=manga,
                 page=1,
                 name='001.jpg',
-                ))
+            ))
         MangaPage.objects.bulk_create(manga_page_list)
+
+    @timed
+    def create_comments(self):
+        user_list = User.objects.all()
+        comment_list = []
+        for manga in Manga.published.all():
+            for i in range(self.config['COMMENTS']()):
+                comment = lorem_ipsum.words(random.randint(1, 15), common=False)
+                comment_list.append(Comment(
+                    content_type=ContentType.objects.get_for_model(manga),
+                    object_id=manga.id,
+                    markdown=comment,
+                    html='<p>{}</p>'.format(comment),
+                    created_by=random.choice(user_list),
+                ))
+
+        Comment.objects.bulk_create(comment_list)
 
     @timed
     def create_settings(self):
@@ -197,6 +223,7 @@ class DataCreator:
         self.create_manga()
         self.create_manga_tags()
         self.create_manga_pages()
+        self.create_comments()
         self.create_settings()
 
         finish = datetime.datetime.now()

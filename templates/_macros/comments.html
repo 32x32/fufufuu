@@ -36,9 +36,18 @@
                     <a href="{{ url('user', args=[comment.created_by.username]) }}"><strong class="text-small">{{ comment.created_by.username }}</strong></a>
                     <span class="icon icon-dot text-small text-secondary"></span>
                     <span class="text-secondary text-small">{{ comment.created_on|naturaltime }}</span>
+                    {% if comment.created_by == user or user.is_moderator %}
+                        <span class="icon icon-dot text-small text-secondary"></span>
+                        <form action="{{ url('comment.delete', args=[comment.id]) }}" method="post" class="inline">
+                            {{ forms.csrf_input() }}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <a class="submit-link text-danger text-small">{% trans %}Delete{% endtrans %}</a>
+                        </form>
+                    {% endif %}
                 </div>
                 {{ comment.html }}
             </div>
+            <div class="clear"></div>
         </div>
     {% else %}
         <p>{% trans %}There are no comments here yet.{% endtrans %}</p>

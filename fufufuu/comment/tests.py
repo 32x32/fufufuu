@@ -37,6 +37,46 @@ class CommentPostViewTests(BaseTestCase):
         self.assertEqual(comment.created_by, self.user)
 
 
+class CommentDeleteViewTests(BaseTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.comment = Comment.objects.all()[0]
+
+    def test_comment_delete_view_get(self):
+        response = self.client.get(reverse('comment.delete', args=[self.comment.id]))
+        self.assertRedirects(response, reverse('manga.list'))
+
+    def test_comment_delete_view_post_owner(self):
+        self.comment.created_by = self.user
+        self.comment.save()
+
+        response = self.client.post(reverse('comment.delete', args=[self.comment.id]))
+        self.assertRedirects(response, reverse('manga.list'))
+        self.assertFalse(Comment.objects.filter(id=self.comment.id).exists())
+
+    def test_comment_delete_view_post_not_moderator(self):
+        user = self.create_test_user('testuser2')
+        self.comment.created_by = user
+        self.comment.save()
+
+        self.user.is_moderator = False
+        self.user.save()
+
+        response = self.client.post(reverse('comment.delete', args=[self.comment.id]))
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(Comment.objects.filter(id=self.comment.id).exists())
+
+    def test_comment_delete_view_post_moderator(self):
+        user = self.create_test_user('testuser2')
+        self.comment.created_by = user
+        self.comment.save()
+
+        response = self.client.post(reverse('comment.delete', args=[self.comment.id]))
+        self.assertRedirects(response, reverse('manga.list'))
+        self.assertFalse(Comment.objects.filter(id=self.comment.id).exists())
+
+
 class CommentFormTests(BaseTestCase):
 
     def test_comment_form_init(self):
