@@ -91,7 +91,7 @@
 }
 
 .manga-image-container {
-    min-height: 200px;
+    min-height: 300px;
 }
 
 .manga-image {
@@ -152,7 +152,7 @@
     .manga-container { min-width: @manga-width; }
 }
 
-@media screen and (min-width: @screen-md) and (max-width: @screen-lg1) {
+@media screen and (min-width: @screen-sm) and (max-width: @screen-lg1) {
     .manga-info {
         position: absolute;
         top: 5px;
@@ -172,30 +172,7 @@
     }
 }
 
-@media screen and (min-width: @screen-xs) and (max-width: @screen-md1) {
-    .manga-info {
-        position: absolute;
-        top: 5px;
-        .transition(300ms ease all);
-        .transform(translate3d(-310px, 0, 0));
-        &.active {
-            .transform(translate3d(0, 0, 0));
-        }
-    }
-    .manga-container {
-        display: block;
-        padding: 5px;
-        width: 100%;
-
-        .transition(300ms ease all);
-        .transform(translate3d(0, 0, 0));
-        &.active {
-            .transform(translate3d(310px, 0, 0));
-        }
-    }
-}
-
-@media screen and (max-width: @screen-xs1) {
+@media screen and (max-width: @screen-sm1) {
     .manga-info {
         padding: 5px 10px;
         width: 100%;
