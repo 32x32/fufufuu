@@ -5,18 +5,20 @@
 {% block title %}{{ manga.title }}{% endblock %}
 
 {% block content %}
-    <div class="manga-container">
-        <div class="max-lg">{% include 'manga/_include/manga-controls.html' %}</div>
-        <div class="manga-main" data-bind="css: { double: double() }">
-            <a id="manga-prev-page" data-bind="attr: { href: prevUrl() }"></a>
-            <a id="manga-next-page" data-bind="attr: { href: nextUrl() }"></a>
-            <div data-bind="html: image()" class="manga-image-container"></div>
+    <div id="manga-page-container">
+        <div class="manga-container">
+            <div class="max-lg">{% include 'manga/_include/manga-controls.html' %}</div>
+            <div class="manga-main" data-bind="css: { double: double() }">
+                <a id="manga-prev-page" data-bind="attr: { href: prevUrl() }"></a>
+                <a id="manga-next-page" data-bind="attr: { href: nextUrl() }"></a>
+                <div data-bind="html: image()" class="manga-image-container"></div>
+            </div>
+            <div class="manga-comments">
+                <hr>
+                {{ comments.comments_widget(manga) }}
+            </div>
         </div>
-        <div class="manga-comments">
-            <hr>
-            {{ comments.comments_widget(manga) }}
-        </div>
+        {% include 'manga/_include/manga-info.html' %}
     </div>
-    {% include 'manga/_include/manga-info.html' %}
     <div id="payload" class="none">{{ payload }}</div>
 {% endblock %}
