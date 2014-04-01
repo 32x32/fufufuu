@@ -23,10 +23,10 @@ class ReportMangaType:
     OTHER       = 'OTHER'
 
     choices = (
+        (REPOST,        _('Repost')),
         (COPYRIGHT,     _('Copyright Infringement')),
         (CP,            _('Child Pornography')),
-        (REPOST,        _('Repost')),
-        (UNFIT,         _('Unfit Content for Fufufuu')),
+        (UNFIT,         _('Inappropriate Content for Fufufuu')),
         (OTHER,         _('Other')),
     )
 

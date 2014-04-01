@@ -1,21 +1,32 @@
 from captcha.fields import CaptchaField
 from django import forms
-from fufufuu.report.enums import ReportMangaType
+from django.utils.translation import ugettext_lazy as _
 
+from fufufuu.core.forms import BlankLabelSuffixMixin
+from fufufuu.report.enums import ReportMangaType
 from fufufuu.report.models import ReportManga
 
 
-class ReportMangaForm(forms.ModelForm):
+class ReportMangaForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     type = forms.ChoiceField(
+        label=_('Select the reason for reporting'),
         choices=ReportMangaType.choices,
         widget=forms.RadioSelect(),
     )
 
     comment = forms.CharField(
+        label=_('Provide any additional details for the report'),
         required=False,
-        widget=forms.Textarea(),
+        widget=forms.Textarea(attrs={
+            'rows': '3',
+            'maxlength': '300',
+        }),
         max_length=300,
+    )
+
+    check = forms.BooleanField(
+        label=_('I am petitioning to remove this gallery based on the information I provided above.')
     )
 
     class Meta:

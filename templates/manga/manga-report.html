@@ -1,6 +1,26 @@
 {% extends 'manga/manga-base.html' %}
+{% import '_macros/forms.html' as forms with context %}
 
 {% block title %}{{ manga.title }}{% endblock %}
 
 {% block content %}
+    <div class="width-800 container block-center">
+        <h2 class="space-top-10 space-bottom-10">{% trans title=manga.title %}Report {{ title }}{% endtrans %}</h2>
+        <p>{% trans title=manga.title %}Please complete this form to petition for the removal of this gallery.{% endtrans %}</p>
+        <hr>
+        <form action="" method="post">
+            {{ forms.csrf_input() }}
+            <p>{{ form.type.label }}</p>
+            {{ form.type }}
+            <hr>
+            {{ forms.field(form.comment) }}
+            {% if not user.is_authenticated() %}
+                <div class="width-400">{{ forms.field(form.captcha) }}</div>
+            {% endif %}
+            <hr>
+            {{ forms.field_checkbox(form.check) }}
+            <hr>
+            <button class="btn btn-primary">{% trans %}Submit Report{% endtrans %}</button>
+        </form>
+    </div>
 {% endblock %}

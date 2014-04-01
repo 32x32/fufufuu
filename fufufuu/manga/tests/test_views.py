@@ -123,6 +123,7 @@ class MangaReportViewTests(BaseTestCase):
 
         response = self.client.post(reverse('manga.report', args=[self.manga.id, self.manga.slug]), {
             'type': ReportMangaType.COPYRIGHT,
+            'check': 'on',
             'captcha_0': store.hashkey,
             'captcha_1': store.response,
         })
@@ -132,6 +133,7 @@ class MangaReportViewTests(BaseTestCase):
         response = self.client.post(reverse('manga.report', args=[self.manga.id, self.manga.slug]), {
             'type': ReportMangaType.COPYRIGHT,
             'comment': 'This is a standard copyright violation.',
+            'check': 'on',
         })
         self.assertRedirects(response, reverse('manga.list'))
 
