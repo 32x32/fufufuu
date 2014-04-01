@@ -41,7 +41,7 @@ class ModeratorTemplateView(TemplateView):
     Return HTTP404 if user is not a moderator or staff.
     """
 
-    @method_decorator
+    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_moderator and not request.user.is_staff:
             raise Http404

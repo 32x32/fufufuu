@@ -41,7 +41,7 @@
     {% endif %}
     <hr class="nav-sep">
     {% if user.is_moderator or user.is_staff %}
-        <a href="#" class="nav-link"><span class="icon icon-tools"></span>{% trans %}Mod Tools{% endtrans %}</a>
+        <a href="{{ url('moderator.dashboard') }}" class="nav-link"><span class="icon icon-tools"></span>{% trans %}Mod Tools{% endtrans %}</a>
     {% endif %}
     {% if user.is_staff %}
         <a href="{{ url('staff.site.metrics') }}" class="nav-link"><span class="icon icon-tools"></span>{% trans %}Staff Tools{% endtrans %}</a>
