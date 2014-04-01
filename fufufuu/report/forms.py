@@ -3,6 +3,8 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from fufufuu.core.forms import BlankLabelSuffixMixin
+from fufufuu.core.utils import get_ip_address
+
 from fufufuu.report.enums import ReportMangaType
 from fufufuu.report.models import ReportManga
 
@@ -33,19 +35,20 @@ class ReportMangaForm(BlankLabelSuffixMixin, forms.ModelForm):
         model = ReportManga
         fields = ('type', 'comment',)
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.user = user
+        self.request = request
 
-        if not self.user.is_authenticated():
+        if not self.request.user.is_authenticated():
             self.fields['captcha'] = CaptchaField()
 
     def save(self, manga, commit=True):
         report_manga = super().save(commit=False)
         report_manga.manga = manga
+        report_manga.ip_address = get_ip_address(self.request)
 
-        if self.user.is_authenticated():
-            report_manga.created_by = self.user
+        if self.request.user.is_authenticated():
+            report_manga.created_by = self.request.user
 
         if commit:
             report_manga.save()

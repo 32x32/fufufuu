@@ -25,6 +25,7 @@ class ReportManga(models.Model):
     type            = models.CharField(max_length=20, choices=ReportMangaType.choices)
     resolution      = models.ForeignKey(ReportMangaResolution, blank=True, null=True)
     comment         = models.TextField(blank=True, null=True)
+    ip_address      = models.CharField(max_length=200, blank=True, null=True)
 
     created_by      = models.ForeignKey(User, blank=True, null=True)
     created_on      = models.DateTimeField(auto_now_add=True)

@@ -185,13 +185,13 @@ class MangaReportView(TemplateView):
     def get(self, request, id, slug):
         manga = get_object_or_404(Manga.published, id=id)
         return self.render_to_response({
-            'form': ReportMangaForm(request.user),
+            'form': ReportMangaForm(request),
             'manga': manga,
         })
 
     def post(self, request, id, slug):
         manga = get_object_or_404(Manga.published, id=id)
-        form = ReportMangaForm(request.user, data=request.POST)
+        form = ReportMangaForm(request, data=request.POST)
         if form.is_valid():
             form.save(manga)
             messages.success(request, _('Thank you for reporting. Your report will be reviewed by a moderator shortly.'))
