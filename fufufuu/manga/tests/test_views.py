@@ -11,6 +11,7 @@ from fufufuu.core.utils import slugify
 from fufufuu.download.models import DownloadLink
 from fufufuu.manga.enums import MangaStatus, MangaCategory
 from fufufuu.manga.models import Manga, MangaFavorite
+from fufufuu.report.enums import ReportMangaType
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 
@@ -99,6 +100,40 @@ class MangaReportViewTests(BaseTestCase):
         response = self.client.get(reverse('manga.report', args=[self.manga.id, self.manga.slug]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'manga/manga-report.html')
+
+    def test_manga_report_view_post_invalid(self):
+        response = self.client.post(reverse('manga.report', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-report.html')
+
+    def test_manga_report_view_post_anonymous_invalid(self):
+        self.client.logout()
+        response = self.client.post(reverse('manga.report', args=[self.manga.id, self.manga.slug]), {
+            'type': ReportMangaType.COPYRIGHT,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-report.html')
+
+    def test_manga_report_view_post_anonymous(self):
+        from captcha.conf import settings
+        from captcha.models import CaptchaStore
+
+        challenge, response = settings.get_challenge()()
+        store = CaptchaStore.objects.create(challenge=challenge, response=response)
+
+        response = self.client.post(reverse('manga.report', args=[self.manga.id, self.manga.slug]), {
+            'type': ReportMangaType.COPYRIGHT,
+            'captcha_0': store.hashkey,
+            'captcha_1': store.response,
+        })
+        self.assertRedirects(response, reverse('manga.list'))
+
+    def test_manga_report_view_post(self):
+        response = self.client.post(reverse('manga.report', args=[self.manga.id, self.manga.slug]), {
+            'type': ReportMangaType.COPYRIGHT,
+            'comment': 'This is a standard copyright violation.',
+        })
+        self.assertRedirects(response, reverse('manga.list'))
 
 
 class MangaFavoriteViewTests(BaseTestCase):
