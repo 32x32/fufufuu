@@ -13,18 +13,19 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('password', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('last_login', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('username', self.gf('django.db.models.fields.CharField')(max_length=30, unique=True)),
+            ('username', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30)),
             ('email', self.gf('django.db.models.fields.EmailField')(max_length=254, blank=True)),
             ('markdown', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('html', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('avatar', self.gf('django.db.models.fields.files.FileField')(null=True, max_length=255, blank=True)),
+            ('avatar', self.gf('django.db.models.fields.files.FileField')(max_length=255, null=True, blank=True)),
             ('is_moderator', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('is_staff', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('comment_limit', self.gf('django.db.models.fields.IntegerField')(default=50)),
+            ('comment_limit', self.gf('django.db.models.fields.IntegerField')(default=30)),
             ('edit_limit', self.gf('django.db.models.fields.IntegerField')(default=30)),
             ('report_limit', self.gf('django.db.models.fields.IntegerField')(default=30)),
             ('upload_limit', self.gf('django.db.models.fields.IntegerField')(default=10)),
+            ('report_weight', self.gf('django.db.models.fields.DecimalField')(default=10, max_digits=19, decimal_places=10)),
             ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated_on', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
         ))
@@ -38,9 +39,9 @@ class Migration(SchemaMigration):
 
     models = {
         'account.user': {
-            'Meta': {'db_table': "'user'", 'object_name': 'User'},
-            'avatar': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'max_length': '255', 'blank': 'True'}),
-            'comment_limit': ('django.db.models.fields.IntegerField', [], {'default': '50'}),
+            'Meta': {'object_name': 'User', 'db_table': "'user'"},
+            'avatar': ('django.db.models.fields.files.FileField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'comment_limit': ('django.db.models.fields.IntegerField', [], {'default': '30'}),
             'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'edit_limit': ('django.db.models.fields.IntegerField', [], {'default': '30'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '254', 'blank': 'True'}),
@@ -53,9 +54,10 @@ class Migration(SchemaMigration):
             'markdown': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'report_limit': ('django.db.models.fields.IntegerField', [], {'default': '30'}),
+            'report_weight': ('django.db.models.fields.DecimalField', [], {'default': '10', 'max_digits': '19', 'decimal_places': '10'}),
             'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'upload_limit': ('django.db.models.fields.IntegerField', [], {'default': '10'}),
-            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
+            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         }
     }
 

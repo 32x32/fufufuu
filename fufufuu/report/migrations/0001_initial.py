@@ -12,25 +12,39 @@ class Migration(SchemaMigration):
     )
 
     def forwards(self, orm):
+        # Adding model 'ReportMangaResolution'
+        db.create_table('report_manga_resolution', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('removed', self.gf('django.db.models.fields.BooleanField')()),
+            ('comment', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['account.User'])),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+        ))
+        db.send_create_signal('report', ['ReportMangaResolution'])
+
         # Adding model 'ReportManga'
         db.create_table('report_manga', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('manga', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['manga.Manga'])),
-            ('report_type', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('status', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('comment', self.gf('django.db.models.fields.TextField')()),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['account.User'])),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
+            ('status', self.gf('django.db.models.fields.CharField')(default='OPEN', max_length=20)),
+            ('type', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('resolution', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['report.ReportMangaResolution'], null=True, blank=True)),
+            ('comment', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['account.User'], null=True, blank=True)),
+            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
         db.send_create_signal('report', ['ReportManga'])
 
-        # Adding index on 'ReportManga', fields ['manga', 'status']
-        db.create_index('report_manga', ['manga_id', 'status'])
+        # Adding index on 'ReportManga', fields ['status', 'manga']
+        db.create_index('report_manga', ['status', 'manga_id'])
 
 
     def backwards(self, orm):
-        # Removing index on 'ReportManga', fields ['manga', 'status']
-        db.delete_index('report_manga', ['manga_id', 'status'])
+        # Removing index on 'ReportManga', fields ['status', 'manga']
+        db.delete_index('report_manga', ['status', 'manga_id'])
+
+        # Deleting model 'ReportMangaResolution'
+        db.delete_table('report_manga_resolution')
 
         # Deleting model 'ReportManga'
         db.delete_table('report_manga')
@@ -38,12 +52,12 @@ class Migration(SchemaMigration):
 
     models = {
         'account.user': {
-            'Meta': {'db_table': "'user'", 'object_name': 'User'},
-            'avatar': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'max_length': '255', 'blank': 'True'}),
-            'comment_limit': ('django.db.models.fields.IntegerField', [], {'default': '50'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'Meta': {'object_name': 'User', 'db_table': "'user'"},
+            'avatar': ('django.db.models.fields.files.FileField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'comment_limit': ('django.db.models.fields.IntegerField', [], {'default': '30'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'edit_limit': ('django.db.models.fields.IntegerField', [], {'default': '30'}),
-            'email': ('django.db.models.fields.EmailField', [], {'blank': 'True', 'max_length': '254'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '254', 'blank': 'True'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
@@ -53,55 +67,65 @@ class Migration(SchemaMigration):
             'markdown': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'report_limit': ('django.db.models.fields.IntegerField', [], {'default': '30'}),
-            'updated_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now': 'True'}),
+            'report_weight': ('django.db.models.fields.IntegerField', [], {'default': '10'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'upload_limit': ('django.db.models.fields.IntegerField', [], {'default': '10'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         'manga.manga': {
-            'Meta': {'db_table': "'manga'", 'object_name': 'Manga'},
-            'category': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'default': "'OTHER'", 'max_length': '20'}),
-            'collection': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'to': "orm['tag.Tag']", 'related_name': "'+'", 'blank': 'True'}),
-            'collection_part': ('django.db.models.fields.CharField', [], {'null': 'True', 'max_length': '20', 'blank': 'True'}),
-            'cover': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'max_length': '255'}),
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'to': "orm['account.User']", 'related_name': "'+'", 'blank': 'True'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
-            'favorite_users': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'to': "orm['account.User']", 'related_name': "'manga_favorites'", 'symmetrical': 'False'}),
+            'Meta': {'object_name': 'Manga', 'db_table': "'manga'"},
+            'category': ('django.db.models.fields.CharField', [], {'default': "'OTHER'", 'db_index': 'True', 'max_length': '20'}),
+            'collection': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['tag.Tag']", 'null': 'True', 'blank': 'True', 'on_delete': 'models.SET_NULL'}),
+            'collection_part': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'cover': ('django.db.models.fields.files.FileField', [], {'max_length': '255', 'null': 'True'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['account.User']", 'null': 'True', 'blank': 'True', 'on_delete': 'models.SET_NULL'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'favorite_users': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'manga_favorites'", 'symmetrical': 'False', 'to': "orm['account.User']", 'blank': 'True'}),
             'html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'language': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'default': "'en'", 'max_length': '20'}),
+            'language': ('django.db.models.fields.CharField', [], {'default': "'en'", 'db_index': 'True', 'max_length': '20'}),
             'markdown': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'published_on': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'db_index': 'True'}),
+            'published_on': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True', 'null': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '100'}),
-            'status': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'default': "'DRAFT'", 'max_length': '20'}),
-            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'to': "orm['tag.Tag']", 'symmetrical': 'False'}),
-            'tank': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'to': "orm['tag.Tag']", 'related_name': "'+'", 'blank': 'True'}),
-            'tank_chapter': ('django.db.models.fields.CharField', [], {'null': 'True', 'max_length': '20', 'blank': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'default': "'Untitled'", 'max_length': '100'}),
+            'status': ('django.db.models.fields.CharField', [], {'default': "'DRAFT'", 'db_index': 'True', 'max_length': '20'}),
+            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['tag.Tag']", 'blank': 'True'}),
+            'tank': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['tag.Tag']", 'null': 'True', 'blank': 'True', 'on_delete': 'models.SET_NULL'}),
+            'tank_chapter': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'default': "'Untitled'", 'db_index': 'True', 'max_length': '100'}),
             'uncensored': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'to': "orm['account.User']", 'related_name': "'+'", 'blank': 'True'}),
-            'updated_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'db_index': 'True', 'auto_now': 'True'})
+            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['account.User']", 'null': 'True', 'blank': 'True', 'on_delete': 'models.SET_NULL'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_index': 'True', 'blank': 'True'})
         },
         'report.reportmanga': {
-            'Meta': {'db_table': "'report_manga'", 'object_name': 'ReportManga', 'index_together': "[('manga', 'status')]"},
-            'comment': ('django.db.models.fields.TextField', [], {}),
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['account.User']"}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'Meta': {'object_name': 'ReportManga', 'db_table': "'report_manga'", 'index_together': "[('status', 'manga')]"},
+            'comment': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['account.User']", 'null': 'True', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'manga': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['manga.Manga']"}),
-            'report_type': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
-            'status': ('django.db.models.fields.CharField', [], {'max_length': '20'})
+            'resolution': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['report.ReportMangaResolution']", 'null': 'True', 'blank': 'True'}),
+            'status': ('django.db.models.fields.CharField', [], {'default': "'OPEN'", 'max_length': '20'}),
+            'type': ('django.db.models.fields.CharField', [], {'max_length': '20'})
+        },
+        'report.reportmangaresolution': {
+            'Meta': {'object_name': 'ReportMangaResolution', 'db_table': "'report_manga_resolution'"},
+            'comment': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['account.User']"}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'removed': ('django.db.models.fields.BooleanField', [], {})
         },
         'tag.tag': {
-            'Meta': {'db_table': "'tag'", 'object_name': 'Tag', 'unique_together': "[('tag_type', 'name')]"},
-            'cover': ('django.db.models.fields.files.FileField', [], {'null': 'True', 'max_length': '255', 'blank': 'True'}),
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'to': "orm['account.User']", 'related_name': "'+'", 'blank': 'True'}),
-            'created_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
+            'Meta': {'unique_together': "[('tag_type', 'name')]", 'object_name': 'Tag', 'db_table': "'tag'"},
+            'cover': ('django.db.models.fields.files.FileField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['account.User']", 'null': 'True', 'blank': 'True', 'on_delete': 'models.SET_NULL'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '100'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '100'}),
             'tag_type': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
-            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'on_delete': 'models.SET_NULL', 'null': 'True', 'to': "orm['account.User']", 'related_name': "'+'", 'blank': 'True'}),
-            'updated_on': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'db_index': 'True', 'auto_now': 'True'})
+            'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['account.User']", 'null': 'True', 'blank': 'True', 'on_delete': 'models.SET_NULL'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_index': 'True', 'blank': 'True'})
         }
     }
 

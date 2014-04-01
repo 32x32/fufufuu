@@ -37,6 +37,9 @@ class User(AbstractBaseUser):
     report_limit        = models.IntegerField(default=30)
     upload_limit        = models.IntegerField(default=10)
 
+    # scores and weights
+    report_weight       = models.DecimalField(default=10, max_digits=19, decimal_places=10)
+
     created_on          = models.DateTimeField(auto_now_add=True)
     updated_on          = models.DateTimeField(auto_now=True)
 

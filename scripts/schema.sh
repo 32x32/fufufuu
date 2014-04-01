@@ -1,5 +1,11 @@
 #!/bin/sh
 
+rm fufufuu.sqlite3
+rm -fr __pycache__
+rm -fr media/*
+rm -fr logs/*
+python manage.py syncdb --noinput
+
 python manage.py schemamigration account --initial --update
 python manage.py schemamigration comment --initial --update
 python manage.py schemamigration core --initial --update
