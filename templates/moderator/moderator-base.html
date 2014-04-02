@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% include '_include/header.html' %}
+    {% include 'moderator/_include/moderator-nav.html' %}
+    <div id="template-{{ TEMPLATE_NAME }}" class="content">
+        {% include '_include/messages.html' %}
+        {% block content %}{% endblock %}
+    </div>
+{% endblock %}

@@ -17,6 +17,18 @@ class ReportMangaResolution(models.Model):
         db_table = 'report_manga_resolution'
 
 
+class ReportMangaOpenManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(status=ReportStatus.OPEN)
+
+
+class ReportMangaClosedManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(status=ReportStatus.CLOSED)
+
+
 class ReportManga(models.Model):
 
     manga           = models.ForeignKey(Manga)
@@ -29,6 +41,10 @@ class ReportManga(models.Model):
 
     created_by      = models.ForeignKey(User, blank=True, null=True)
     created_on      = models.DateTimeField(auto_now_add=True)
+
+    open            = ReportMangaOpenManager()
+    closed          = ReportMangaClosedManager()
+    all             = models.Manager()
 
     class Meta:
         db_table = 'report_manga'
