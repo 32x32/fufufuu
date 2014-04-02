@@ -84,6 +84,7 @@ class BaseTestCase(TestCase):
 
         self.request = namedtuple('Request', 'user')
         self.request.user = self.user
+        self.request.META = {'REMOTE_ADDR': '127.0.0.1'}
         self.client.login(username='testuser', password='password')
 
     def assertTemplateUsed(self, response, template_name):

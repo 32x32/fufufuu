@@ -9,6 +9,9 @@ from fufufuu.report.enums import ReportMangaType
 from fufufuu.report.models import ReportManga
 
 
+ANONYMOUS_USER_REPORT_WEIGHT = 5
+
+
 class ReportMangaForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     type = forms.ChoiceField(
@@ -49,6 +52,9 @@ class ReportMangaForm(BlankLabelSuffixMixin, forms.ModelForm):
 
         if self.request.user.is_authenticated():
             report_manga.created_by = self.request.user
+            report_manga.weight = self.request.user.report_weight
+        else:
+            report_manga.weight = ANONYMOUS_USER_REPORT_WEIGHT
 
         if commit:
             report_manga.save()

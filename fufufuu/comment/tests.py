@@ -102,7 +102,6 @@ class CommentFormTests(BaseTestCase):
         })
         self.assertTrue(form.is_valid())
 
-        self.request.META = {'REMOTE_ADDR': '127.0.0.1'}
         comment = form.save(self.request)
 
         self.assertEqual(comment.content_type, content_type)

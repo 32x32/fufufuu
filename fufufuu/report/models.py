@@ -38,6 +38,7 @@ class ReportManga(models.Model):
     resolution      = models.ForeignKey(ReportMangaResolution, blank=True, null=True)
     comment         = models.TextField(blank=True, null=True)
     ip_address      = models.CharField(max_length=200, blank=True, null=True)
+    weight          = models.DecimalField(max_digits=19, decimal_places=10)
 
     created_by      = models.ForeignKey(User, blank=True, null=True)
     created_on      = models.DateTimeField(auto_now_add=True)
