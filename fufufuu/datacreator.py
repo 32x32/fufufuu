@@ -20,6 +20,8 @@ from fufufuu.core.models import SiteSetting
 from fufufuu.core.utils import slugify
 from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.models import Manga, MangaTag, MangaPage
+from fufufuu.report.enums import ReportStatus, ReportMangaType
+from fufufuu.report.models import ReportManga
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag, TagData, TagAlias
 
@@ -29,12 +31,14 @@ CONFIGURATION = {
     'default': {
         'COMMENTS': lambda: random.choice([0, 0, 0, 0, 0, 1, 2, 3]),
         'MANGA': 3000,
+        'REPORTS': 300,
         'TAGS': 600,
         'USERS': 5,
     },
     'test': {
         'COMMENTS': lambda: 1,
         'MANGA': 1,
+        'REPORTS': 1,
         'TAGS': 1,
         'USERS': 1,
     }
@@ -114,7 +118,7 @@ class DataCreator:
                     html='Tag Data - {} - {}'.format(tag.name, language),
                     created_by=self.user,
                     updated_by=self.user,
-                    ))
+                ))
             TagData.objects.bulk_create(tag_data_list)
 
     @timed
@@ -203,6 +207,25 @@ class DataCreator:
         Comment.objects.bulk_create(comment_list)
 
     @timed
+    def create_manga_reports(self):
+        user_id_list = User.objects.all().values_list('id', flat=True)
+        manga_id_list = Manga.objects.all().values_list('id', flat=True)[:self.config['REPORTS']]
+        type_list = list(ReportMangaType.choices_dict.keys())
+
+        report_manga_list = []
+        for i in range(self.config['REPORTS']):
+            report_manga_list.append(ReportManga(
+                manga_id=random.choice(manga_id_list),
+                status=ReportStatus.OPEN,
+                type=random.choice(type_list),
+                comment=lorem_ipsum.sentence(),
+                weight=random.randint(1, 25),
+                created_by_id=random.choice(user_id_list),
+            ))
+
+        ReportManga.all.bulk_create(report_manga_list)
+
+    @timed
     def create_settings(self):
         settings = (
             (SiteSettingKey.ENABLE_COMMENTS, 'True'),
@@ -224,6 +247,7 @@ class DataCreator:
         self.create_manga_tags()
         self.create_manga_pages()
         self.create_comments()
+        self.create_manga_reports()
         self.create_settings()
 
         finish = datetime.datetime.now()

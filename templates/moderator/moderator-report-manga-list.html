@@ -19,7 +19,7 @@
             <tbody>
                 {% for manga in manga_list %}
                     <tr>
-                        <td>0</td>
+                        <td>{{ manga.report_weight }}</td>
                         <td>{{ manga.report_count }}</td>
                         <td><span class="manga-status manga-status-{{ manga.status.lower() }} space-right">{{ manga.status_display }}</span></td>
                         <td><span class="manga-category manga-category-{{ manga.category.lower() }} space-right">{{ manga.category_display }}</span></td>
