@@ -37,19 +37,16 @@ nav {
 ---------------------------------------------------*/
 
 .nav-link {
+    border-left: 5px solid transparent;
     color: @nav-color;
     display: block;
-    padding: 6px 15px;
+    padding: 6px 15px 6px 10px;
 
-    &.active, &:hover, &:focus {
-        color: @nav-color;
-        &:after { content: '\e875'; font-family: 'entypo'; float: right; }
-    }
     &:hover, &:focus {
-        &:after { color: @nav-color-hover; }
+        border-left-color: #ccc;
     }
-    &.active:after {
-        color: @nav-color;
+    &.active {
+        border-left-color: @color-accent1;
     }
 
     > .icon { margin-right: 5px; }

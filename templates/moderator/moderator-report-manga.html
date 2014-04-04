@@ -2,11 +2,14 @@
 
 {% block title %}{% trans title=manga.title %}Manga Report - {{ title }}{% endtrans %}{% endblock %}
 
-{% block content %}
+{% block content_upper %}
     <ul class="breadcrumb-list">
         <li><a href="{{ url('moderator.report.manga.list') }}">{% trans %}Manga Report List{% endtrans %}</a></li>
         <li><span>{{ manga.title }}</span></li>
     </ul>
+{% endblock %}
+
+{% block content %}
     <div class="container">
 {#        <table>#}
 {#            <tbody>#}

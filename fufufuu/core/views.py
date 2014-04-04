@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.http.response import HttpResponse, Http404
+from django.http.response import HttpResponse
 from django.template.context import get_standard_processors
 from django.utils.decorators import method_decorator
 from django.views.generic.base import View
+
 from fufufuu.core.templates import TEMPLATE_ENV
 
 
@@ -33,30 +34,6 @@ class ProtectedTemplateView(TemplateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
-
-class ModeratorTemplateView(TemplateView):
-    """
-    Return HTTP404 if user is not a moderator or staff.
-    """
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_moderator and not request.user.is_staff:
-            raise Http404
-        return super().dispatch(request, *args, **kwargs)
-
-
-class StaffTemplateView(TemplateView):
-    """
-    Returns HTTP404 if user is not a moderator or staff. This view does not
-    redirect user to the login page.
-    """
-
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_staff:
-            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
 

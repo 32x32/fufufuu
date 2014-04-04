@@ -4,6 +4,7 @@
     {% include '_include/header.html' %}
     {% include 'moderator/_include/moderator-nav.html' %}
     <div id="template-{{ TEMPLATE_NAME }}" class="content">
+        {% block content_upper %}{% endblock %}
         {% include '_include/messages.html' %}
         <div class="min-md">{% block content %}{% endblock %}</div>
         <div class="container max-md">{% trans %}Your screen must be at least 960 pixels wide to view this page.{% endtrans %}</div>

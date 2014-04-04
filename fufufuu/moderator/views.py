@@ -1,18 +1,42 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models.aggregates import Count, Sum
+from django.http import Http404
 from django.shortcuts import get_object_or_404, get_list_or_404
+from django.utils.decorators import method_decorator
 from fufufuu.core.utils import paginate
-from fufufuu.core.views import ModeratorTemplateView
+from fufufuu.core.views import TemplateView
 from fufufuu.manga.models import Manga
 from fufufuu.report.models import ReportManga
 
 
+class ModeratorTemplateView(TemplateView):
+    """
+    Return HTTP404 if user is not a moderator or staff.
+    """
+
+    def render_to_response(self, context):
+        context.update({
+            'report_manga_count': ReportManga.open.values('manga').distinct().count(),
+            'report_comment_count': 0,
+        })
+        return super().render_to_response(context)
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_moderator and not request.user.is_staff:
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+
 class ModeratorReportMangaListView(ModeratorTemplateView):
 
-    max_show = 50
+    page_size = 50
     template_name = 'moderator/moderator-report-manga-list.html'
 
     def get(self, request):
-        report_list = ReportManga.open.values('manga').annotate(count=Count('manga'), weight=Sum('weight'))
+        report_list = ReportManga.open.values('manga')\
+            .annotate(count=Count('manga'), weight=Sum('weight'))\
+            .order_by('-weight')[:self.page_size]
         report_dict = dict([(r['manga'], (r['count'], r['weight'])) for r in report_list])
 
         manga_list = Manga.objects.filter(id__in=report_dict.keys()).select_related('created_by')
@@ -22,7 +46,7 @@ class ModeratorReportMangaListView(ModeratorTemplateView):
 
         manga_list = sorted(manga_list, key=lambda m: m.report_weight, reverse=True)
         return self.render_to_response({
-            'manga_list': manga_list[:self.max_show],
+            'manga_list': manga_list,
         })
 
 
