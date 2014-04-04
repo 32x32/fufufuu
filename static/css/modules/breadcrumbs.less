@@ -1,0 +1,31 @@
+/* --------------------------------------------------
+    breadcrumb styles
+---------------------------------------------------*/
+
+.breadcrumb-list {
+    background-color: @breadcrumb-bg;
+    border-bottom: 1px solid @breadcrumb-border;
+    margin-bottom: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 10px;
+    white-space: nowrap;
+
+    > li {
+        .inline-block();
+        padding: 0;
+
+        &:after {
+            color: #999;
+            content: '\e875';
+            font-family: 'entypo';
+            padding: 0 10px;
+        }
+        &:last-of-type:after { content: none; }
+
+        > span, > a {
+            font-weight: @font-weight-bold;
+            line-height: 48px;
+        }
+    }
+}
