@@ -1,0 +1,27 @@
+{% extends 'moderator/moderator-base.html' %}
+
+{% block title %}{% trans title=manga.title %}Manga Report - {{ title }}{% endtrans %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+{#        <table>#}
+{#            <tbody>#}
+{#                {% for report in report_list %}#}
+{#                    <tr>#}
+{#                        <td>{{ report.weight }}</td>#}
+{#                        <td>{{ report.type }}</td>#}
+{#                        <td>#}
+{#                            {% if report.comment %}#}
+{#                                <div>{{ report.comment }}</div>#}
+{#                            {% else %}#}
+{#                                <span>{% trans %}No comment provided.{% endtrans %}</span>#}
+{#                            {% endif %}#}
+{#                        </td>#}
+{#                        <td>{{ report.created_by }}</td>#}
+{#                        <td>{{ report.created_on|naturaltime }}</td>#}
+{#                    </tr>#}
+{#                {% endfor %}#}
+{#            </tbody>#}
+{#        </table>#}
+    </div>
+{% endblock %}

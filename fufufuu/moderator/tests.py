@@ -8,3 +8,11 @@ class ModeratorReportMangaListViewTests(BaseTestCase):
         response = self.client.get(reverse('moderator.report.manga.list'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'moderator/moderator-report-manga-list.html')
+
+
+class ModeratorReportMangaViewTests(BaseTestCase):
+
+    def test_moderator_report_manga_view_get(self):
+        response = self.client.get(reverse('moderator.report.manga', args=[self.manga.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'moderator/moderator-report-manga.html')
