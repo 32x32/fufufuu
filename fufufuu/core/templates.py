@@ -11,6 +11,7 @@ from jinja2.loaders import FileSystemLoader
 from fufufuu.comment.filters import get_comment_list, get_comment_form
 from fufufuu.core.filters import exclude_keys, startswith, language_display
 from fufufuu.manga.filters import manga_category_display, manga_status_display
+from fufufuu.report.filters import report_manga_type_display
 from fufufuu.tag.filters import tag_type_display
 from fufufuu.settings import TEMPLATE_DIRS, DEBUG
 
@@ -65,14 +66,15 @@ TEMPLATE_ENV.globals.update(**{
     'url':                      reverse,
 })
 TEMPLATE_ENV.filters.update(**{
-    'exclude_keys':             exclude_keys,
-    'get_comment_form':         get_comment_form,
-    'get_comment_list':         get_comment_list,
-    'language_display':         language_display,
-    'manga_category_display':   manga_category_display,
-    'manga_status_display':     manga_status_display,
-    'naturaltime':              naturaltime,
-    'set':                      set,
-    'startswith':               startswith,
-    'tag_type_display':         tag_type_display,
+    'exclude_keys':                 exclude_keys,
+    'get_comment_form':             get_comment_form,
+    'get_comment_list':             get_comment_list,
+    'language_display':             language_display,
+    'manga_category_display':       manga_category_display,
+    'manga_status_display':         manga_status_display,
+    'naturaltime':                  naturaltime,
+    'report_manga_type_display':    report_manga_type_display,
+    'set':                          set,
+    'startswith':                   startswith,
+    'tag_type_display':             tag_type_display,
 })

@@ -1,34 +1,86 @@
 {% extends 'moderator/moderator-base.html' %}
+{% import '_macros/forms.html' as forms with context %}
+{% import '_macros/widgets.html' as widgets with context %}
 
-{% block title %}{% trans title=manga.title %}Manga Report - {{ title }}{% endtrans %}{% endblock %}
-
-{% block content_upper %}
-    <ul class="breadcrumb-list">
-        <li><a href="{{ url('moderator.report.manga.list') }}">{% trans %}Manga Report List{% endtrans %}</a></li>
-        <li><span>{{ manga.title }}</span></li>
-    </ul>
-{% endblock %}
+{% block title %}{% trans title=manga.title %}Manga Reports - {{ title }}{% endtrans %}{% endblock %}
 
 {% block content %}
     <div class="container">
-{#        <table>#}
-{#            <tbody>#}
-{#                {% for report in report_list %}#}
-{#                    <tr>#}
-{#                        <td>{{ report.weight }}</td>#}
-{#                        <td>{{ report.type }}</td>#}
-{#                        <td>#}
-{#                            {% if report.comment %}#}
-{#                                <div>{{ report.comment }}</div>#}
-{#                            {% else %}#}
-{#                                <span>{% trans %}No comment provided.{% endtrans %}</span>#}
-{#                            {% endif %}#}
-{#                        </td>#}
-{#                        <td>{{ report.created_by }}</td>#}
-{#                        <td>{{ report.created_on|naturaltime }}</td>#}
-{#                    </tr>#}
-{#                {% endfor %}#}
-{#            </tbody>#}
-{#        </table>#}
+        <form action="" method="post">
+            {{ formset.management_form }}
+            {{ forms.csrf_input() }}
+            <div class="panel panel-thin">
+                <div class="panel-heading">
+                    <div class="half-wrapper">
+                        <div class="half half-md">
+                            <div class="space-bottom">
+                                <span class="manga-status manga-status-{{ manga.status.lower() }} space-right">{{ manga.status_display }}</span>
+                                <a href="{{ url('manga', args=[manga.id, manga.slug]) }}" target="_blank">{{ manga.title }}</a>
+                            </div>
+                            <div><strong>{% trans count=formset|length %}{{ count }} reports{% endtrans %}</strong></div>
+                        </div>
+                        <div class="half half-md">
+                            {% if manga.created_by %}
+                                <a href="{{ url('user', args=[manga.created_by.username]) }}">
+                                    <span class="left space-right-10">{{ widgets.user_avatar(manga.created_by) }}</span>
+                                    <strong>{{ manga.created_by }}</strong>
+                                    <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
+                                    <div class="clear"></div>
+                                </a>
+                            {% else %}
+                                <div>
+                                    <span class="left space-right-10">
+                                        <img src="{{ STATIC_URL }}images/no-avatar.png" class="account-avatar">
+                                    </span>
+                                    <strong>[---- {% trans %}User Deleted{% endtrans %} ----]</strong>
+                                    <p class="text-secondary text-xsmall space-bottom-0">{% trans date=manga.created_on|naturaltime %}Uploaded {{ date }}{% endtrans %}</p>
+                                    <div class="clear"></div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body panel-body-no-padding panel-table">
+                    <table class="table-vertical-align-top space-bottom-10">
+                        <thead>
+                            <tr>
+                                <th width="80">{% trans %}Quality{% endtrans %}</th>
+                                <th width="40" title="{% trans %}Weight{% endtrans %}">Wt</th>
+                                <th width="100%">{% trans %}Comment{% endtrans %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for form in formset %}{% with report=form.instance %}
+                                <tr>
+                                    <td>
+                                        {{ form.id }}
+                                        {{ form.quality }}
+                                    </td>
+                                    <td>{{ report.weight }}</td>
+                                    <td>
+                                        <strong>{{ report.type|report_manga_type_display }}</strong>
+                                        <div>{{ report.comment }}</div>
+                                        <div>
+                                            <a href="{{ url('user', args=[report.created_by.username]) }}"><strong class="text-small">{{ report.created_by.username }}</strong></a>
+                                            <span class="icon icon-dot text-small text-secondary"></span>
+                                            <span class="text-secondary text-small">{{ report.created_on|naturaltime }}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endwith %}{% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="well">
+                <div class="space-bottom-10">
+                    <textarea name="comment" placeholder="{% trans %}Leave a comments for the reporters.{% endtrans %}"></textarea>
+                </div>
+                <div>
+                    <button class="btn btn-error space-right-10" name="action" value="remove">{% trans %}Remove Manga{% endtrans %}</button>
+                    <button class="btn" name="action" value="keep">{% trans %}Keep Manga{% endtrans %}</button>
+                </div>
+            </div>
+        </form>
     </div>
 {% endblock %}

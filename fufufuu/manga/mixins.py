@@ -1,5 +1,6 @@
 from collections import defaultdict
 from fufufuu.core.languages import Language
+from fufufuu.core.templates import TEMPLATE_ENV
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaStatus, MangaCategory
@@ -42,3 +43,7 @@ class MangaMixin:
     @property
     def cover_url(self):
         return image_resize(self.cover, ImageKeyType.MANGA_COVER, self.id)
+
+    @property
+    def info_text(self):
+        return TEMPLATE_ENV.get_template('manga/manga-archive-info.txt').render({'manga': self})

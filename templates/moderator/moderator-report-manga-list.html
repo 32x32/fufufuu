@@ -2,12 +2,6 @@
 
 {% block title %}{% trans %}Manga Report List{% endtrans %}{% endblock %}
 
-{% block content_upper %}
-    <ul class="breadcrumb-list">
-        <li><span>{% trans %}Manga Report List{% endtrans %}</span></li>
-    </ul>
-{% endblock %}
-
 {% block content %}
     <div class="container">
         <table class="table-hover">
@@ -16,7 +10,6 @@
                     <th width="40" title="{% trans %}Count{% endtrans %}">Co</th>
                     <th width="40" title="{% trans %}Weight{% endtrans %}">Wt</th>
                     <th width="80">{% trans %}Status{% endtrans %}</th>
-                    <th width="100">{% trans %}Category{% endtrans %}</th>
                     <th width="100%">{% trans %}Title{% endtrans %}</th>
                     <th width="160">{% trans %}Uploader{% endtrans %}</th>
                     <th width="160">{% trans %}Upload Age{% endtrans %}</th>
@@ -28,7 +21,6 @@
                         <td>{{ manga.report_count }}</td>
                         <td>{{ manga.report_weight }}</td>
                         <td><span class="manga-status manga-status-{{ manga.status.lower() }} space-right">{{ manga.status_display }}</span></td>
-                        <td><span class="manga-category manga-category-{{ manga.category.lower() }} space-right">{{ manga.category_display }}</span></td>
                         <td><a href="{{ url('moderator.report.manga', args=[manga.id]) }}">{{ manga.title }}</a></td>
                         <td>{{ manga.created_by }}</td>
                         <td>{{ manga.created_on|naturaltime }}</td>

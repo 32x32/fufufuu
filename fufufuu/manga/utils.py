@@ -128,7 +128,7 @@ def generate_manga_archive(manga):
         manga_zip.write(page.image.path, '{:03d}.{}'.format(page.page, extension))
 
     # write info.txt into zip file
-    info_text = TEMPLATE_ENV.get_template('manga/manga-archive-info.txt').render({'manga': manga})
+    info_text = manga.info_text
     manga_zip.writestr('info.txt', info_text)
     manga_zip.close()
 
