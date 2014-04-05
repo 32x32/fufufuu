@@ -14,6 +14,25 @@ class ReportStatus:
     choices_dict = dict(choices)
 
 
+class ReportQuality:
+
+    UNKNOWN     = 'UNKNOWN'
+
+    GOOD        = 'GOOD'
+    NEUTRAL     = 'NETRUAL'
+    BAD         = 'BAD'
+    SPAM        = 'SPAM'
+
+    choices = (
+        (GOOD,      _('Good')),
+        (NEUTRAL,   _('Neutral')),
+        (BAD,       _('Bad')),
+        (SPAM,      _('Spam')),
+    )
+
+    choices_dict = dict(choices)
+
+
 class ReportMangaType:
 
     COPYRIGHT   = 'COPYRIGHT'

@@ -74,4 +74,3 @@ class ModeratorReportMangaView(ModeratorTemplateView):
             'manga': manga,
             'formset': formset,
         })
-

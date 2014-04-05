@@ -2,10 +2,13 @@ from django.db import models
 
 from fufufuu.account.models import User
 from fufufuu.manga.models import Manga
-from fufufuu.report.enums import ReportMangaType, ReportStatus
+from fufufuu.report.enums import ReportMangaType, ReportStatus, ReportQuality
 
 
 class ReportMangaResolution(models.Model):
+    """
+    This class represents a moderator handling a set of reports.
+    """
 
     removed         = models.BooleanField()
     comment         = models.TextField(blank=True, null=True)
@@ -35,10 +38,12 @@ class ReportManga(models.Model):
 
     status          = models.CharField(max_length=20, choices=ReportStatus.choices, default=ReportStatus.OPEN)
     type            = models.CharField(max_length=20, choices=ReportMangaType.choices)
-    resolution      = models.ForeignKey(ReportMangaResolution, blank=True, null=True)
+    weight          = models.DecimalField(max_digits=19, decimal_places=10)
     comment         = models.TextField(blank=True, null=True)
     ip_address      = models.CharField(max_length=200, blank=True, null=True)
-    weight          = models.DecimalField(max_digits=19, decimal_places=10)
+
+    quality         = models.CharField(max_length=20, choices=ReportQuality.choices, default=ReportQuality.UNKNOWN)
+    resolution      = models.ForeignKey(ReportMangaResolution, blank=True, null=True)
 
     created_by      = models.ForeignKey(User, blank=True, null=True)
     created_on      = models.DateTimeField(auto_now_add=True)

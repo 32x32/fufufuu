@@ -7,7 +7,7 @@ class ReportMangaForm(forms.ModelForm):
 
     class Meta:
         model = ReportManga
-        fields = []
+        fields = ['quality']
 
 
 class ReportMangaFormSet(BaseModelFormSet):
