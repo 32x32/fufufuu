@@ -1,9 +1,11 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models.aggregates import Count, Sum
 from django.forms.models import modelformset_factory
 from django.http import Http404
-from django.shortcuts import get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404, redirect
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext_lazy as _
 from fufufuu.core.views import TemplateView
 from fufufuu.manga.models import Manga
 from fufufuu.moderator.forms import ModeratorReportMangaFormSet, ModeratorReportMangaForm
@@ -55,8 +57,8 @@ class ModeratorReportMangaView(ModeratorTemplateView):
 
     template_name = 'moderator/moderator-report-manga.html'
 
-    @classmethod
-    def get_formset_cls(cls):
+    @staticmethod
+    def get_formset_cls():
         return modelformset_factory(
             model=ReportManga,
             form=ModeratorReportMangaForm,
@@ -64,13 +66,29 @@ class ModeratorReportMangaView(ModeratorTemplateView):
             extra=0,
         )
 
+    @staticmethod
+    def get_report_queryset(manga):
+        return ReportManga.open.filter(manga=manga).select_related('created_by').order_by('-weight')
+
     def get(self, request, id):
         manga = get_object_or_404(Manga.objects, id=id)
-        report_list = get_list_or_404(
-            klass=ReportManga.open.select_related('created_by').order_by('-weight'),
-            manga=manga
-        )
-        formset = self.get_formset_cls()(user=request.user, queryset=report_list),
+        formset = self.get_formset_cls()(queryset=self.get_report_queryset(manga))
+        return self.render_to_response({
+            'manga': manga,
+            'formset': formset,
+        })
+
+    def post(self, request, id):
+        manga = get_object_or_404(Manga.objects, id=id)
+        formset = self.get_formset_cls()(queryset=self.get_report_queryset(manga), data=request.POST)
+        if formset.is_valid():
+            resolution = formset.save(user=request.user, manga=manga)
+            if resolution.removed:
+                messages.error(request, _('{} has been removed.').format(manga.title))
+            else:
+                messages.info(request, _('{} has not been removed.').format(manga.title))
+            return redirect('moderator.report.manga.list')
+
         return self.render_to_response({
             'manga': manga,
             'formset': formset,

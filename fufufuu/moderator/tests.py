@@ -20,6 +20,54 @@ class ModeratorReportMangaViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'moderator/moderator-report-manga.html')
 
+    def test_moderator_report_manga_view_post_invalid(self):
+        report_list = ReportManga.open.filter(manga=self.manga)
+        report_count = report_list.count()
+        data = {
+            'form-TOTAL_FORMS': report_count,
+            'form-INITIAL_FORMS': report_count,
+            'form-MAX_NUM_FORMS': '100',
+        }
+        for i, report in enumerate(report_list):
+            data['form-{}-id'.format(i)] = report.id
+            data['form-{}-quality'.format(i)] = ReportQuality.GOOD
+
+        response = self.client.post(reverse('moderator.report.manga', args=[self.manga.id]), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'moderator/moderator-report-manga.html')
+
+    def test_moderator_report_manga_view_post_remove(self):
+        report_list = ReportManga.open.filter(manga=self.manga)
+        report_count = report_list.count()
+        data = {
+            'form-TOTAL_FORMS': report_count,
+            'form-INITIAL_FORMS': report_count,
+            'form-MAX_NUM_FORMS': '100',
+            'action': 'remove',
+        }
+        for i, report in enumerate(report_list):
+            data['form-{}-id'.format(i)] = report.id
+            data['form-{}-quality'.format(i)] = ReportQuality.GOOD
+
+        response = self.client.post(reverse('moderator.report.manga', args=[self.manga.id]), data)
+        self.assertRedirects(response, reverse('moderator.report.manga.list'))
+
+    def test_moderator_report_manga_view_post_keep(self):
+        report_list = ReportManga.open.filter(manga=self.manga)
+        report_count = report_list.count()
+        data = {
+            'form-TOTAL_FORMS': report_count,
+            'form-INITIAL_FORMS': report_count,
+            'form-MAX_NUM_FORMS': '100',
+            'action': 'keep',
+        }
+        for i, report in enumerate(report_list):
+            data['form-{}-id'.format(i)] = report.id
+            data['form-{}-quality'.format(i)] = ReportQuality.BAD
+
+        response = self.client.post(reverse('moderator.report.manga', args=[self.manga.id]), data)
+        self.assertRedirects(response, reverse('moderator.report.manga.list'))
+
 
 class ModeratorReportMangaFormSetTests(BaseTestCase):
 
@@ -30,7 +78,7 @@ class ModeratorReportMangaFormSetTests(BaseTestCase):
             'form-MAX_NUM_FORMS': '100',
         }
         formset_cls = ModeratorReportMangaView.get_formset_cls()
-        formset = formset_cls(user=self.user, queryset=ReportManga.open.none(), data=data)
+        formset = formset_cls(queryset=ReportManga.open.none(), data=data)
         self.assertFalse(formset.is_valid())
         self.assertEqual(formset.non_form_errors(), ['No action has been selected for the manga.'])
 
@@ -47,7 +95,7 @@ class ModeratorReportMangaFormSetTests(BaseTestCase):
             data['form-{}-id'.format(i)] = report.id
 
         formset_cls = ModeratorReportMangaView.get_formset_cls()
-        formset = formset_cls(user=self.user, queryset=report_list, data=data)
+        formset = formset_cls(queryset=report_list, data=data)
         self.assertFalse(formset.is_valid())
         self.assertEqual(formset.errors, [{'quality': ['This field is required.']} for _ in range(report_count)])
 
@@ -67,11 +115,12 @@ class ModeratorReportMangaFormSetTests(BaseTestCase):
             data['form-{}-quality'.format(i)] = ReportQuality.BAD
 
         formset_cls = ModeratorReportMangaView.get_formset_cls()
-        formset = formset_cls(user=self.user, queryset=report_list, data=data)
+        formset = formset_cls(queryset=report_list, data=data)
         self.assertTrue(formset.is_valid())
 
-        resolution = formset.save()
+        resolution = formset.save(user=self.user, manga=self.manga)
         self.assertFalse(resolution.removed)
+        self.assertEqual(resolution.manga, self.manga)
         self.assertEqual(resolution.comment, 'These are incorrect reports.')
 
         closed_report_list = ReportManga.closed.filter(resolution=resolution)
@@ -94,11 +143,12 @@ class ModeratorReportMangaFormSetTests(BaseTestCase):
             data['form-{}-quality'.format(i)] = ReportQuality.GOOD
 
         formset_cls = ModeratorReportMangaView.get_formset_cls()
-        formset = formset_cls(user=self.user, queryset=report_list, data=data)
+        formset = formset_cls(queryset=report_list, data=data)
         self.assertTrue(formset.is_valid())
 
-        resolution = formset.save()
+        resolution = formset.save(user=self.user, manga=self.manga)
         self.assertTrue(resolution.removed)
+        self.assertEqual(resolution.manga, self.manga)
 
         closed_report_list = ReportManga.closed.filter(resolution=resolution)
         self.assertEqual(set(closed_report_list.values_list('id', flat=True)), report_id_set)

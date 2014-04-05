@@ -14,21 +14,18 @@ class ModeratorReportMangaForm(forms.ModelForm):
 
 class ModeratorReportMangaFormSet(BaseModelFormSet):
 
-    def __init__(self, user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.user = user
-
     def clean(self):
         action = self.data.get('action')
         if action not in ['remove', 'keep']:
             raise forms.ValidationError(_('No action has been selected for the manga.'))
 
-    def save(self):
+    def save(self, user, manga):
         remove = self.data.get('action') == 'remove'
         resolution = ReportMangaResolution.objects.create(
+            manga=manga,
             removed=remove,
             comment=self.data.get('comment'),
-            created_by=self.user,
+            created_by=user,
         )
         for form in self.forms:
             instance = form.instance

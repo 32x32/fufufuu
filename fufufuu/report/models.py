@@ -10,6 +10,7 @@ class ReportMangaResolution(models.Model):
     This class represents a moderator handling a set of reports.
     """
 
+    manga           = models.ForeignKey(Manga)
     removed         = models.BooleanField()
     comment         = models.TextField(blank=True, null=True)
 
