@@ -1,11 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models.aggregates import Count, Sum
+from django.forms.models import modelformset_factory
 from django.http import Http404
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils.decorators import method_decorator
-from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView
 from fufufuu.manga.models import Manga
+from fufufuu.moderator.forms import ReportMangaFormSet, ReportMangaForm
 from fufufuu.report.models import ReportManga
 
 
@@ -54,14 +55,23 @@ class ModeratorReportMangaView(ModeratorTemplateView):
 
     template_name = 'moderator/moderator-report-manga.html'
 
+    def get_formset_cls(self):
+        return modelformset_factory(
+            model=ReportManga,
+            form=ReportMangaForm,
+            formset=ReportMangaFormSet,
+            extra=0,
+        )
+
     def get(self, request, id):
         manga = get_object_or_404(Manga.objects, id=id)
         report_list = get_list_or_404(
             klass=ReportManga.open.select_related('created_by').order_by('-weight'),
             manga=manga
         )
+        formset = self.get_formset_cls()(user=request.user, queryset=report_list),
         return self.render_to_response({
             'manga': manga,
-            'report_list': report_list,
+            'formset': formset,
         })
 

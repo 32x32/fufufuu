@@ -1,18 +1,21 @@
 from collections import defaultdict
 
+from captcha.fields import CaptchaField
 from django import forms
 from django.forms.models import BaseModelFormSet
 from django.utils import timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
-from fufufuu.core.utils import convert_markdown
+from fufufuu.core.utils import convert_markdown, get_ip_address
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_FIELDNAME_MAP
 from fufufuu.manga.models import Manga, MangaPage
 from fufufuu.manga.utils import generate_manga_archive
+from fufufuu.report.enums import ReportMangaType
+from fufufuu.report.models import ReportManga
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.utils import get_or_create_tag_by_name_or_alias
 
@@ -342,3 +345,55 @@ class MangaListFilterForm(forms.Form):
             'other':        bool(cd.get('other')),
             'lang':         cd.get('lang'),
         }
+
+
+class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
+
+    ANONYMOUS_USER_REPORT_WEIGHT = 5
+
+    type = forms.ChoiceField(
+        label=_('Select the reason for reporting'),
+        choices=ReportMangaType.choices,
+        widget=forms.RadioSelect(),
+    )
+
+    comment = forms.CharField(
+        label=_('Provide any additional details for the report'),
+        required=False,
+        widget=forms.Textarea(attrs={
+            'rows': '3',
+            'maxlength': '300',
+        }),
+        max_length=300,
+    )
+
+    check = forms.BooleanField(
+        label=_('I am petitioning to remove this gallery based on the information I provided above.')
+    )
+
+    class Meta:
+        model = ReportManga
+        fields = ('type', 'comment',)
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+        if not self.request.user.is_authenticated():
+            self.fields['captcha'] = CaptchaField()
+
+    def save(self, manga, commit=True):
+        report_manga = super().save(commit=False)
+        report_manga.manga = manga
+        report_manga.ip_address = get_ip_address(self.request)
+
+        if self.request.user.is_authenticated():
+            report_manga.created_by = self.request.user
+            report_manga.weight = self.request.user.report_weight
+        else:
+            report_manga.weight = self.ANONYMOUS_USER_REPORT_WEIGHT
+
+        if commit:
+            report_manga.save()
+
+        return report_manga

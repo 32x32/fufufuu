@@ -17,10 +17,9 @@ from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
-from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet, MangaListFilterForm
+from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet, MangaListFilterForm, MangaReportForm
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive
-from fufufuu.report.forms import ReportMangaForm
 
 
 class MangaListMixin:
@@ -185,13 +184,13 @@ class MangaReportView(TemplateView):
     def get(self, request, id, slug):
         manga = get_object_or_404(Manga.published, id=id)
         return self.render_to_response({
-            'form': ReportMangaForm(request),
+            'form': MangaReportForm(request),
             'manga': manga,
         })
 
     def post(self, request, id, slug):
         manga = get_object_or_404(Manga.published, id=id)
-        form = ReportMangaForm(request, data=request.POST)
+        form = MangaReportForm(request, data=request.POST)
         if form.is_valid():
             form.save(manga)
             messages.success(request, _('Thank you for reporting. Your report will be reviewed by a moderator shortly.'))
@@ -302,7 +301,7 @@ class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
         manga = self.get_manga_restricted(id)
         return self.render_to_response({
             'manga': manga,
-            'formset': (self.get_formset_cls()(user=request.user, queryset=MangaPage.objects.filter(manga=manga))),
+            'formset': self.get_formset_cls()(user=request.user, queryset=MangaPage.objects.filter(manga=manga)),
         })
 
     def post(self, request, id, slug):
