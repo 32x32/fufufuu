@@ -273,8 +273,6 @@ class MangaPageFormSet(BaseModelFormSet):
         return self._selected_forms
 
     def clean(self):
-        cd = self.cleaned_data
-
         action = self.data.get('action')
         if action not in ['reorder', 'set_cover', 'delete']:
             raise forms.ValidationError(_('The form was submitted without an action, please re-submit this form.'))
@@ -288,9 +286,7 @@ class MangaPageFormSet(BaseModelFormSet):
             elif len(self.selected_forms) == 0:
                 raise forms.ValidationError(_('Please select at least one image to delete.'))
 
-        return cd
-
-    def save(self, manga, commit=True):
+    def save(self, manga):
         getattr(self, self.data.get('action'))()
         if manga.status == MangaStatus.PUBLISHED:
             generate_manga_archive(manga)

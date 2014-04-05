@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils.decorators import method_decorator
 from fufufuu.core.views import TemplateView
 from fufufuu.manga.models import Manga
-from fufufuu.moderator.forms import ReportMangaFormSet, ReportMangaForm
+from fufufuu.moderator.forms import ModeratorReportMangaFormSet, ModeratorReportMangaForm
 from fufufuu.report.models import ReportManga
 
 
@@ -55,11 +55,12 @@ class ModeratorReportMangaView(ModeratorTemplateView):
 
     template_name = 'moderator/moderator-report-manga.html'
 
-    def get_formset_cls(self):
+    @classmethod
+    def get_formset_cls(cls):
         return modelformset_factory(
             model=ReportManga,
-            form=ReportMangaForm,
-            formset=ReportMangaFormSet,
+            form=ModeratorReportMangaForm,
+            formset=ModeratorReportMangaFormSet,
             extra=0,
         )
 
