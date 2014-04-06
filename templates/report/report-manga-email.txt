@@ -1,0 +1,11 @@
+#-------------------------------------------------------------------------------
+# {{ report.manga.title }}
+#-------------------------------------------------------------------------------
+
+Status:     {{ report.status }}
+Type:       {{ report.type }}
+Weight:     {{ report.weight }}
+Reporter:   {{ report.created_by }}
+Date:       {{ report.created_on }}
+
+{{ report.comment }}

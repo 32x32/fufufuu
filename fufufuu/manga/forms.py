@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
-from fufufuu.core.utils import convert_markdown, get_ip_address
+from fufufuu.core.utils import convert_markdown, get_ip_address, send_email_alert
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_FIELDNAME_MAP
@@ -215,6 +215,10 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         if cd.get('action') == MangaAction.PUBLISH:
             manga.status = MangaStatus.PUBLISHED
             manga.published_on = timezone.now()
+            send_email_alert(
+                subject='[Fufufuu] Published: {}'.format(manga.title),
+                message=manga.info_text,
+            )
 
         manga.save(self.request.user)
         manga.tags.clear()
@@ -405,5 +409,10 @@ class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
         if total_weight >= self.PENDING_WEIGHT:
             self.manga.status = MangaStatus.PENDING
             self.manga.save(self.manga.updated_by)
+
+        send_email_alert(
+            subject='[Fufufuu] Reported: {}'.format(self.manga.title),
+            message=report_manga.email_text,
+        )
 
         return report_manga

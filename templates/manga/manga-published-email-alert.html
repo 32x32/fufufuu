@@ -1,0 +1,69 @@
+{% spaceless %}
+<!DOCTYPE html>
+<html lang="en">
+    <body>
+        <h1 style="font-size: 24px; margin: 0 0 10px 0;">Manga Details</h1>
+        {% set style = "border: 1px solid #ddd; padding: 5px;" %}
+        <table style="border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; width: 100%;">
+            <tr>
+                <td width="100" style="{{ style }}">Title</td>
+                <td style="{{ style }}"><a href="http://fufufuu.net{{ url('manga', args=[manga.id, manga.slug]) }}">{{ manga.title }}</a></td>
+            </tr>
+            <tr>
+                <td style="{{ style }}">Uploader</td>
+                <td style="{{ style }}"><a href="http://fufufuu.net{{ url('user', args=[manga.created_by.username]) }}">{{ manga.created_by.username }}</a></td>
+            </tr>
+            <tr>
+                <td style="{{ style }}">Pages</td>
+                <td style="{{ style }}">{{ manga.mangapage_set.count() }}</td>
+            </tr>
+            <tr>
+                <td style="{{ style }}">Description</td>
+                <td style="{{ style }}">{{ manga.html }}</td>
+            </tr>
+        </table>
+        <table style="border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; width: 100%;">
+            <tr>
+                <td width="100" style="{{ style }}">Category</td>
+                <td style="{{ style }}">{{ manga.category_display }}</td>
+            </tr>
+            <tr>
+                <td style="{{ style }}">Language</td>
+                <td style="{{ style }}">{{ manga.language|language_display }}</td>
+            </tr>
+        </table>
+        <table style="border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; width: 100%;">
+            {% if manga.tank %}
+                <tr>
+                    <td width="100" style="{{ style }}">Tank</td>
+                    <td style="{{ style }}">{{ manga.tank.name }}</td>
+                </tr>
+            {% endif %}
+            {% if tag_dict.SCANLATOR %}
+                <tr>
+                    <td width="100" style="{{ style }}">Scanlators</td>
+                    <td style="{{ style }}">{% for tag in tag_dict.SCANLATOR %}<a href="http://fufufuu.net{{ url('tag', args=[tag.id, tag.slug]) }}">{{ tag.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                </tr>
+            {% endif %}
+            {% if tag_dict.PARODY %}
+                <tr>
+                    <td width="100" style="{{ style }}">Parodies</td>
+                    <td style="{{ style }}">{% for tag in tag_dict.PARODY %}<a href="http://fufufuu.net{{ url('tag', args=[tag.id, tag.slug]) }}">{{ tag.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                </tr>
+            {% endif %}
+            {% if tag_dict.CIRCLE %}
+                <tr>
+                    <td width="100" style="{{ style }}">Circles</td>
+                    <td style="{{ style }}">{% for tag in tag_dict.CIRCLE %}<a href="http://fufufuu.net{{ url('tag', args=[tag.id, tag.slug]) }}">{{ tag.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                </tr>
+            {% endif %}
+            {% if tag_dict.AUTHOR %}
+                <tr>
+                    <td width="100" style="{{ style }}">Authors</td>
+                    <td style="{{ style }}">{% for tag in tag_dict.AUTHOR %}<a href="http://fufufuu.net{{ url('tag', args=[tag.id, tag.slug]) }}">{{ tag.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                </tr>
+            {% endif %}
+        </table>
+    </body>
+</html>
+{% endspaceless %}

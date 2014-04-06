@@ -1,6 +1,7 @@
 from django.db import models
 
 from fufufuu.account.models import User
+from fufufuu.core.templates import TEMPLATE_ENV
 from fufufuu.manga.models import Manga
 from fufufuu.report.enums import ReportMangaType, ReportStatus, ReportQuality
 
@@ -56,3 +57,7 @@ class ReportManga(models.Model):
     class Meta:
         db_table = 'report_manga'
         index_together = [('status', 'manga')]
+
+    @property
+    def email_text(self):
+        return TEMPLATE_ENV.get_template('report/report-manga-email.txt').render({'report': self})
