@@ -24,3 +24,19 @@
         <img src="{{ STATIC_URL }}images/no-avatar.png" alt="{{ user.username }}" class="account-avatar">
     {% endif %}
 {% endmacro %}
+
+{% macro render_blog_entry(blog_entry) %}
+    <h4>{{ blog_entry.title }}</h4>
+    <div class="space-bottom-10">
+        {% if blog_entry.created_by %}
+            <a href="{{ url('user', args=[blog_entry.created_by.username]) }}">
+                <strong class="text-small">{{ blog_entry.created_by }}</strong>
+            </a>
+        {% else %}
+            <span class="text-secondary">&lt;{% trans %}User Deleted{% endtrans %}&gt;</span>
+        {% endif %}
+        <span class="text-secondary text-small icon icon-dot"></span>
+        <span class="text-secondary text-small space-bottom-0">{% trans date=blog_entry.created_on|naturaltime %}Posted {{ date }}{% endtrans %}</span>
+    </div>
+    <div>{{ blog_entry.html }}</div>
+{% endmacro %}

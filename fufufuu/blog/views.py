@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.aggregates import Count
+from django.shortcuts import get_object_or_404
 from fufufuu.blog.models import BlogEntry
 from fufufuu.comment.models import Comment
 from fufufuu.core.utils import paginate
@@ -36,7 +37,10 @@ class BlogEntryView(TemplateView):
     template_name = 'blog/blog-entry.html'
 
     def get(self, request, id, slug):
-        return self.render_to_response({})
+        blog_entry = get_object_or_404(BlogEntry, id=id)
+        return self.render_to_response({
+            'blog_entry': blog_entry,
+        })
 
 
 #-------------------------------------------------------------------------------

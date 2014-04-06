@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% import '_macros/widgets.html' as widgets with context %}
+{% import '_macros/comments.html' as comments with context %}
+
+{% block content %}
+    <div class="container-fat width-800">
+        {{ widgets.render_blog_entry(blog_entry) }}
+        <div class="manga-comments">
+            <hr>
+            {{ comments.comments_widget(blog_entry) }}
+        </div>
+    </div>
+{% endblock %}
