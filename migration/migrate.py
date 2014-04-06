@@ -61,6 +61,23 @@ def convert_text_to_markdown(text):
     return text
 
 
+
+def timed(func):
+    """
+    use @timed to decorate a function that will print out the time it took
+    for this function to run.
+    """
+
+    def inner(*args, **kwargs):
+        logger.debug('{} started'.format(func.__name__).ljust(80, '-'))
+        start = datetime.datetime.now()
+        result = func(*args, **kwargs)
+        finish = datetime.datetime.now()
+        logger.debug('{} finished in {}'.format(func.__name__, finish-start).ljust(80, '-'))
+        return result
+    return inner
+
+
 def migration(old_model_cls, new_model_cls, clear=False):
     def wrapper(f):
         def inner(self, *args, **kwargs):
