@@ -77,11 +77,15 @@
             </tr>
         {% endif %}
     </table>
-    <form action="{{ url('manga.download', args=[manga.id, manga.slug]) }}" method="post">
-        {{ forms.csrf_input() }}
-        <button class="btn btn-warning btn-block manga-info-cover-action">
-            <span class="icon icon-down-circled space-right"></span>
-            <span>{% trans %}Download{% endtrans %} ({{ archive.file.size|filesizeformat }})</span>
-        </button>
-    </form>
+    {% if download_available %}
+        <form action="{{ url('manga.download', args=[manga.id, manga.slug]) }}" method="post">
+            {{ forms.csrf_input() }}
+            <button class="btn btn-warning btn-block manga-info-cover-action">
+                <span class="icon icon-down-circled space-right"></span>
+                <span>{% trans %}Download{% endtrans %} ({{ archive.file.size|filesizeformat }})</span>
+            </button>
+        </form>
+    {% else %}
+        <button class="btn btn-block" disabled title="{% trans %}The servers are currently overloaded, please check back again later.{% endtrans %}">{% trans %}Download Unavailable{% endtrans %}</button>
+    {% endif %}
 </div>

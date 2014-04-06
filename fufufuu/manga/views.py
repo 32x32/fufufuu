@@ -19,7 +19,7 @@ from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet, MangaListFilterForm, MangaReportForm
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
-from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive
+from fufufuu.manga.utils import process_zipfile, process_images, MangaArchiveGenerator
 from fufufuu.report.models import ReportManga
 
 
@@ -151,14 +151,16 @@ class MangaView(MangaViewMixin, TemplateView):
         try:
             archive = MangaArchive.objects.get(manga=manga)
         except MangaArchive.DoesNotExist:
-            archive = generate_manga_archive(manga)
-        if not os.path.exists(archive.file.path):
-            archive = generate_manga_archive(manga)
+            archive = MangaArchiveGenerator.generate(manga)
+
+        download_available = os.path.exists(archive.file.path)
+        if not download_available: MangaArchiveGenerator.generate(manga)
 
         comment_list = Comment.objects.filter_content_object(manga).order_by('-created_on')
         context.update({
             'archive': archive,
             'comment_list': comment_list,
+            'download_available': download_available,
             'manga': manga,
             'page_count': len(manga_page_list),
             'payload': payload,
@@ -191,9 +193,11 @@ class MangaDownloadView(MangaViewMixin, TemplateView):
         try:
             manga_archive = MangaArchive.objects.get(manga=manga)
         except MangaArchive.DoesNotExist:
-            manga_archive = generate_manga_archive(manga)
+            manga_archive = MangaArchiveGenerator.generate(manga)
         if not os.path.exists(manga_archive.file.path):
-            manga_archive = generate_manga_archive(manga)
+            MangaArchiveGenerator.generate(manga)
+            messages.error(request, _('Sorry, the download is currently unavailable.'))
+            return redirect('manga', id=id, slug=slug)
 
         link, created = DownloadLink.objects.get_or_create(
             url=manga_archive.file.url,

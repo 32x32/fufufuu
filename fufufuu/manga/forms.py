@@ -14,7 +14,7 @@ from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_FIELDNAME_MAP
 from fufufuu.manga.models import Manga, MangaPage
-from fufufuu.manga.utils import generate_manga_archive
+from fufufuu.manga.utils import MangaArchiveGenerator
 from fufufuu.report.enums import ReportMangaType
 from fufufuu.report.models import ReportManga
 from fufufuu.tag.enums import TagType
@@ -221,7 +221,7 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         manga.tags.add(*self.get_tag_list())
 
         if manga.status == MangaStatus.PUBLISHED:
-            generate_manga_archive(manga)
+            MangaArchiveGenerator.generate(manga)
 
         if manga.tank and not manga.tank.cover:
             manga.tank.set_default_cover()
@@ -290,7 +290,7 @@ class MangaPageFormSet(BaseModelFormSet):
     def save(self, manga):
         getattr(self, self.data.get('action'))()
         if manga.status == MangaStatus.PUBLISHED:
-            generate_manga_archive(manga)
+            MangaArchiveGenerator.generate(manga)
 
     def reorder(self):
         for page, form in enumerate(self.ordered_forms, start=1):

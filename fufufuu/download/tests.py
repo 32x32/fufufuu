@@ -6,13 +6,13 @@ from django.core.urlresolvers import reverse
 
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.download.models import DownloadLink
-from fufufuu.manga.utils import generate_manga_archive
+from fufufuu.manga.utils import MangaArchiveGenerator
 
 
 class DownloadViewTests(BaseTestCase):
 
     def test_download_view_get(self):
-        manga_archive = generate_manga_archive(self.manga)
+        manga_archive = MangaArchiveGenerator.generate(self.manga)
 
         download_link = DownloadLink.objects.create(
             url=manga_archive.file.url,
@@ -30,7 +30,7 @@ class DownloadManagementTests(BaseTestCase):
     def test_clear_downloads(self):
         now = datetime.datetime.now(tz=pytz.UTC)
 
-        manga_archive = generate_manga_archive(self.manga)
+        manga_archive = MangaArchiveGenerator.generate(self.manga)
         download_link1 = DownloadLink.objects.create(
             url=manga_archive.file.url,
             ip_address='some-ip-address',

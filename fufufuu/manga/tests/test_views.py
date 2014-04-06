@@ -15,6 +15,7 @@ from fufufuu.manga.enums import MangaStatus, MangaCategory
 from fufufuu.manga.models import Manga, MangaFavorite
 from fufufuu.manga.views import MangaViewMixin
 from fufufuu.report.enums import ReportMangaType
+from fufufuu.report.models import ReportManga
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 
@@ -132,6 +133,7 @@ class MangaReportViewTests(BaseTestCase):
         challenge, response = settings.get_challenge()()
         store = CaptchaStore.objects.create(challenge=challenge, response=response)
 
+        self.client.logout()
         response = self.client.post(reverse('manga.report', args=[self.manga.id, self.manga.slug]), {
             'type': ReportMangaType.COPYRIGHT,
             'check': 'on',
@@ -141,6 +143,7 @@ class MangaReportViewTests(BaseTestCase):
         self.assertRedirects(response, reverse('manga.list'))
 
     def test_manga_report_view_post(self):
+        ReportManga.open.filter(manga=self.manga, created_by=self.user).delete()
         response = self.client.post(reverse('manga.report', args=[self.manga.id, self.manga.slug]), {
             'type': ReportMangaType.COPYRIGHT,
             'comment': 'This is a standard copyright violation.',

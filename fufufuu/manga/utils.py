@@ -3,6 +3,7 @@ import tempfile
 import zipfile
 from io import BytesIO
 
+from django.core.cache import cache
 from django.core.files.base import File
 from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import ugettext as _
@@ -106,31 +107,58 @@ def process_zipfile(manga, file, user):
     return errors
 
 
-def generate_manga_archive(manga):
-    try:
-        manga_archive = MangaArchive.objects.get(manga=manga)
-        DeletedFile.objects.create(path=manga_archive.file.path)
-    except MangaArchive.DoesNotExist:
-        manga_archive = MangaArchive(manga=manga)
+class MangaArchiveGenerator:
 
-    manga_zip_file = BytesIO()
-    manga_zip = zipfile.ZipFile(manga_zip_file, 'w')
+    LOCK_KEY = 'generate-manga-archive-lock-{}'
+    LOCK_TIMEOUT = 30
 
-    # write manga pages into zip file
-    for page in MangaPage.objects.filter(manga=manga).order_by('page'):
-        if not page.image: continue
-        extension = get_image_extension(page.image)
-        manga_zip.write(page.image.path, '{:03d}.{}'.format(page.page, extension))
+    @classmethod
+    def acquire_lock(cls, manga):
+        if cache.get(cls.LOCK_KEY.format(manga.id)):
+            return False
 
-    # write info.txt into zip file
-    info_text = manga.info_text
-    manga_zip.writestr('info.txt', info_text)
-    manga_zip.close()
+        cache.set(cls.LOCK_KEY.format(manga.id), True, cls.LOCK_TIMEOUT)
+        return True
 
-    manga_archive.name = manga.archive_name
-    manga_archive.file = UploadedFile(manga_zip_file, 'archive.zip')
-    manga_archive.save()
+    @classmethod
+    def release_lock(cls, manga):
+        cache.delete(cls.LOCK_KEY.format(manga.id))
 
-    manga_zip_file.close()
+    @classmethod
+    def generate(cls, manga):
+        """
+        This method is locked for up to 30 seconds (per manga) until it returns.
+        This prevents the server from falling over due to stampede effect.
+        """
 
-    return manga_archive
+        if not cls.acquire_lock(manga): return
+
+        try:
+            manga_archive = MangaArchive.objects.get(manga=manga)
+            DeletedFile.objects.create(path=manga_archive.file.path)
+        except MangaArchive.DoesNotExist:
+            manga_archive = MangaArchive(manga=manga)
+
+        manga_zip_file = BytesIO()
+        manga_zip = zipfile.ZipFile(manga_zip_file, 'w')
+
+        # write manga pages into zip file
+        for page in MangaPage.objects.filter(manga=manga).order_by('page'):
+            if not page.image: continue
+            extension = get_image_extension(page.image)
+            manga_zip.write(page.image.path, '{:03d}.{}'.format(page.page, extension))
+
+        # write info.txt into zip file
+        info_text = manga.info_text
+        manga_zip.writestr('info.txt', info_text)
+        manga_zip.close()
+
+        manga_archive.name = manga.archive_name
+        manga_archive.file = UploadedFile(manga_zip_file, 'archive.zip')
+        manga_archive.save()
+
+        manga_zip_file.close()
+
+        cls.release_lock(manga)
+
+        return manga_archive
