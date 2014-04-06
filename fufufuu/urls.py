@@ -18,6 +18,7 @@ urlpatterns = patterns('',
 
     # apps
     url(r'^account/',                   include('fufufuu.account.urls')),
+    url(r'^blog/',                      include('fufufuu.blog.urls')),
     url(r'^captcha/',                   include('captcha.urls')),
     url(r'^comment/',                   include('fufufuu.comment.urls')),
     url(r'^download/',                  include('fufufuu.download.urls')),

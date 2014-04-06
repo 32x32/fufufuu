@@ -7,6 +7,7 @@ rm -fr logs/*
 python manage.py syncdb --noinput
 
 python manage.py schemamigration account --initial --update
+python manage.py schemamigration blog --initial --update
 python manage.py schemamigration comment --initial --update
 python manage.py schemamigration core --initial --update
 python manage.py schemamigration download --initial --update

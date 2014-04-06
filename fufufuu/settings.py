@@ -29,6 +29,7 @@ INSTALLED_APPS = (
     'south',
 
     'fufufuu.account',
+    'fufufuu.blog',
     'fufufuu.comment',
     'fufufuu.core',
     'fufufuu.download',

@@ -13,11 +13,12 @@ from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.webdesign import lorem_ipsum
 from fufufuu.comment.models import Comment
+from fufufuu.blog.models import BlogEntry
 from fufufuu.account.models import User
 from fufufuu.core.languages import Language
 from fufufuu.core.enums import SiteSettingKey
 from fufufuu.core.models import SiteSetting
-from fufufuu.core.utils import slugify
+from fufufuu.core.utils import slugify, convert_markdown
 from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.models import Manga, MangaTag, MangaPage
 from fufufuu.report.enums import ReportStatus, ReportMangaType
@@ -29,14 +30,16 @@ from fufufuu.tag.models import Tag, TagData, TagAlias
 
 CONFIGURATION = {
     'default': {
-        'COMMENTS': lambda: random.choice([0, 0, 0, 0, 0, 1, 2, 3]),
+        'BLOG': 30,
+        'COMMENTS': [0, 0, 0, 0, 0, 1, 2, 3],
         'MANGA': 3000,
         'REPORTS': 300,
         'TAGS': 600,
         'USERS': 5,
     },
     'test': {
-        'COMMENTS': lambda: 1,
+        'BLOG': 1,
+        'COMMENTS': [1],
         'MANGA': 1,
         'REPORTS': 1,
         'TAGS': 1,
@@ -194,7 +197,7 @@ class DataCreator:
         user_list = User.objects.all()
         comment_list = []
         for manga in Manga.published.all():
-            for i in range(self.config['COMMENTS']()):
+            for i in range(random.choice(self.config['COMMENTS'])):
                 comment = lorem_ipsum.words(random.randint(1, 15), common=False)
                 comment_list.append(Comment(
                     content_type=ContentType.objects.get_for_model(manga),
@@ -226,6 +229,22 @@ class DataCreator:
         ReportManga.all.bulk_create(report_manga_list)
 
     @timed
+    def create_blog_entries(self):
+        blog_entry_list = []
+        for i in range(self.config['BLOG']):
+            title = lorem_ipsum.sentence()
+            markdown = '\n\n'.join(lorem_ipsum.paragraphs(random.randint(1, 3)))
+            blog_entry = BlogEntry(
+                title=title,
+                slug=slugify(title),
+                markdown=markdown,
+                html=convert_markdown(markdown),
+            )
+            blog_entry_list.append(blog_entry)
+
+        BlogEntry.objects.bulk_create(blog_entry_list)
+
+    @timed
     def create_settings(self):
         settings = (
             (SiteSettingKey.ENABLE_COMMENTS, 'True'),
@@ -248,6 +267,7 @@ class DataCreator:
         self.create_manga_pages()
         self.create_comments()
         self.create_manga_reports()
+        self.create_blog_entries()
         self.create_settings()
 
         finish = datetime.datetime.now()

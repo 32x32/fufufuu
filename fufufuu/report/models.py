@@ -15,7 +15,7 @@ class ReportMangaResolution(models.Model):
     removed         = models.BooleanField()
     comment         = models.TextField(blank=True, null=True)
 
-    created_by      = models.ForeignKey(User)
+    created_by      = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     created_on      = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -47,7 +47,7 @@ class ReportManga(models.Model):
     quality         = models.CharField(max_length=20, choices=ReportQuality.choices, default=ReportQuality.UNKNOWN)
     resolution      = models.ForeignKey(ReportMangaResolution, blank=True, null=True)
 
-    created_by      = models.ForeignKey(User, blank=True, null=True)
+    created_by      = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     created_on      = models.DateTimeField(auto_now_add=True)
 
     open            = ReportMangaOpenManager()
