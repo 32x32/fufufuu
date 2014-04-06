@@ -102,7 +102,8 @@ class ModeratorReportMangaFormSetTests(BaseTestCase):
         self.assertEqual(formset.errors, [{'quality': ['This field is required.']} for _ in range(report_count)])
 
     def test_moderator_report_manga_form_set_keep(self):
-        original_status = self.manga.status
+        self.manga.status = MangaStatus.PENDING
+        self.manga.save(self.user)
 
         report_list = ReportManga.open.filter(manga=self.manga)
         report_id_set = set(report_list.values_list('id', flat=True))
@@ -128,7 +129,7 @@ class ModeratorReportMangaFormSetTests(BaseTestCase):
         self.assertEqual(resolution.comment, 'These are incorrect reports.')
 
         manga = Manga.objects.get(id=self.manga.id)
-        self.assertEqual(manga.status, original_status)
+        self.assertEqual(manga.status, MangaStatus.PUBLISHED)
 
         closed_report_list = ReportManga.closed.filter(resolution=resolution)
         self.assertEqual(set(closed_report_list.values_list('id', flat=True)), report_id_set)

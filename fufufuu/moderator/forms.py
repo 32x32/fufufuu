@@ -23,8 +23,12 @@ class ModeratorReportMangaFormSet(BaseModelFormSet):
     def save(self, user, manga):
         remove = self.data.get('action') == 'remove'
 
+        original_status = manga.status
         if remove:
             manga.status = MangaStatus.REMOVED
+        else:
+            manga.status = MangaStatus.PUBLISHED
+        if original_status != manga.status:
             manga.save(updated_by=user)
 
         resolution = ReportMangaResolution.objects.create(

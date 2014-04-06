@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from captcha.fields import CaptchaField
 from django import forms
+from django.db.models.aggregates import Sum
 from django.forms.models import BaseModelFormSet
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -346,6 +347,7 @@ class MangaListFilterForm(forms.Form):
 class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     ANONYMOUS_USER_REPORT_WEIGHT = 5
+    PENDING_WEIGHT = 50
 
     type = forms.ChoiceField(
         label=_('Select the reason for reporting'),
@@ -378,7 +380,7 @@ class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
         if not self.request.user.is_authenticated():
             self.fields['captcha'] = CaptchaField()
 
-    def save(self, manga, commit=True):
+    def save(self, manga):
         report_manga = super().save(commit=False)
         report_manga.manga = manga
         report_manga.ip_address = get_ip_address(self.request)
@@ -389,7 +391,11 @@ class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
         else:
             report_manga.weight = self.ANONYMOUS_USER_REPORT_WEIGHT
 
-        if commit:
-            report_manga.save()
+        report_manga.save()
+
+        total_weight = ReportManga.open.filter(manga=manga).aggregate(total_weight=Sum('weight')).get('total_weight', 0)
+        if total_weight >= self.PENDING_WEIGHT:
+            manga.status = MangaStatus.PENDING
+            manga.save(manga.updated_by)
 
         return report_manga

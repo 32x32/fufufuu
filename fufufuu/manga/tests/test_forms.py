@@ -448,3 +448,24 @@ class MangaReportFormTests(BaseTestCase):
         self.assertEqual(report_manga.weight, self.user.report_weight)
         self.assertEqual(report_manga.manga, self.manga)
         self.assertEqual(report_manga.type, ReportMangaType.REPOST)
+
+    def test_manga_report_form_pending(self):
+        self.user.report_weight = 50
+        self.user.save()
+
+        form = MangaReportForm(request=self.request, data={
+            'type': ReportMangaType.REPOST,
+            'comment': 'This is a repost.',
+            'check': 'on',
+        })
+        self.assertTrue(form.is_valid())
+
+        report_manga = form.save(self.manga)
+        self.assertEqual(report_manga.created_by, self.user)
+        self.assertEqual(report_manga.ip_address, '127.0.0.1')
+        self.assertEqual(report_manga.weight, self.user.report_weight)
+        self.assertEqual(report_manga.manga, self.manga)
+        self.assertEqual(report_manga.type, ReportMangaType.REPOST)
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(manga.status, MangaStatus.PENDING)
