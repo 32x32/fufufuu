@@ -1,7 +1,7 @@
 {% extends 'manga/manga-base.html' %}
 {% import '_macros/forms.html' as forms with context %}
 
-{% block title %}{{ manga.title }}{% endblock %}
+{% block title %}{% trans title=manga.title %}{{ title }} - Report{% endtrans %}{% endblock %}
 
 {% block content %}
     <div class="width-800 container block-center">

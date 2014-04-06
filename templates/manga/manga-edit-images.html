@@ -1,7 +1,7 @@
 {% extends 'manga/manga-base.html' %}
 {% import '_macros/forms.html' as forms with context %}
 
-{% block title %}{% trans title=manga.title %}Edit Images: {{ title }}{% endtrans %}{% endblock %}
+{% block title %}{% trans title=manga.title %}{{ title }} - Edit Images{% endtrans %}{% endblock %}
 
 {% block content %}
     <div class="container relative">

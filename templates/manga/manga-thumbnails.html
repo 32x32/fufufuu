@@ -1,6 +1,6 @@
 {% extends 'manga/manga-base.html' %}
 
-{% block title %}{{ manga.title }}{% endblock %}
+{% block title %}{% trans title=manga.title %}{{ title }} - Thumbnails{% endtrans %}{% endblock %}
 
 {% block content %}
     <div class="container">

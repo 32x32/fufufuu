@@ -1,7 +1,7 @@
 {% extends 'manga/manga-base.html' %}
 {% import '_macros/forms.html' as forms with context %}
 
-{% block title %}{% trans title=manga.title %}Edit: {{ title }}{% endtrans %}{% endblock %}
+{% block title %}{% trans title=manga.title %}{{ title }} - Edit{% endtrans %}{% endblock %}
 
 {% block content %}
     <form action="" method="post" enctype="multipart/form-data">
