@@ -79,7 +79,37 @@ class MangaListFavoritesView(MangaListMixin, ProtectedTemplateView):
         })
 
 
-class MangaView(TemplateView):
+#-------------------------------------------------------------------------------
+
+
+class MangaViewMixin:
+
+    def get_manga_for_view(self, id):
+        user = self.request.user
+        if not user.is_authenticated():
+            manga = get_object_or_404(Manga.published, id=id)
+        elif user.is_staff:
+            manga = get_object_or_404(Manga.all, id=id)
+        elif user.is_moderator:
+            manga = get_object_or_404(Manga.objects, id=id)
+        else:
+            manga = get_object_or_404(Manga.published, id=id)
+        return manga
+
+    def get_manga_for_edit(self, id):
+        user = self.request.user
+        if not user.is_authenticated():
+            raise Http404
+        if user.is_staff:
+            manga = get_object_or_404(Manga.all, id=id)
+        elif user.is_moderator:
+            manga = get_object_or_404(Manga.objects, id=id)
+        else:
+            manga = get_object_or_404(Manga.objects, id=id, created_by=user)
+        return manga
+
+
+class MangaView(MangaViewMixin, TemplateView):
 
     template_name = 'manga/manga.html'
 
@@ -104,7 +134,7 @@ class MangaView(TemplateView):
 
     def get(self, request, id, slug):
         context = {}
-        manga = get_object_or_404(Manga.published, id=id)
+        manga = self.get_manga_for_view(id)
 
         manga_page_list = list(manga.mangapage_set.order_by('page'))
         payload = self.get_payload(manga_page_list)
@@ -135,12 +165,12 @@ class MangaView(TemplateView):
         return self.render_to_response(context)
 
 
-class MangaThumbnailsView(TemplateView):
+class MangaThumbnailsView(MangaViewMixin, TemplateView):
 
     template_name = 'manga/manga-thumbnails.html'
 
     def get(self, request, id, slug):
-        manga = get_object_or_404(Manga.published, id=id)
+        manga = self.get_manga_for_view(id)
         manga_page_list = manga.mangapage_set.all()
         for mp in manga_page_list:
             mp.image_thumbnail_url = image_resize(mp.image, ImageKeyType.MANGA_THUMB, mp.id)
@@ -150,13 +180,13 @@ class MangaThumbnailsView(TemplateView):
         })
 
 
-class MangaDownloadView(TemplateView):
+class MangaDownloadView(MangaViewMixin, TemplateView):
 
     def get(self, request, id, slug):
         return HttpResponseNotAllowed(permitted_methods=['post'])
 
     def post(self, request, id, slug):
-        manga = get_object_or_404(Manga.published, id=id)
+        manga = self.get_manga_for_view(id)
         try:
             manga_archive = MangaArchive.objects.get(manga=manga)
         except MangaArchive.DoesNotExist:
@@ -177,19 +207,19 @@ class MangaDownloadView(TemplateView):
         return redirect('download', key=link.key, filename=manga_archive.name)
 
 
-class MangaReportView(TemplateView):
+class MangaReportView(MangaViewMixin, TemplateView):
 
     template_name = 'manga/manga-report.html'
 
     def get(self, request, id, slug):
-        manga = get_object_or_404(Manga.published, id=id)
+        manga = self.get_manga_for_view(id)
         return self.render_to_response({
             'form': MangaReportForm(request),
             'manga': manga,
         })
 
     def post(self, request, id, slug):
-        manga = get_object_or_404(Manga.published, id=id)
+        manga = self.get_manga_for_view(id)
         form = MangaReportForm(request, data=request.POST)
         if form.is_valid():
             form.save(manga)
@@ -202,13 +232,13 @@ class MangaReportView(TemplateView):
         })
 
 
-class MangaFavoriteView(ProtectedTemplateView):
+class MangaFavoriteView(MangaViewMixin, ProtectedTemplateView):
 
     def get(self, request, id, slug):
         return redirect(reverse('manga', args=[id, slug]))
 
     def post(self, request, id, slug):
-        manga = get_object_or_404(Manga.published, id=id)
+        manga = self.get_manga_for_view(id)
         try:
             mf = MangaFavorite.objects.get(user=request.user, manga=manga)
             mf.delete()
@@ -221,39 +251,12 @@ class MangaFavoriteView(ProtectedTemplateView):
 #-------------------------------------------------------------------------------
 
 
-class MangaEditMixin:
-
-    def get_manga(self, id):
-        """
-        draft mode      --> editable only by created user
-        published mode  --> editable everyone
-        pending mode    --> editable only by moderators
-        deleted mode    --> raise 404
-        """
-
-        manga = get_object_or_404(Manga.objects, id=id)
-        if manga.status == MangaStatus.DRAFT:
-            if manga.created_by != self.request.user: raise Http404
-        elif manga.status == MangaStatus.PUBLISHED:
-            pass
-        elif manga.status == MangaStatus.PENDING:
-            pass
-        return manga
-
-    def get_manga_restricted(self, id):
-        if self.request.user.is_moderator:
-            manga = get_object_or_404(Manga.objects, id=id)
-        else:
-            manga = get_object_or_404(Manga.objects, id=id, created_by=self.request.user)
-        return manga
-
-
-class MangaEditView(MangaEditMixin, ProtectedTemplateView):
+class MangaEditView(MangaViewMixin, ProtectedTemplateView):
 
     template_name = 'manga/manga-edit.html'
 
     def get(self, request, id, slug):
-        manga = self.get_manga(id)
+        manga = self.get_manga_for_edit(id)
 
         return self.render_to_response({
             'manga': manga,
@@ -261,7 +264,7 @@ class MangaEditView(MangaEditMixin, ProtectedTemplateView):
         })
 
     def post(self, request, id, slug):
-        manga = self.get_manga(id)
+        manga = self.get_manga_for_edit(id)
 
         if request.POST.get('action') == MangaAction.DELETE:
             manga.delete(updated_by=request.user)
@@ -282,7 +285,7 @@ class MangaEditView(MangaEditMixin, ProtectedTemplateView):
         })
 
 
-class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
+class MangaEditImagesView(MangaViewMixin, ProtectedTemplateView):
 
     template_name = 'manga/manga-edit-images.html'
 
@@ -298,14 +301,14 @@ class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
         )
 
     def get(self, request, id, slug):
-        manga = self.get_manga_restricted(id)
+        manga = self.get_manga_for_edit(id)
         return self.render_to_response({
             'manga': manga,
             'formset': self.get_formset_cls()(user=request.user, queryset=MangaPage.objects.filter(manga=manga)),
         })
 
     def post(self, request, id, slug):
-        manga = self.get_manga_restricted(id)
+        manga = self.get_manga_for_edit(id)
         formset = self.get_formset_cls()(
             user=request.user,
             queryset=MangaPage.objects.filter(manga=manga),
@@ -327,21 +330,21 @@ class MangaEditImagesView(MangaEditMixin, ProtectedTemplateView):
         })
 
 
-class MangaEditImagesPageView(MangaEditMixin, ProtectedTemplateView):
+class MangaEditImagesPageView(MangaViewMixin, ProtectedTemplateView):
 
     def get(self, request, id, slug, page):
-        manga = self.get_manga_restricted(id)
+        manga = self.get_manga_for_edit(id)
         manga_page = get_object_or_404(MangaPage, manga=manga, page=page)
         return HttpResponseXAccel(manga_page.image.url, manga_page.image.name, attachment=False)
 
 
-class MangaEditUploadView(MangaEditMixin, ProtectedTemplateView):
+class MangaEditUploadView(MangaViewMixin, ProtectedTemplateView):
 
     def get(self, request, id, slug):
         return HttpResponseNotAllowed(permitted_methods=['post'])
 
     def post(self, request, id, slug):
-        manga = self.get_manga_restricted(id)
+        manga = self.get_manga_for_edit(id)
         if 'zipfile' in request.FILES:
             errors = process_zipfile(manga, request.FILES.get('zipfile'), request.user)
         elif 'images' in request.FILES:

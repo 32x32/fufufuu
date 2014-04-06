@@ -1,9 +1,11 @@
 import zipfile
 from io import BytesIO
+from django.contrib.auth.models import AnonymousUser
 
 from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
+from django.http.response import Http404
 
 from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
@@ -11,6 +13,7 @@ from fufufuu.core.utils import slugify
 from fufufuu.download.models import DownloadLink
 from fufufuu.manga.enums import MangaStatus, MangaCategory
 from fufufuu.manga.models import Manga, MangaFavorite
+from fufufuu.manga.views import MangaViewMixin
 from fufufuu.report.enums import ReportMangaType
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
@@ -60,6 +63,10 @@ class MangaViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'manga/manga.html')
 
     def test_manga_view_get_draft(self):
+        self.user.is_staff = False
+        self.user.is_moderator = False
+        self.user.save()
+
         self.manga.status = MangaStatus.DRAFT
         self.manga.save(updated_by=self.user)
         response = self.client.get(reverse('manga', args=[self.manga.id, self.manga.slug]))
@@ -87,6 +94,10 @@ class MangaDownloadViewTests(BaseTestCase):
         self.assertEqual(response['location'], 'http://testserver{}'.format(reverse('download', args=[download_link.key, self.manga.archive_name])))
 
     def test_manga_download_view_post_draft(self):
+        self.user.is_staff = False
+        self.user.is_moderator = False
+        self.user.save()
+
         self.manga.status = MangaStatus.DRAFT
         self.manga.save(updated_by=self.user)
 
@@ -255,6 +266,7 @@ class MangaEditImagesViewTests(BaseTestCase):
         self.manga.created_by = user
         self.manga.save(user)
 
+        self.user.is_staff = False
         self.user.is_moderator = False
         self.user.save()
 
@@ -347,8 +359,131 @@ class MangaEditImagesPageView(BaseTestCase):
         self.manga.created_by = user
         self.manga.save(user)
 
+        self.user.is_staff = False
         self.user.is_moderator = False
         self.user.save()
 
         response = self.client.get(reverse('manga.edit.images.page', args=[self.manga.id, self.manga.slug, manga_page.page]))
         self.assertEqual(response.status_code, 404)
+
+
+class MangaViewMixinTests(BaseTestCase):
+
+    def _assert_get_manga(self, method_name, user, manga_status, error_cls):
+        class TestRequest: pass
+
+        mixin = MangaViewMixin()
+        mixin.request = TestRequest()
+        mixin.request.user = user
+
+        self.manga.status = manga_status
+        self.manga.save(self.user)
+
+        if error_cls:
+            try:
+                getattr(mixin, method_name)(self.manga.id)
+                self.fail('Exception not raised, expected {}'.format(error_cls))
+            except error_cls:
+                pass
+        else:
+            self.assertEqual(self.manga, getattr(mixin, method_name)(self.manga.id))
+
+    def assert_get_manga_for_view(self, user, manga_status, error_cls=None):
+        self._assert_get_manga('get_manga_for_view', user, manga_status, error_cls)
+
+    def assert_get_manga_for_edit(self, user, manga_status, error_cls=None):
+        self._assert_get_manga('get_manga_for_edit', user, manga_status, error_cls)
+
+    def test_get_manga_for_view_unauthenticated(self):
+        user = AnonymousUser()
+        self.assert_get_manga_for_view(user, MangaStatus.DRAFT, Http404)
+        self.assert_get_manga_for_view(user, MangaStatus.PUBLISHED)
+        self.assert_get_manga_for_view(user, MangaStatus.PENDING, Http404)
+        self.assert_get_manga_for_view(user, MangaStatus.REMOVED, Http404)
+        self.assert_get_manga_for_view(user, MangaStatus.DELETED, Http404)
+
+    def test_get_manga_for_view_staff(self):
+        self.user.is_staff = True
+        self.user.is_moderator = False
+        self.user.save()
+
+        self.assert_get_manga_for_view(self.user, MangaStatus.DRAFT)
+        self.assert_get_manga_for_view(self.user, MangaStatus.PUBLISHED)
+        self.assert_get_manga_for_view(self.user, MangaStatus.PENDING)
+        self.assert_get_manga_for_view(self.user, MangaStatus.REMOVED)
+        self.assert_get_manga_for_view(self.user, MangaStatus.DELETED)
+
+    def test_get_manga_for_view_moderator(self):
+        self.user.is_staff = False
+        self.user.is_moderator = True
+        self.user.save()
+
+        self.assert_get_manga_for_view(self.user, MangaStatus.DRAFT)
+        self.assert_get_manga_for_view(self.user, MangaStatus.PUBLISHED)
+        self.assert_get_manga_for_view(self.user, MangaStatus.PENDING)
+        self.assert_get_manga_for_view(self.user, MangaStatus.REMOVED)
+        self.assert_get_manga_for_view(self.user, MangaStatus.DELETED, Http404)
+
+    def test_get_manga_for_view(self):
+        self.user.is_staff = False
+        self.user.is_moderator = False
+        self.user.save()
+
+        self.assert_get_manga_for_view(self.user, MangaStatus.DRAFT, Http404)
+        self.assert_get_manga_for_view(self.user, MangaStatus.PUBLISHED)
+        self.assert_get_manga_for_view(self.user, MangaStatus.PENDING, Http404)
+        self.assert_get_manga_for_view(self.user, MangaStatus.REMOVED, Http404)
+        self.assert_get_manga_for_view(self.user, MangaStatus.DELETED, Http404)
+
+    def test_get_manga_for_edit_unauthenticated(self):
+        user = AnonymousUser()
+        self.assert_get_manga_for_edit(user, MangaStatus.DRAFT, Http404)
+        self.assert_get_manga_for_edit(user, MangaStatus.PUBLISHED, Http404)
+        self.assert_get_manga_for_edit(user, MangaStatus.PENDING, Http404)
+        self.assert_get_manga_for_edit(user, MangaStatus.REMOVED, Http404)
+        self.assert_get_manga_for_edit(user, MangaStatus.DELETED, Http404)
+    
+    def test_get_manga_for_edit_staff(self):
+        self.user.is_staff = True
+        self.user.is_moderator = False
+        self.user.save()
+
+        self.assert_get_manga_for_edit(self.user, MangaStatus.DRAFT)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.PUBLISHED)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.PENDING)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.REMOVED)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.DELETED)
+
+    def test_get_manga_for_edit_moderator(self):
+        self.user.is_staff = False
+        self.user.is_moderator = True
+        self.user.save()
+
+        self.assert_get_manga_for_edit(self.user, MangaStatus.DRAFT)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.PUBLISHED)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.PENDING)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.REMOVED)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.DELETED, Http404)
+
+    def test_get_manga_for_edit_owner(self):
+        self.user.is_staff = False
+        self.user.is_moderator = False
+        self.user.save()
+
+        self.assert_get_manga_for_edit(self.user, MangaStatus.DRAFT)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.PUBLISHED)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.PENDING)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.REMOVED)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.DELETED, Http404)
+
+    def test_get_manga_for_edit_not_owner(self):
+        user = self.create_test_user('testuser2')
+        user.is_staff = False
+        user.is_moderator = False
+        user.save()
+
+        self.assert_get_manga_for_edit(user, MangaStatus.DRAFT, Http404)
+        self.assert_get_manga_for_edit(user, MangaStatus.PUBLISHED, Http404)
+        self.assert_get_manga_for_edit(user, MangaStatus.PENDING,  Http404)
+        self.assert_get_manga_for_edit(user, MangaStatus.REMOVED, Http404)
+        self.assert_get_manga_for_edit(user, MangaStatus.DELETED, Http404)

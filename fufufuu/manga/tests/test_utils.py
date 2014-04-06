@@ -111,13 +111,3 @@ class MangaUtilTests(BaseTestCase):
         self.assertTrue(os.path.exists(ma_path2))
 
         self.assertTrue(DeletedFile.objects.filter(path=ma_path1).exists())
-
-    def test_generate_manga_archive_draft(self):
-        self.manga.status = MangaStatus.DRAFT
-        self.manga.save(updated_by=self.user)
-
-        try:
-            generate_manga_archive(self.manga)
-            self.fail('A RuntimeError should have been raised')
-        except RuntimeError:
-            pass

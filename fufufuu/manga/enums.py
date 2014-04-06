@@ -29,12 +29,14 @@ class MangaStatus:
     DRAFT               = 'DRAFT'
     PUBLISHED           = 'PUBLISHED'
     PENDING             = 'PENDING'
+    REMOVED             = 'REMOVED'
     DELETED             = 'DELETED'
 
     choices = (
         (DRAFT,         _('Draft')),
         (PUBLISHED,     _('Published')),
         (PENDING,       _('Pending')),
+        (REMOVED,       _('Removed')),
         (DELETED,       _('Deleted')),
     )
 

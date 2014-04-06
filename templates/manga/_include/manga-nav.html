@@ -26,18 +26,18 @@
 {% endmacro %}
 
 <div id="m-nav">
-    <div class="right min-md">
-        <a href="{{ url_manga_edit }}" class="{{ utils.link_active(url_manga_edit) }}">
-            <span class="icon icon-pencil"></span>
-            <span>{% trans %}Edit{% endtrans %}</span>
-        </a>
-        {% if manga.created_by == user or user.is_moderator %}
+    {% if manga.created_by == user or user.is_moderator %}
+        <div class="right min-md">
+            <a href="{{ url_manga_edit }}" class="{{ utils.link_active(url_manga_edit) }}">
+                <span class="icon icon-pencil"></span>
+                <span>{% trans %}Edit{% endtrans %}</span>
+            </a>
             <a href="{{ url_manga_edit_images }}" class="{{ utils.link_active(url_manga_edit_images) }}">
                 <span class="icon icon-pencil"></span>
                 <span>{% trans %}Edit Images{% endtrans %}</span>
             </a>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
     <div class="m-nav-main">
         <a class="max-lg{% if request.path != url_manga %} disabled{% endif %}" id="m-nav-info-toggle">
             <span class="icon icon-info-circled"></span>

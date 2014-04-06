@@ -9,11 +9,9 @@ from django.utils.translation import ugettext as _
 from PIL import Image
 
 from fufufuu.core.models import DeletedFile
-from fufufuu.core.templates import TEMPLATE_ENV
 from fufufuu.core.utils import get_image_extension
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
-from fufufuu.manga.enums import MangaStatus
 from fufufuu.manga.models import MangaPage, MangaArchive
 
 
@@ -109,9 +107,6 @@ def process_zipfile(manga, file, user):
 
 
 def generate_manga_archive(manga):
-    if manga.status != MangaStatus.PUBLISHED:
-        raise RuntimeError('generate_manga_archive should only be used with published manga')
-
     try:
         manga_archive = MangaArchive.objects.get(manga=manga)
         DeletedFile.objects.create(path=manga_archive.file.path)
