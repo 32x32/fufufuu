@@ -1,3 +1,61 @@
 {% extends 'base.html' %}
 
 {% block title %}{% trans %}Help{% endtrans %}{% endblock %}
+
+{% block content %}
+    <div class="container width-800">
+        <h2>{% trans %}Categories{% endtrans %}</h2>
+        <table class="table-no-border table-compressed">
+            <tr>
+                <td width="85"><div class="manga-category manga-category-non_h">{% trans %}Non-H{% endtrans %}</div></td>
+                <td>{% trans %}Non-pornographic doujinshi, no nudity.{% endtrans %}</td>
+            </tr>
+            <tr>
+                <td><div class="manga-category manga-category-ecchi">{% trans %}Ecchi{% endtrans %}</div></td>
+                <td>{% trans %}Only softcore nudity is permitted.{% endtrans %}</td>
+            </tr>
+            <tr>
+                <td><div class="manga-category manga-category-vanilla">{% trans %}Vanilla{% endtrans %}</div></td>
+                <td>{% trans %}Mild adult content, cute/romantic stories.{% endtrans %}</td>
+            </tr>
+            <tr>
+                <td><div class="manga-category manga-category-alternative">{% trans %}Alternative{% endtrans %}</div></td>
+                <td>{% trans %}Futunari, BDSM, tentacles, NTR, mind-break, monster girls.{% endtrans %}</td>
+            </tr>
+            <tr>
+                <td><div class="manga-category manga-category-yuri">{% trans %}Yuri{% endtrans %}</div></td>
+                <td>{% trans %}Contains two or more women, no men.{% endtrans %}</td>
+            </tr>
+            <tr>
+                <td><div class="manga-category manga-category-yaoi">{% trans %}Yaoi{% endtrans %}</div></td>
+                <td>{% trans %}Boys' Love, male sexual relationships (bara included).{% endtrans %}</td>
+            </tr>
+            <tr>
+                <td><div class="manga-category manga-category-other">{% trans %}Other{% endtrans %}</div></td>
+                <td>{% trans %}This does not fit into any other categories.{% endtrans %}</td>
+            </tr>
+        </table>
+        <hr>
+        <h2>{% trans %}Rules{% endtrans %}</h2>
+        <ol class="bullet-list">
+            <li>{% trans %}Do not upload, post, discuss, request, or link to, anything that violates local or United States law. This will be strictly enforced and violators will be severely punished.{% endtrans %}</li>
+            <li>{% trans %}If you are under the age of 18, or it is illegal for you to view materials contained on this website, discontinue browsing immediately.{% endtrans %}</li>
+            <li>{% trans %}The quality of uploads is extremely important. Images should be at least 800 by 1200 pixels and preferrably in PNG format.{% endtrans %}</li>
+            <li>{% trans %}Submitting false reports or otherwise abusing the report system will result in a ban of indeterminate length. Posting a comment stating that you've reported is not allowed. Please do not announce your reports.{% endtrans %}</li>
+            <li>{% trans %}No spamming or flooding of any kind. No intentionally evading spam filters.{% endtrans %}</li>
+            <li>{% trans %}The use of scrapers, bots or other automated uploading/downloading scripts are prohibited. Users may not upload or post comments from proxies or Tor exit nodes.{% endtrans %}</li>
+            <li>{% trans %}Remember: The use of Fufufuu is a privileges, not a right. The Fufufuu staff reserves the right to revoke access and remove content for any reason without notice.{% endtrans %}</li>
+        </ol>
+        <hr>
+        <h2>{% trans %}Frequently Asked Questions{% endtrans %}</h2>
+        <h3>{% trans %}What is Fufufuu?{% endtrans %}</h3>
+        <p class="faq-answer">{% trans %}fufufuu.net is a manga and doujinshi reader. Think of fakku.net, g.e-hentai.org or pururin.com as examples.{% endtrans %}</p>
+        <h3>{% trans %}Where did the name Fufufuu come from?{% endtrans %}</h3>
+        <p class="faq-answer no-margin-bottom">{% trans %}See <a href="http://www.urbandictionary.com/define.php?term=fufufu">http://www.urbandictionary.com/define.php?term=fufufu</a>.{% endtrans %}</p>
+        <p class="faq-answer text-xsmall">{% trans %}A Japanese term for (often evil) laughter. It is often used in manga or manga-styled scenes in anime when someone is deviously plotting something. It is mostly humorous.{% endtrans %}</p>
+        <p class="faq-answer">{% trans %}Unfortunately "fufufu.net" was already taken, so we settled with the next best option: fufufuu.net.{% endtrans %}</p>
+        <h3>{% trans %}What happens if fufufuu.net dies?{% endtrans %}</h3>
+        <p class="faq-answer">{% trans %}In the event fufufuu.net goes away for any reason, I will make available the source code for fufufuu.net and provide a copy of the database and all images files to whomever is willing to host fufufuu.net.{% endtrans %}</p>
+        <p class="faq-answer">{% trans %}Unless a horrific accidents happens to me (ParadigmShift), I can be contacted via <a href="mailto:paradigmshift@fufufuu.net">paradigmshift@fufufuu.net</a> or on #fufufuu@irc.rizon.net if you have any questions or concerns.{% endtrans %}</p>
+    </div>
+{% endblock %}
