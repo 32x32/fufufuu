@@ -373,16 +373,24 @@ class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
         model = ReportManga
         fields = ('type', 'comment',)
 
-    def __init__(self, request, *args, **kwargs):
+    def __init__(self, request, manga, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.request = request
+        self.manga = manga
 
         if not self.request.user.is_authenticated():
             self.fields['captcha'] = CaptchaField()
 
-    def save(self, manga):
+    def clean(self):
+        cd = self.cleaned_data
+        user = self.request.user
+        if user.is_authenticated() and ReportManga.open.filter(manga=self.manga, created_by=user).exists():
+            raise forms.ValidationError(_('You have already reported this manga.'))
+        return cd
+
+    def save(self):
         report_manga = super().save(commit=False)
-        report_manga.manga = manga
+        report_manga.manga = self.manga
         report_manga.ip_address = get_ip_address(self.request)
 
         if self.request.user.is_authenticated():
@@ -393,9 +401,9 @@ class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
 
         report_manga.save()
 
-        total_weight = ReportManga.open.filter(manga=manga).aggregate(total_weight=Sum('weight')).get('total_weight', 0)
+        total_weight = ReportManga.open.filter(manga=self.manga).aggregate(total_weight=Sum('weight')).get('total_weight', 0)
         if total_weight >= self.PENDING_WEIGHT:
-            manga.status = MangaStatus.PENDING
-            manga.save(manga.updated_by)
+            self.manga.status = MangaStatus.PENDING
+            self.manga.save(self.manga.updated_by)
 
         return report_manga

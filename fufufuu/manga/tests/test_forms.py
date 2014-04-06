@@ -10,6 +10,7 @@ from fufufuu.manga.forms import MangaEditForm, MangaReportForm
 from fufufuu.manga.models import MangaTag, Manga, MangaPage
 from fufufuu.manga.views import MangaEditImagesView
 from fufufuu.report.enums import ReportMangaType
+from fufufuu.report.models import ReportManga
 from fufufuu.tag.enums import TagType
 from fufufuu.tag.models import Tag
 
@@ -410,6 +411,10 @@ class MangaPageFormsetTests(BaseTestCase):
 
 class MangaReportFormTests(BaseTestCase):
 
+    def setUp(self):
+        super().setUp()
+        ReportManga.open.filter(manga=self.manga, created_by=self.user).delete()
+
     def test_manga_report_form_anonymous_user(self):
         from captcha.conf import settings
         from captcha.models import CaptchaStore
@@ -419,7 +424,7 @@ class MangaReportFormTests(BaseTestCase):
 
         self.request.user = AnonymousUser()
 
-        form = MangaReportForm(request=self.request, data={
+        form = MangaReportForm(request=self.request, manga=self.manga, data={
             'type': ReportMangaType.COPYRIGHT,
             'check': 'on',
             'captcha_0': store.hashkey,
@@ -427,7 +432,7 @@ class MangaReportFormTests(BaseTestCase):
         })
         self.assertTrue(form.is_valid())
 
-        report_manga = form.save(self.manga)
+        report_manga = form.save()
         self.assertEqual(report_manga.created_by, None)
         self.assertEqual(report_manga.ip_address, '127.0.0.1')
         self.assertEqual(report_manga.weight, MangaReportForm.ANONYMOUS_USER_REPORT_WEIGHT)
@@ -435,14 +440,14 @@ class MangaReportFormTests(BaseTestCase):
         self.assertEqual(report_manga.type, ReportMangaType.COPYRIGHT)
 
     def test_manga_report_form(self):
-        form = MangaReportForm(request=self.request, data={
+        form = MangaReportForm(request=self.request, manga=self.manga, data={
             'type': ReportMangaType.REPOST,
             'comment': 'This is a repost.',
             'check': 'on',
         })
         self.assertTrue(form.is_valid())
 
-        report_manga = form.save(self.manga)
+        report_manga = form.save()
         self.assertEqual(report_manga.created_by, self.user)
         self.assertEqual(report_manga.ip_address, '127.0.0.1')
         self.assertEqual(report_manga.weight, self.user.report_weight)
@@ -453,14 +458,14 @@ class MangaReportFormTests(BaseTestCase):
         self.user.report_weight = 50
         self.user.save()
 
-        form = MangaReportForm(request=self.request, data={
+        form = MangaReportForm(request=self.request, manga=self.manga, data={
             'type': ReportMangaType.REPOST,
             'comment': 'This is a repost.',
             'check': 'on',
         })
         self.assertTrue(form.is_valid())
 
-        report_manga = form.save(self.manga)
+        report_manga = form.save()
         self.assertEqual(report_manga.created_by, self.user)
         self.assertEqual(report_manga.ip_address, '127.0.0.1')
         self.assertEqual(report_manga.weight, self.user.report_weight)
@@ -469,3 +474,19 @@ class MangaReportFormTests(BaseTestCase):
 
         manga = Manga.objects.get(id=self.manga.id)
         self.assertEqual(manga.status, MangaStatus.PENDING)
+
+    def test_manga_report_multiple_open(self):
+        form = MangaReportForm(request=self.request, manga=self.manga, data={
+            'type': ReportMangaType.REPOST,
+            'comment': 'This is a repost.',
+            'check': 'on',
+        })
+        form.save()
+
+        form = MangaReportForm(request=self.request, manga=self.manga, data={
+            'type': ReportMangaType.REPOST,
+            'comment': 'This is a repost.',
+            'check': 'on',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['__all__'], ['You have already reported this manga.'])

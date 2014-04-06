@@ -8,18 +8,19 @@ from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
-from fufufuu.comment.models import Comment
 
+from fufufuu.comment.models import Comment
 from fufufuu.core.response import HttpResponseXAccel
 from fufufuu.core.utils import paginate, get_ip_address, natural_sort
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
-from fufufuu.manga.enums import MangaStatus, MangaCategory, MangaAction
+from fufufuu.manga.enums import MangaCategory, MangaAction
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet, MangaListFilterForm, MangaReportForm
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images, generate_manga_archive
+from fufufuu.report.models import ReportManga
 
 
 class MangaListMixin:
@@ -213,16 +214,19 @@ class MangaReportView(MangaViewMixin, TemplateView):
 
     def get(self, request, id, slug):
         manga = self.get_manga_for_view(id)
+        if request.user.is_authenticated() and ReportManga.open.filter(manga=manga, created_by=request.user).exists():
+            messages.error(request, _('You have already reported this manga.'))
+
         return self.render_to_response({
-            'form': MangaReportForm(request),
+            'form': MangaReportForm(request, manga=manga),
             'manga': manga,
         })
 
     def post(self, request, id, slug):
         manga = self.get_manga_for_view(id)
-        form = MangaReportForm(request, data=request.POST)
+        form = MangaReportForm(request, manga=manga, data=request.POST)
         if form.is_valid():
-            form.save(manga)
+            form.save()
             messages.success(request, _('Thank you for reporting. Your report will be reviewed by a moderator shortly.'))
             return redirect('manga.list')
 
