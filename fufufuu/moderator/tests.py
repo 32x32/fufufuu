@@ -1,5 +1,7 @@
 from django.core.urlresolvers import reverse
 from fufufuu.core.tests import BaseTestCase
+from fufufuu.manga.enums import MangaStatus
+from fufufuu.manga.models import Manga
 from fufufuu.moderator.views import ModeratorReportMangaView
 from fufufuu.report.enums import ReportQuality
 from fufufuu.report.models import ReportManga
@@ -100,6 +102,8 @@ class ModeratorReportMangaFormSetTests(BaseTestCase):
         self.assertEqual(formset.errors, [{'quality': ['This field is required.']} for _ in range(report_count)])
 
     def test_moderator_report_manga_form_set_keep(self):
+        original_status = self.manga.status
+
         report_list = ReportManga.open.filter(manga=self.manga)
         report_id_set = set(report_list.values_list('id', flat=True))
         report_count = report_list.count()
@@ -122,6 +126,9 @@ class ModeratorReportMangaFormSetTests(BaseTestCase):
         self.assertFalse(resolution.removed)
         self.assertEqual(resolution.manga, self.manga)
         self.assertEqual(resolution.comment, 'These are incorrect reports.')
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(manga.status, original_status)
 
         closed_report_list = ReportManga.closed.filter(resolution=resolution)
         self.assertEqual(set(closed_report_list.values_list('id', flat=True)), report_id_set)
@@ -149,6 +156,9 @@ class ModeratorReportMangaFormSetTests(BaseTestCase):
         resolution = formset.save(user=self.user, manga=self.manga)
         self.assertTrue(resolution.removed)
         self.assertEqual(resolution.manga, self.manga)
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(manga.status, MangaStatus.REMOVED)
 
         closed_report_list = ReportManga.closed.filter(resolution=resolution)
         self.assertEqual(set(closed_report_list.values_list('id', flat=True)), report_id_set)

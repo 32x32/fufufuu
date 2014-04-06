@@ -1,6 +1,7 @@
 from django import forms
 from django.forms.models import BaseModelFormSet
 from django.utils.translation import ugettext_lazy as _
+from fufufuu.manga.enums import MangaStatus
 from fufufuu.report.enums import ReportStatus
 from fufufuu.report.models import ReportManga, ReportMangaResolution
 
@@ -21,6 +22,11 @@ class ModeratorReportMangaFormSet(BaseModelFormSet):
 
     def save(self, user, manga):
         remove = self.data.get('action') == 'remove'
+
+        if remove:
+            manga.status = MangaStatus.REMOVED
+            manga.save(updated_by=user)
+
         resolution = ReportMangaResolution.objects.create(
             manga=manga,
             removed=remove,
