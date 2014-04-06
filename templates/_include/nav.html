@@ -3,6 +3,7 @@
 {% set url_account_login = url('account.login') %}
 {% set url_account_register = url('account.register') %}
 {% set url_account_settings = url('account.settings') %}
+{% set url_blog_entry_list = url('blog.entry.list') %}
 {% set url_flat_help = url('flat.help') %}
 {% set url_manga_list = url('manga.list') %}
 {% set url_manga_list_favorites = url('manga.list.favorites') %}
@@ -49,6 +50,6 @@
     {% if user.is_moderator or user.is_staff %}
         <hr class="nav-sep">
     {% endif %}
-    <a href="#" class="nav-link"><span class="icon icon-newspaper"></span>{% trans %}News & Blog{% endtrans %}</a>
+    <a href="{{ url_blog_entry_list }}" class="nav-link {{ utils.link_active_starts_with(url_blog_entry_list) }}"><span class="icon icon-newspaper"></span>{% trans %}News & Blog{% endtrans %}</a>
     <a href="{{ url_flat_help }}" class="nav-link {{ utils.link_active_starts_with(url_flat_help) }}"><span class="icon icon-help-circled"></span>{% trans %}Help{% endtrans %}</a>
 </nav>

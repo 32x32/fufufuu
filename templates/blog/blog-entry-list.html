@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% import '_macros/widgets.html' as widgets with context %}
+
+{% block title %}{% trans %}News & Blog{% endtrans %}{% endblock %}
+
+{#{% block content_upper %}#}
+{#    <div class="filter-bar">#}
+{#        <form class="right">#}
+{#            {{ widgets.pagination(blog_entry_list) }}#}
+{#        </form>#}
+{#        <div class="clear"></div>#}
+{#    </div>#}
+{#{% endblock %}#}
+
+{% block content %}
+    <div class="container-fat width-800">
+        {% for blog_entry in blog_entry_list %}
+            <h4>{{ blog_entry.title }}</h4>
+            <div class="space-bottom-10">
+                {% if blog_entry.created_by %}
+                    <a href="{{ url('user', args=[blog_entry.created_by.username]) }}">
+                        <span class="left space-right-10">{{ widgets.user_avatar(blog_entry.created_by) }}</span>
+                        <strong>{{ blog_entry.created_by }}</strong>
+                        <p class="text-secondary text-xsmall space-bottom-0">{% trans date=blog_entry.created_on|naturaltime %}Posted {{ date }}{% endtrans %}</p>
+                        <div class="clear"></div>
+                    </a>
+                {% else %}
+                    <div>
+                        <span class="left space-right-10">
+                            <img src="{{ STATIC_URL }}images/no-avatar.png" class="account-avatar">
+                        </span>
+                        <strong class="text-secondary">&lt;{% trans %}User Deleted{% endtrans %}&gt;</strong>
+                        <p class="text-secondary text-xsmall space-bottom-0">{% trans date=blog_entry.created_on|naturaltime %}Posted {{ date }}{% endtrans %}</p>
+                        <div class="clear"></div>
+                    </div>
+                {% endif %}
+            </div>
+            <div>{{ blog_entry.html }}</div>
+            <div>
+                <a href="{{ url('blog.entry', args=[blog_entry.id, blog_entry.slug]) }}">{% trans count=blog_entry.comment_count %}{{ count }} comments{% endtrans %}</a>
+            </div>
+            {% if not loop.last %}<hr>{% endif %}
+        {% endfor %}
+    </div>
+    {% if blog_entry_list and blog_entry_list.paginator.num_pages > 1 %}
+        <div class="filter-bar filter-bar-bottom">
+            <form class="right">
+                {{ widgets.pagination(blog_entry_list) }}
+            </form>
+            <span class="btn back-to-top"><span class="icon icon-up-circled space-right"></span>{% trans %}Back to Top{% endtrans %}</span>
+            <div class="clear"></div>
+        </div>
+    {% endif %}
+{% endblock %}

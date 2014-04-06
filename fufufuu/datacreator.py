@@ -239,6 +239,7 @@ class DataCreator:
                 slug=slugify(title),
                 markdown=markdown,
                 html=convert_markdown(markdown),
+                created_by=self.user,
             )
             blog_entry_list.append(blog_entry)
 
