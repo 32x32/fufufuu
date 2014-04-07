@@ -152,8 +152,9 @@ class MangaView(MangaViewMixin, TemplateView):
         except MangaArchive.DoesNotExist:
             archive = MangaArchiveGenerator.generate(manga)
 
-        download_available = os.path.exists(archive.file.path)
-        if not download_available: MangaArchiveGenerator.generate(manga)
+        download_available = (archive != None) and os.path.exists(archive.file.path)
+        if not download_available:
+            MangaArchiveGenerator.generate(manga)
 
         context.update({
             'archive': archive,
@@ -191,7 +192,7 @@ class MangaDownloadView(MangaViewMixin, TemplateView):
             manga_archive = MangaArchive.objects.get(manga=manga)
         except MangaArchive.DoesNotExist:
             manga_archive = MangaArchiveGenerator.generate(manga)
-        if not os.path.exists(manga_archive.file.path):
+        if not manga_archive or not os.path.exists(manga_archive.file.path):
             MangaArchiveGenerator.generate(manga)
             messages.error(request, _('Sorry, the download is currently unavailable.'))
             return redirect('manga', id=id, slug=slug)

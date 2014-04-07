@@ -41,7 +41,7 @@ def production():
     use fufufuu as host (note: this is production)
     """
 
-    env.hosts = ['fufufuu-beta']
+    env.hosts = ['fufufuu3']
     env.config = 'production'
 
 #-------------------------------------------------------------------------------

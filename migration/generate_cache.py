@@ -126,4 +126,4 @@ class CacheGenerator(Migrator):
 
 if __name__ == '__main__':
     cg = CacheGenerator()
-    cg.run()
+    cg.generate_cache()
