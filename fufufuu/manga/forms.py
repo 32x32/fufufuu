@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
-from fufufuu.core.utils import convert_markdown, get_ip_address, send_email_alert
+from fufufuu.core.utils import convert_markdown, get_ip_address, send_email_alert, validate_image
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_FIELDNAME_MAP
@@ -159,6 +159,12 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         markdown = self.cleaned_data.get('markdown')
         self.html = convert_markdown(markdown)
         return markdown
+
+    def clean_cover(self):
+        cover = self.cleaned_data.get('cover')
+        if cover:
+            validate_image(cover)
+        return cover
 
     def clean(self):
         cd = self.cleaned_data

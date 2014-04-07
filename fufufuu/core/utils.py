@@ -1,15 +1,17 @@
 import re
 
 from PIL import Image
+from django import forms
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, Page
 from django.shortcuts import _get_queryset
 from django.utils import timezone
 from django.utils.text import slugify as django_slugify
+from django.utils.translation import ugettext_lazy as _
 import markdown
 from unidecode import unidecode
 
-from fufufuu.settings import DEBUG, ADMINS, DEFAULT_FROM_EMAIL
+from fufufuu.settings import DEBUG, ADMINS, DEFAULT_FROM_EMAIL, MAX_IMAGE_FILE_SIZE, SUPPORTED_IMAGE_FORMATS, MAX_IMAGE_DIMENSION
 
 
 IMAGE_FORMAT_EXTENSION = {
@@ -92,7 +94,7 @@ def get_object_or_none(klass, *args, **kwargs):
 
 def get_ip_address(request):
     """
-    Returns the user's ip address from the request
+    Returns the user's ip address from the request.
     """
 
     ip_address = request.META.get('REMOTE_ADDR', '')
@@ -102,7 +104,7 @@ def get_ip_address(request):
 
 def convert_markdown(markdown_text):
     """
-    returns the markdown converted into HTML
+    returns the markdown converted into HTML.
     """
 
     markdown_text = markdown_text.strip()
@@ -115,7 +117,7 @@ def convert_markdown(markdown_text):
 
 def send_email_alert(subject, message, fail_silently=False):
     """
-    Send an email to ADMINS
+    Send an email to ADMINS.
     """
 
     if DEBUG: return
@@ -131,10 +133,35 @@ def send_email_alert(subject, message, fail_silently=False):
 
 def natural_sort(l, key_attr):
     """
-    sort a list in the way humans expect
+    Sort a list in the way humans expect.
     http://stackoverflow.com/questions/4836710/does-python-have-a-built-in-function-for-string-natural-sort
     """
 
     convert = lambda text: int(text) if text.isdigit() else text.lower()
     key = lambda item: [convert(c) for c in re.split('([0-9]+)', getattr(item, key_attr))]
     return sorted(l, key=key)
+
+
+def validate_image(f):
+    """
+    This method validates an image file that a user uploads.
+    """
+
+    if f.size > MAX_IMAGE_FILE_SIZE:
+        raise forms.ValidationError(_('{} is over 10MB in size.').format(f.name))
+
+    try:
+        Image.open(f).verify()
+        f.seek(0)
+    except Exception as e:
+        raise forms.ValidationError(_('{} failed to verify as an image file.').format(f.name))
+
+    im = Image.open(f)
+
+    if im.format not in SUPPORTED_IMAGE_FORMATS:
+        raise forms.ValidationError(_('{} is not a supported image type.').format(f.name))
+
+    if im.size[0] > MAX_IMAGE_DIMENSION[0] or im.size[1] > MAX_IMAGE_DIMENSION[1]:
+        raise forms.ValidationError(_('{} is larger than 8000x8000 pixels.').format(f.name))
+
+    return f

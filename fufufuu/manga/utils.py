@@ -14,13 +14,10 @@ from fufufuu.core.utils import get_image_extension
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.models import MangaPage, MangaArchive
+from fufufuu.settings import MAX_IMAGE_FILE_SIZE, SUPPORTED_IMAGE_FORMATS, MAX_IMAGE_DIMENSION
 
 
-MAX_TOTAL_SIZE          = 200 * 1024 * 1024
-MAX_IMAGE_FILE_SIZE     = 8 * 1024 * 1024
-MAX_IMAGE_DIMENSION     = (8000, 8000)
-MANGA_PAGE_LIMIT        = 100
-SUPPORTED_IMAGE_FORMATS = ['JPEG', 'PNG']
+MANGA_PAGE_LIMIT = 100
 
 
 def process_images(manga, file_list, user):
@@ -37,7 +34,7 @@ def process_images(manga, file_list, user):
             break
 
         if f.size > MAX_IMAGE_FILE_SIZE:
-            errors.append(_('{} is over 10MB in size.'.format(f.name)))
+            errors.append(_('{} is over 10MB in size.').format(f.name))
             continue
 
         try:

@@ -5,7 +5,7 @@ from django.utils.translation import ugettext as _
 
 from fufufuu.account.models import User
 from fufufuu.core.forms import BlankLabelSuffixMixin
-from fufufuu.core.utils import convert_markdown
+from fufufuu.core.utils import convert_markdown, validate_image
 
 
 USERNAME_REGEX = r'^\w{4,20}$'
@@ -159,14 +159,15 @@ class AccountSettingsForm(BlankLabelSuffixMixin, forms.ModelForm):
     def clean_avatar(self):
         if 'avatar-clear' in self.data:
             return False
-        return self.cleaned_data.get('avatar')
+        avatar = self.cleaned_data.get('avatar')
+        if avatar:
+            validate_image(avatar)
+        return avatar
 
     def save(self):
         user = super().save(commit=False)
-
         if self.html:
             user.html = self.html
-
         user.save()
         return user
 

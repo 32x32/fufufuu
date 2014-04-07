@@ -1,8 +1,8 @@
 import os
-import random
-import string
+
 from django.utils import timezone
 from django.utils.http import int_to_base36
+
 from fufufuu.core.utils import get_image_extension
 
 
@@ -46,10 +46,9 @@ def image_upload_to(instance, filename):
     random_key is used to prevent scraping of the website
     """
 
-    random_key_length = 4
-    random_key = ''.join([random.choice(string.hexdigits) for _ in range(random_key_length)])
-
-    filename = '{}-{}.jpg'.format(int_to_base36(instance.key_id), random_key)
+    key = int(timezone.now().strftime('%Y%m%d%H%M%S%f'))
+    key = int_to_base36(key)
+    filename = '{}-{}.jpg'.format(int_to_base36(instance.key_id), key)
     dirs = int_to_base36(instance.key_id)[:-1]
     return os.sep.join(['image', instance.key_type.lower()] + list(dirs) + [filename])
 

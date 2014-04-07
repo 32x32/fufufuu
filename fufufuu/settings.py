@@ -104,6 +104,11 @@ DEFAULT_FILE_STORAGE = 'fufufuu.core.storage.FufufuuStorage'
 RESOURCE_VERSION = 'development'
 X_ACCEL = False
 
+MAX_TOTAL_SIZE          = 200 * 1024 * 1024
+MAX_IMAGE_FILE_SIZE     = 8 * 1024 * 1024
+MAX_IMAGE_DIMENSION     = (8000, 8000)
+SUPPORTED_IMAGE_FORMATS = ['JPEG', 'PNG']
+
 #-------------------------------------------------------------------------------
 # captcha settings
 #-------------------------------------------------------------------------------

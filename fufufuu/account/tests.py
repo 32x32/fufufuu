@@ -2,12 +2,13 @@ from captcha.conf import settings
 from captcha.models import CaptchaStore
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
-from fufufuu.account.forms import AccountRegisterForm
+from fufufuu.account.forms import AccountRegisterForm, AccountSettingsForm
 
 from fufufuu.account.models import User
 from fufufuu.core.enums import SiteSettingKey
 from fufufuu.core.models import SiteSetting
 from fufufuu.core.tests import BaseTestCase
+from fufufuu.settings import MAX_IMAGE_FILE_SIZE
 
 
 class AccountLoginViewTests(BaseTestCase):
@@ -190,6 +191,39 @@ class AccountSettingsPasswordViewTests(BaseTestCase):
 
         user = User.objects.get(id=self.user.id)
         self.assertTrue(user.check_password('1234'))
+
+
+class AccountSettingsFormTests(BaseTestCase):
+
+    def test_account_settings_form_avatar_filesize_too_large(self):
+        form = AccountSettingsForm(instance=self.user, files={
+            'avatar': SimpleUploadedFile('test.jpg', b'0' * (MAX_IMAGE_FILE_SIZE+1)),
+        })
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['avatar'], ['test.jpg is over 10MB in size.'])
+
+    def test_account_settings_form_avatar_not_an_image(self):
+        form = AccountSettingsForm(instance=self.user, files={
+            'avatar': SimpleUploadedFile('test.jpg', b'0'),
+        })
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['avatar'], ['test.jpg failed to verify as an image file.'])
+
+    def test_account_settings_form_avatar_dimensions_too_large(self):
+        form = AccountSettingsForm(instance=self.user, files={
+            'avatar': SimpleUploadedFile('test.jpg', self.create_test_image_file(width=8001).getvalue()),
+        })
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['avatar'], ['test.jpg is larger than 8000x8000 pixels.'])
+
+    def test_account_settings_form(self):
+        form = AccountSettingsForm(instance=self.user, files={
+            'avatar': SimpleUploadedFile('test.jpg', self.create_test_image_file().getvalue()),
+        })
+        self.assertTrue(form.is_valid())
+        user = form.save()
+
+        self.assertTrue(user.avatar)
 
 
 class AccountRegisterFormTests(BaseTestCase):
