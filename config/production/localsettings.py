@@ -31,10 +31,10 @@ EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'no-reply@fufufuu.net'
 
 ALLOWED_HOSTS = [
-    'beta.fufufuu.net',
+    'fufufuu.net',
 ]
 
-SESSION_COOKIE_DOMAIN = 'beta.fufufuu.net'
+SESSION_COOKIE_DOMAIN = 'fufufuu.net'
 
 CACHES = {
     'default': {
