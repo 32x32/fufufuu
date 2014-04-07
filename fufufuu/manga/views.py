@@ -9,7 +9,6 @@ from django.http.response import Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 
-from fufufuu.comment.models import Comment
 from fufufuu.core.response import HttpResponseXAccel
 from fufufuu.core.utils import paginate, get_ip_address, natural_sort
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
@@ -156,10 +155,8 @@ class MangaView(MangaViewMixin, TemplateView):
         download_available = os.path.exists(archive.file.path)
         if not download_available: MangaArchiveGenerator.generate(manga)
 
-        comment_list = Comment.objects.filter_content_object(manga).order_by('-created_on')
         context.update({
             'archive': archive,
-            'comment_list': comment_list,
             'download_available': download_available,
             'manga': manga,
             'page_count': len(manga_page_list),

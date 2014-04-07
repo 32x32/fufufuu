@@ -8,9 +8,11 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro field(field) %}
+{% macro field(field, show_label=True) %}
     <div class="form-field{% if field.errors %} error{% endif %}">
-        {{ field.label_tag() }}
+        {% if show_label %}
+            {{ field.label_tag() }}
+        {% endif %}
         {{ field }}
         {% for error in field.errors %}
             <span class="error-block">{{ error }}</span>

@@ -37,6 +37,10 @@
         {% endif %}
         <span class="text-secondary text-small icon icon-dot"></span>
         <span class="text-secondary text-small space-bottom-0">{% trans date=blog_entry.created_on|naturaltime %}Posted {{ date }}{% endtrans %}</span>
+        {% if user.is_staff %}
+            <span class="text-secondary text-small icon icon-dot"></span>
+            <a href="{{ url('blog.entry.edit', args=[blog_entry.id, blog_entry.slug]) }}">{% trans %}Edit{% endtrans %}</a>
+        {% endif %}
     </div>
-    <div>{{ blog_entry.html }}</div>
+    <div class="markdown">{{ blog_entry.html }}</div>
 {% endmacro %}

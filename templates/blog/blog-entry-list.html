@@ -3,11 +3,23 @@
 
 {% block title %}{% trans %}News & Blog{% endtrans %}{% endblock %}
 
+{% block content_upper %}
+    {% if user.is_staff %}
+        <div class="filter-bar">
+            <form class="right">
+                {{ widgets.pagination(blog_entry_list) }}
+            </form>
+            <a href="{{ url('blog.entry.create') }}" class="btn btn-primary">{% trans %}New Post{% endtrans %}</a>
+            <div class="clear"></div>
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     <div class="container-fat width-800">
         {% for blog_entry in blog_entry_list %}
             {{ widgets.render_blog_entry(blog_entry) }}
-            <div>
+            <div class="space-top-10">
                 <a href="{{ url('blog.entry', args=[blog_entry.id, blog_entry.slug]) }}">{% trans count=blog_entry.comment_count %}{{ count }} comments{% endtrans %}</a>
             </div>
             {% if not loop.last %}<hr>{% endif %}

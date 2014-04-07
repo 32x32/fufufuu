@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% import '_macros/forms.html' as forms with context %}
+
+{% block title %}{% if blog_entry %}{{ blog_entry.title }}{% else %}{% trans %}New Post{% endtrans %}{% endif %}{% endblock %}
+
+{% block content_upper %}
+    <ul class="breadcrumb-list">
+        <li><a href="{{ url('blog.entry.list') }}">{% trans %}News & Blog{% endtrans %}</a></li>
+        {% if blog_entry %}
+            <li><a href="{{ url('blog.entry', args=[blog_entry.id, blog_entry.slug]) }}">{{ blog_entry.title }}</a></li>
+            <li><span>{% trans %}Edit{% endtrans %}</span></li>
+        {% else %}
+            <li><span>{% trans %}New Post{% endtrans %}</span></li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+        <div class="container blog-edit-main">
+            {{ forms.csrf_input() }}
+            {{ forms.field(form.title, show_label=False) }}
+            <div class="half-wrapper">
+                <div class="half half-md">
+                    {{ form.markdown }}
+                    <a href="/f/markdown/" class="text-xsmall" target="_blank">This field uses markdown for formatting.</a>
+                </div>
+                <div class="half half-md">
+                    <div class="markdown markdown-preview" data-for="id_markdown"></div>
+                    <textarea name="html" class="none markdown-preview" data-for="id_markdown"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="blog-edit-sidebar">
+            <div class="well space-bottom-10">
+                {% if blog_entry %}
+                    <button type="submit" class="btn btn-primary btn-block">{% trans %}Save{% endtrans %}</button>
+                {% else %}
+                    <button type="submit" class="btn btn-primary btn-block">{% trans %}Publish Post{% endtrans %}</button>
+                {% endif %}
+            </div>
+            {% if blog_entry %}
+                <div class="well space-bottom-10">
+                    <span class="text-secondary text-small">Updated {{ blog_entry.updated_on|naturaltime }} by {{ blog_entry.updated_by }}</span>
+                </div>
+                <div class="well space-bottom-10">
+                    <span class="text-secondary text-small">Created {{ blog_entry.created_on|naturaltime }} by {{ blog_entry.created_by }}</span>
+                </div>
+            {% endif %}
+        </div>
+    </form>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/markdown.min.js?version={{ RESOURCE_VERSION }}"></script>
+{% endblock %}

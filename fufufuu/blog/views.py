@@ -1,6 +1,10 @@
 from django.contrib.contenttypes.models import ContentType
+from django.contrib import messages
 from django.db.models.aggregates import Count
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
+from django.utils.translation import ugettext_lazy as _
+
+from fufufuu.blog.forms import BlogEntryForm
 from fufufuu.blog.models import BlogEntry
 from fufufuu.comment.models import Comment
 from fufufuu.core.utils import paginate
@@ -45,24 +49,34 @@ class BlogEntryView(TemplateView):
 
 #-------------------------------------------------------------------------------
 
-
-class BlogEntryCreateView(StaffTemplateView):
-
-    template_name = 'blog/blog-entry-create.html'
-
-    def get(self, request):
-        return self.render_to_response({})
-
-    def post(self, request):
-        return self.render_to_response({})
-
-
 class BlogEntryEditView(StaffTemplateView):
 
     template_name = 'blog/blog-entry-edit.html'
 
-    def get(self, request, id, slug):
-        return self.render_to_response({})
+    @staticmethod
+    def get_blog_entry(id):
+        if id:
+            blog_entry = get_object_or_404(BlogEntry, id=id)
+        else:
+            blog_entry = None
+        return blog_entry
 
-    def post(self, rqeuest):
-        return self.render_to_response({})
+    def get(self, request, id=None, slug=None):
+        blog_entry = self.get_blog_entry(id)
+        return self.render_to_response({
+            'blog_entry': blog_entry,
+            'form': BlogEntryForm(instance=blog_entry),
+        })
+
+    def post(self, request, id=None, slug=None):
+        blog_entry = self.get_blog_entry(id)
+        form = BlogEntryForm(instance=blog_entry, data=request.POST)
+        if form.is_valid():
+            blog_entry = form.save(request.user)
+            messages.success(request, _('The post has been updated.'))
+            return redirect('blog.entry.edit', id=blog_entry.id, slug=blog_entry.slug)
+
+        return self.render_to_response({
+            'blog_entry': blog_entry,
+            'form': form,
+        })

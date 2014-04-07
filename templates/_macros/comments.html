@@ -2,9 +2,9 @@
 {% import '_macros/widgets.html' as widgets with context %}
 
 {% macro comments_widget(content_object) %}
-    <h2>{% trans count=comment_list|length %}{{ count }} comments{% endtrans %}</h2>
     {% set comment_list = content_object|get_comment_list %}
     {% set comment_form = content_object|get_comment_form %}
+    <h2>{% trans count=comment_list|length %}{{ count }} comments{% endtrans %}</h2>
     {% if user.is_authenticated() %}
         <form action="{{ url('comment.post') }}" method="post">
             {{ forms.csrf_input() }}

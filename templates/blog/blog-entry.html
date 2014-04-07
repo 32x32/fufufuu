@@ -2,6 +2,8 @@
 {% import '_macros/widgets.html' as widgets with context %}
 {% import '_macros/comments.html' as comments with context %}
 
+{% block title %}{{ blog_entry.title }}{% endblock %}
+
 {% block content %}
     <div class="container-fat width-800">
         {{ widgets.render_blog_entry(blog_entry) }}
