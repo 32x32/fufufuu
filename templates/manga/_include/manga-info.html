@@ -36,13 +36,9 @@
             </div>
         {% endif %}
     </div>
-    <div class="manga-info-section markdown">
-        {% if manga.markdown %}
-            {{ manga.html }}
-        {% else %}
-            <p>{% trans %}No Description Available{% endtrans %}</p>
-        {% endif %}
-    </div>
+    {% if manga.markdown %}
+        <div class="manga-info-section markdown">{{ manga.html }}</div>
+    {% endif %}
     <div class="min-lg">{% include 'manga/_include/manga-controls.html' %}</div>
     <table class="manga-info-table">
         {{ tag_widget(manga.tag_dictionary.SCANLATOR, gettext('Scanlators')) }}
