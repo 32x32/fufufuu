@@ -111,7 +111,7 @@ def setup():
         # utilities
         'cron', 'ntp', 'rsync', 'gettext', 'htop', 'tmux', 'bmon',
         # server
-        'nginx', 'exim4',
+        'nginx', 'exim4', 'update-notifier-common',
     ]
 
     db_password = prompt('Please enter the db password: ')
