@@ -52,7 +52,11 @@
                                 <strong>{{ report.type|report_manga_type_display }}</strong>
                                 <div>{{ report.comment }}</div>
                                 <div>
-                                    <a href="{{ url('user', args=[report.created_by.username]) }}"><strong class="text-small">{{ report.created_by.username }}</strong></a>
+                                    {% if report.created_by %}
+                                        <a href="{{ url('user', args=[report.created_by.username]) }}"><strong class="text-small">{{ report.created_by.username }}</strong></a>
+                                    {% else %}
+                                        <span>{% trans %}Anonymous{% endtrans %}</span>
+                                    {% endif %}
                                     <span class="icon icon-dot text-small text-secondary"></span>
                                     <span class="text-secondary text-small">{{ report.created_on|naturaltime }}</span>
                                 </div>

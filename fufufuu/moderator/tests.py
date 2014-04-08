@@ -22,6 +22,12 @@ class ModeratorReportMangaViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'moderator/moderator-report-manga.html')
 
+    def test_moderator_report_manga_view_get_anonymous(self):
+        ReportManga.open.filter(manga=self.manga.id).update(created_by=None)
+        response = self.client.get(reverse('moderator.report.manga', args=[self.manga.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'moderator/moderator-report-manga.html')
+
     def test_moderator_report_manga_view_post_invalid(self):
         report_list = ReportManga.open.filter(manga=self.manga)
         report_count = report_list.count()
