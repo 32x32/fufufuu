@@ -140,11 +140,11 @@ class MangaView(MangaViewMixin, TemplateView):
         payload = self.get_payload(manga_page_list)
 
         if manga.tank_id:
-            manga_list = Manga.published.filter(tank_id=manga.tank_id)
+            manga_list = Manga.published.filter(tank_id=manga.tank_id, language=manga.language)
             context['chapter_list'] = natural_sort(manga_list, 'tank_chapter')
 
         if manga.collection_id:
-            manga_list = Manga.published.filter(collection_id=manga.collection_id)
+            manga_list = Manga.published.filter(collection_id=manga.collection_id, language=manga.language)
             context['collection_list'] = natural_sort(manga_list, 'collection_part')
 
         try:
