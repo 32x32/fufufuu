@@ -15,6 +15,13 @@ class ImageTransformer(object):
         im = Image.open(file)
         ImageFile.MAXBLOCK = im.size[0] * im.size[1]
 
+        try:
+            im.load()
+        except IOError:
+            # we can "safely" ignore the exception that occurs at this point
+            # http://stackoverflow.com/questions/12984426/python-pil-ioerror-image-file-truncated-with-big-images
+            pass
+
         if im.mode != 'RGB':
             im = im.convert('RGB')
 

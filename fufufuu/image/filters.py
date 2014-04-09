@@ -5,7 +5,7 @@ from django.db.utils import IntegrityError
 from fufufuu.image.models import Image, get_cache_key
 
 
-IMAGE_CACHE_TIMEOUT = 30 * 24 * 60 * 60 # 30 day
+IMAGE_CACHE_TIMEOUT = 30 * 24 * 60 * 60 # 30 days
 
 
 def image_resize(file_path, key_type, key_id):
