@@ -221,10 +221,6 @@ class MangaEditForm(BlankLabelSuffixMixin, forms.ModelForm):
         if cd.get('action') == MangaAction.PUBLISH:
             manga.status = MangaStatus.PUBLISHED
             manga.published_on = timezone.now()
-            send_email_alert(
-                subject='[Fufufuu] Published: {}'.format(manga.title),
-                message=manga.info_text,
-            )
 
         manga.save(self.request.user)
         manga.tags.clear()

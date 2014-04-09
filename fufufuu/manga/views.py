@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 
 from fufufuu.core.response import HttpResponseXAccel
-from fufufuu.core.utils import paginate, get_ip_address, natural_sort
+from fufufuu.core.utils import paginate, get_ip_address, natural_sort, send_email_alert
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
@@ -288,6 +288,9 @@ class MangaEditView(MangaViewMixin, ProtectedTemplateView):
             messages.success(request, _('{} has been updated').format(manga.title))
             for message in form.messages:
                 messages.info(request, message)
+            if request.POST.get('action') == MangaAction.PUBLISH:
+                manga.update_tag_dictionary()
+                send_email_alert(subject='[Fufufuu] Published: {}'.format(manga.title), message=manga.info_text)
             return redirect('manga.edit', id=id, slug=manga.slug)
 
         messages.error(request, _('{} has not been updated. Please fix the errors on the page and try again.').format(manga.title))

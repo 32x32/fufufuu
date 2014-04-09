@@ -23,9 +23,7 @@ class MangaMixin:
         if hasattr(self, '_tag_dictionary'):
             return self._tag_dictionary
 
-        self._tag_dictionary = defaultdict(list)
-        for tag in self.tags.all():
-            self._tag_dictionary[tag.tag_type].append(tag)
+        self.update_tag_dictionary()
         return self._tag_dictionary
 
     @property
@@ -47,3 +45,8 @@ class MangaMixin:
     @property
     def info_text(self):
         return TEMPLATE_ENV.get_template('manga/manga-archive-info.txt').render({'manga': self})
+
+    def update_tag_dictionary(self):
+        self._tag_dictionary = defaultdict(list)
+        for tag in self.tags.all():
+            self._tag_dictionary[tag.tag_type].append(tag)
