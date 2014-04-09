@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
-from fufufuu.core.utils import convert_markdown, get_ip_address, send_email_alert, validate_image
+from fufufuu.core.utils import convert_markdown, get_ip_address, send_email_alert, validate_image, yesterday
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus, MANGA_FIELDNAME_MAP
@@ -356,7 +356,8 @@ class MangaListFilterForm(forms.Form):
 
 class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
 
-    ANONYMOUS_USER_REPORT_WEIGHT = 5
+    ANONYMOUS_REPORT_LIMIT = 20
+    ANONYMOUS_REPORT_WEIGHT = 5
     PENDING_WEIGHT = 50
 
     type = forms.ChoiceField(
@@ -394,6 +395,17 @@ class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
     def clean(self):
         cd = self.cleaned_data
         user = self.request.user
+
+        if user.is_authenticated():
+            count = ReportManga.open.filter(created_by=user, created_on__gte=yesterday()).count()
+            report_limit = user.report_limit
+        else:
+            count = ReportManga.open.filter(ip_address=get_ip_address(self.request), created_on__gte=yesterday()).count()
+            report_limit = self.ANONYMOUS_REPORT_LIMIT
+
+        if count >= report_limit:
+            raise forms.ValidationError(_('Sorry, you have reached your report limit for the day.'))
+
         if user.is_authenticated() and ReportManga.open.filter(manga=self.manga, created_by=user).exists():
             raise forms.ValidationError(_('You have already reported this manga.'))
         return cd
@@ -407,7 +419,7 @@ class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
             report_manga.created_by = self.request.user
             report_manga.weight = self.request.user.report_weight
         else:
-            report_manga.weight = self.ANONYMOUS_USER_REPORT_WEIGHT
+            report_manga.weight = self.ANONYMOUS_REPORT_WEIGHT
 
         report_manga.save()
 

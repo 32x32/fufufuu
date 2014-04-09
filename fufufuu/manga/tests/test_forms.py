@@ -435,7 +435,7 @@ class MangaReportFormTests(BaseTestCase):
         report_manga = form.save()
         self.assertEqual(report_manga.created_by, None)
         self.assertEqual(report_manga.ip_address, '127.0.0.1')
-        self.assertEqual(report_manga.weight, MangaReportForm.ANONYMOUS_USER_REPORT_WEIGHT)
+        self.assertEqual(report_manga.weight, MangaReportForm.ANONYMOUS_REPORT_WEIGHT)
         self.assertEqual(report_manga.manga, self.manga)
         self.assertEqual(report_manga.type, ReportMangaType.COPYRIGHT)
 
@@ -475,7 +475,7 @@ class MangaReportFormTests(BaseTestCase):
         manga = Manga.objects.get(id=self.manga.id)
         self.assertEqual(manga.status, MangaStatus.PENDING)
 
-    def test_manga_report_multiple_open(self):
+    def test_manga_report_form_multiple_open(self):
         form = MangaReportForm(request=self.request, manga=self.manga, data={
             'type': ReportMangaType.REPOST,
             'comment': 'This is a repost.',
@@ -490,3 +490,40 @@ class MangaReportFormTests(BaseTestCase):
         })
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['__all__'], ['You have already reported this manga.'])
+
+    def test_manga_report_form_report_limit(self):
+        for i in range(self.user.report_limit):
+            ReportManga.open.create(
+                manga=self.manga,
+                type=ReportMangaType.OTHER,
+                weight=self.user.report_weight,
+                created_by=self.user,
+            )
+
+        form = MangaReportForm(request=self.request, manga=self.manga, data={
+            'type': ReportMangaType.REPOST,
+            'comment': 'This is a repost.',
+            'check': 'on',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['__all__'], ['Sorry, you have reached your report limit for the day.'])
+
+    def test_manga_report_form_report_limit_anonymous(self):
+        for i in range(MangaReportForm.ANONYMOUS_REPORT_LIMIT):
+            ReportManga.open.create(
+                manga=self.manga,
+                type=ReportMangaType.OTHER,
+                weight=self.user.report_weight,
+                ip_address='my-ip-address'
+            )
+
+        self.request.user = AnonymousUser()
+        self.request.META['REMOTE_ADDR'] = 'my-ip-address'
+
+        form = MangaReportForm(request=self.request, manga=self.manga, data={
+            'type': ReportMangaType.REPOST,
+            'comment': 'This is a repost.',
+            'check': 'on',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['__all__'], ['Sorry, you have reached your report limit for the day.'])
