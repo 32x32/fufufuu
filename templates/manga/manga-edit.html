@@ -41,13 +41,9 @@
                     <div class="markdown markdown-preview" data-for="id_markdown"></div>
                 </div>
                 <div class="half half-md">
-                    {% if manga.title == 'Untitled' and manga.status == 'DRAFT' %}
-                        <div class="well space-bottom-10">
-                            <p class="help-block space-bottom-0">{% trans %}Tags should be entered as a <strong>comma</strong> separated list of text. Here's is an example list of authors:{% endtrans %}</p>
-                            <p><strong>{% trans %}Panda Niku, Ookuma Nekosuke{% endtrans %}</strong></p>
-                            <p class="help-block">{% trans %}"Panda Niku" and "Ookuma Nekosuke" will show up as two separate authors.{% endtrans %}</p>
-                        </div>
-                    {% endif %}
+                    <div class="well space-bottom-10">
+                        <a href="/f/help/" class="text-small">{% trans %}Click here for more information about each tag type.{% endtrans %}</a>
+                    </div>
                     <table class="table-full-border space-bottom-10 manga-edit-inputs">
                         <tr>
                             <td width="120">{{ form.authors.label_tag() }}</td>
@@ -165,7 +161,7 @@
                 </div>
             {% endif %}
             {% if user == manga.created_by %}
-                <div class="well">
+                <div class="well space-bottom-10">
                     <button type="submit" class="btn btn-error" name="action" value="delete">{% trans %}Delete{% endtrans %}</button>
                     <p class="help-block space-top-10">{% trans %}This will delete the current upload from Fufufuu permanently.{% endtrans %}</p>
                 </div>
