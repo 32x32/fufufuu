@@ -35,7 +35,7 @@ class UploadListView(ProtectedTemplateView):
         if not SiteSetting.as_dict().get(SiteSettingKey.ENABLE_UPLOADS):
             return redirect('upload.list')
 
-        if self.get_upload_slots_used() > request.user.upload_limit:
+        if self.get_upload_slots_used() >= request.user.upload_limit:
             messages.error(request, _('You have reached your limit of {} uploads within the past 24 hours.').format(request.user.upload_limit))
             return redirect('upload.list')
 

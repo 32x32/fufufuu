@@ -16,9 +16,9 @@ class CommentPostView(ProtectedTemplateView):
     def post(self, request):
         next_url = request.POST.get('next', reverse('manga.list'))
 
-        form = CommentForm(data=request.POST)
+        form = CommentForm(request=request, data=request.POST)
         if form.is_valid():
-            form.save(request)
+            form.save()
             messages.success(request, _('Your comment has been posted.'))
             return redirect(next_url)
 

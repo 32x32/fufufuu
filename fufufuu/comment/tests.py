@@ -80,12 +80,12 @@ class CommentDeleteViewTests(BaseTestCase):
 class CommentFormTests(BaseTestCase):
 
     def test_comment_form_init(self):
-        form = CommentForm(self.manga)
+        form = CommentForm(request=self.request, content_object=self.manga)
         self.assertEqual(form.fields['content_type'].initial, ContentType.objects.get_for_model(self.manga).id)
         self.assertEqual(form.fields['object_id'].initial, self.manga.id)
 
     def test_comment_form_disallow_empty_comments(self):
-        form = CommentForm(data={
+        form = CommentForm(request=self.request, data={
             'content_type': ContentType.objects.get_for_model(self.manga).id,
             'object_id': self.manga.id,
             'markdown': '\n\n',
@@ -95,7 +95,7 @@ class CommentFormTests(BaseTestCase):
 
     def test_comment_form_save(self):
         content_type = ContentType.objects.get_for_model(self.manga)
-        form = CommentForm(data={
+        form = CommentForm(request=self.request, data={
             'content_type': content_type.id,
             'object_id': self.manga.id,
             'markdown': 'This is a very simple comment',
@@ -109,3 +109,23 @@ class CommentFormTests(BaseTestCase):
         self.assertEqual(comment.ip_address, '127.0.0.1')
         self.assertEqual(comment.created_by, self.user)
         self.assertTrue(comment.created_on)
+
+    def test_comment_form_user_comment_limit(self):
+        content_type = ContentType.objects.get_for_model(self.manga)
+
+        for i in range(self.user.comment_limit):
+            Comment.objects.create(
+                content_type=content_type,
+                object_id=self.manga.id,
+                markdown=i,
+                html=i,
+                created_by=self.user,
+            )
+
+        form = CommentForm(request=self.request, data={
+            'content_type': content_type.id,
+            'object_id': self.manga.id,
+            'markdown': 'This is a very simple comment',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['markdown'], ['Sorry, you have reached your comment limit for the day.'])
