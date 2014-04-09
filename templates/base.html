@@ -4,7 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    {% block meta_viewport %}
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    {% endblock %}
     <meta name="msapplication-TileImage" content="{{ STATIC_URL }}images/touch.png">
     <meta name="msapplication-TileColor" content="#222222">
     <meta name="juicyads-site-verification" content="5808937a0f1b58e073428a4136ed4cfd">

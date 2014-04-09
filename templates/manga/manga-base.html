@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block meta_viewport %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% endblock %}
+
 {% block body %}
     {% include 'manga/_include/manga-header.html' %}
     {% include 'manga/_include/manga-nav.html' %}
