@@ -26,7 +26,7 @@
 {% endmacro %}
 
 {% macro render_blog_entry(blog_entry) %}
-    <h4>{{ blog_entry.title }}</h4>
+    <h2>{{ blog_entry.title }}</h2>
     <div class="space-bottom-10">
         {% if blog_entry.created_by %}
             <a href="{{ url('user', args=[blog_entry.created_by.username]) }}">
