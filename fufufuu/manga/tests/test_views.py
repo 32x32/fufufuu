@@ -247,6 +247,33 @@ class MangaEditViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'manga/manga-edit.html')
         self.assertTrue(tank.name in str(response.content))
 
+    def test_manga_edit_view_post_remove(self):
+        response = self.client.post(reverse('manga.edit', args=[self.manga.id, self.manga.slug]), {
+            'title': 'Test Manga Title',
+            'category': MangaCategory.VANILLA,
+            'language': Language.ENGLISH,
+            'action': 'remove',
+        })
+        self.assertRedirects(response, reverse('manga.list'))
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(manga.status, MangaStatus.REMOVED)
+
+    def test_manga_edit_view_post_remove_not_moderator(self):
+        self.user.is_moderator = False
+        self.user.save()
+
+        response = self.client.post(reverse('manga.edit', args=[self.manga.id, self.manga.slug]), {
+            'title': 'Test Manga Title',
+            'category': MangaCategory.VANILLA,
+            'language': Language.ENGLISH,
+            'action': 'remove',
+        })
+        self.assertRedirects(response, reverse('manga.edit', args=[self.manga.id, slugify('Test Manga Title')]))
+
+        manga = Manga.objects.get(id=self.manga.id)
+        self.assertEqual(manga.status, MangaStatus.DRAFT)
+
 
 class MangaEditImagesViewTests(BaseTestCase):
 

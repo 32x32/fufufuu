@@ -47,11 +47,13 @@ class MangaAction:
 
     SAVE                = 'save'
     PUBLISH             = 'publish'
+    REMOVE              = 'remove'
     DELETE              = 'delete'
 
     choices = (
         (SAVE, SAVE),
         (PUBLISH, PUBLISH),
+        (REMOVE, REMOVE),
         (DELETE, DELETE),
     )
 

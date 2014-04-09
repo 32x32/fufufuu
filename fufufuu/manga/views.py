@@ -15,7 +15,7 @@ from fufufuu.core.views import TemplateView, ProtectedTemplateView
 from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
-from fufufuu.manga.enums import MangaCategory, MangaAction
+from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet, MangaListFilterForm, MangaReportForm
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images, MangaArchiveGenerator
@@ -274,7 +274,13 @@ class MangaEditView(MangaViewMixin, ProtectedTemplateView):
 
         if request.POST.get('action') == MangaAction.DELETE:
             manga.delete(updated_by=request.user)
+            messages.error(request, _('{} has been deleted.').format(manga.title))
             return redirect('upload.list')
+        elif request.POST.get('action') == MangaAction.REMOVE and request.user.is_moderator:
+            manga.status = MangaStatus.REMOVED
+            manga.save(request.user)
+            messages.error(request, _('{} has been removed.').format(manga.title))
+            return redirect('manga.list')
 
         form = MangaEditForm(request=request, instance=manga, data=request.POST, files=request.FILES)
         if form.is_valid():

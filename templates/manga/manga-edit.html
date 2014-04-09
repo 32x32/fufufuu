@@ -158,10 +158,16 @@
                     <p class="help-block space-top-10">{% trans %}This will publish the current upload to the front page of Fufufuu.{% endtrans %}</p>
                 </div>
             {% endif %}
-            {% if user == manga.created_by or user.is_moderator %}
+            {% if user.is_moderator %}
+                <div class="well space-bottom-10">
+                    <button type="submit" class="btn btn-error" name="action" value="remove">{% trans %}Remove{% endtrans %}</button>
+                    <p class="help-block space-top-10">{% trans %}This will remove the current upload from Fufufuu. This upload will remain in the user's upload list.{% endtrans %}</p>
+                </div>
+            {% endif %}
+            {% if user == manga.created_by %}
                 <div class="well">
                     <button type="submit" class="btn btn-error" name="action" value="delete">{% trans %}Delete{% endtrans %}</button>
-                    <p class="help-block space-top-10">{% trans %}This will remove the current upload from Fufufuu permanently.{% endtrans %}</p>
+                    <p class="help-block space-top-10">{% trans %}This will delete the current upload from Fufufuu permanently.{% endtrans %}</p>
                 </div>
             {% endif %}
         </div>
