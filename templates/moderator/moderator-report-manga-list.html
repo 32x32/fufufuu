@@ -19,7 +19,7 @@
                 {% for manga in manga_list %}
                     <tr>
                         <td>{{ manga.report_count }}</td>
-                        <td>{{ manga.report_weight }}</td>
+                        <td>{{ manga.report_weight|int }}</td>
                         <td><span class="manga-status manga-status-{{ manga.status.lower() }} space-right">{{ manga.status_display }}</span></td>
                         <td><a href="{{ url('moderator.report.manga', args=[manga.id]) }}">{{ manga.title }}</a></td>
                         <td>{{ manga.created_by }}</td>

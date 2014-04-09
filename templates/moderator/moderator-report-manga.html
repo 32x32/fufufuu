@@ -35,7 +35,7 @@
             <table class="table-vertical-align-top space-bottom-10">
                 <thead>
                     <tr>
-                        <th width="80">{% trans %}Quality{% endtrans %}</th>
+                        <th width="100">{% trans %}Quality{% endtrans %}</th>
                         <th width="40" title="{% trans %}Weight{% endtrans %}">Wt</th>
                         <th width="100%">{% trans %}Comment{% endtrans %}</th>
                     </tr>
@@ -47,7 +47,7 @@
                                 {{ form.id }}
                                 {{ form.quality }}
                             </td>
-                            <td>{{ report.weight }}</td>
+                            <td>{{ report.weight|int }}</td>
                             <td>
                                 <strong>{{ report.type|report_manga_type_display }}</strong>
                                 <div>{{ report.comment }}</div>
