@@ -4,6 +4,7 @@ from fufufuu.manga.views import *
 
 urlpatterns = patterns('',
 
+    url(r'^(?P<id>\d+)/$',                                              MangaView.as_view(), name='manga'),
     url(r'^(?P<id>\d+)/(?P<slug>[\w-]+)/$',                             MangaView.as_view(), name='manga'),
     url(r'^(?P<id>\d+)/(?P<slug>[\w-]+)/thumbs/$',                      MangaThumbnailsView.as_view(), name='manga.thumbnails'),
     url(r'^(?P<id>\d+)/(?P<slug>[\w-]+)/download/$',                    MangaDownloadView.as_view(), name='manga.download'),

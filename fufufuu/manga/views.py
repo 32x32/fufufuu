@@ -5,7 +5,7 @@ import os
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
-from django.http.response import Http404, HttpResponseNotAllowed
+from django.http.response import Http404, HttpResponseNotAllowed, HttpResponsePermanentRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 
@@ -132,9 +132,12 @@ class MangaView(MangaViewMixin, TemplateView):
         payload = base64.b64encode(payload)
         return payload.decode('utf-8')
 
-    def get(self, request, id, slug):
+    def get(self, request, id, slug=None):
         context = {}
         manga = self.get_manga_for_view(id)
+
+        if slug is None:
+            return HttpResponsePermanentRedirect(reverse('manga', args=[manga.id, manga.slug]))
 
         manga_page_list = list(manga.mangapage_set.order_by('page'))
         payload = self.get_payload(manga_page_list)

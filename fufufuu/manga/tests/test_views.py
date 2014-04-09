@@ -73,6 +73,10 @@ class MangaViewTests(BaseTestCase):
         response = self.client.get(reverse('manga', args=[self.manga.id, self.manga.slug]))
         self.assertEqual(response.status_code, 404)
 
+    def test_manga_view_get_no_slug(self):
+        response = self.client.get(reverse('manga', args=[self.manga.id]))
+        self.assertRedirects(response, reverse('manga', args=[self.manga.id, self.manga.slug]), status_code=301)
+
 
 class MangaThumbnailsViewTests(BaseTestCase):
 
