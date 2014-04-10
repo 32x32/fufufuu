@@ -13,10 +13,11 @@
             {% endfor %}
         </select>
     {% endif %}
-    <select data-bind="event: { change: jumpPage }, value: pageNum()" class="m-page-jump">
+    <select data-bind="event: { change: jumpPage }, value: pageNum()" class="m-page-jump space-right">
         {% for i in range(1, page_count + 1) %}
             <option value="{{ i }}">{% trans %}Page {{ i }}{% endtrans %}</option>
         {% endfor %}
     </select>
+    <span>{% trans %}of {{ page_count }}{% endtrans %}</span>
     <div class="clear"></div>
 </div>
