@@ -63,7 +63,7 @@ specs[ImageKeyType.MANGA_PAGE_DOUBLE] = {
 # TAG_COVER
 #-------------------------------------------------------------------------------
 
-specs[ImageKeyType.MANGA_PAGE_DOUBLE] = {
+specs[ImageKeyType.TAG_COVER] = {
     'width':    400,
     'height':   600,
     'crop':     True,
