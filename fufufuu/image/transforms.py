@@ -58,3 +58,13 @@ specs[ImageKeyType.MANGA_PAGE_DOUBLE] = {
     'width':    1200,
     'height':   900,
 }
+
+#-------------------------------------------------------------------------------
+# TAG_COVER
+#-------------------------------------------------------------------------------
+
+specs[ImageKeyType.MANGA_PAGE_DOUBLE] = {
+    'width':    400,
+    'height':   600,
+    'crop':     True,
+}

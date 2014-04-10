@@ -1,14 +1,8 @@
-import os
-import sys
-
-PROJECT_PATH = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2])
-sys.path.append(PROJECT_PATH)
-os.environ['DJANGO_SETTINGS_MODULE'] = 'fufufuu.settings'
-
 from django.core.files.uploadedfile import SimpleUploadedFile
-from sqlalchemy.engine import create_engine
-from sqlalchemy.orm.session import sessionmaker
-from fufufuu.manga.models import MangaPage
+
+from FUBase import FUBase
+from fufufuu.manga.models import MangaPage, Manga
+from fufufuu.manga.utils import MangaArchiveGenerator
 from models import OldMangaPage
 
 #-------------------------------------------------------------------------------
@@ -58,21 +52,11 @@ MANGA_ID_LIST = [
 #-------------------------------------------------------------------------------
 
 
-class FU217(object):
-
-    CONNECTION_STRING = 'postgresql://derekkwok:password@localhost/fufufuu_old'
-    OLD_MEDIA_ROOT = '/var/www/fufufuu2/media/'
-
-    def __init__(self):
-        self.session = None
-
-    def start(self):
-        self.connect()
-        self.run()
-
-    def connect(self):
-        SQL_ENGINE = create_engine(self.CONNECTION_STRING)
-        self.session = sessionmaker(bind=SQL_ENGINE)()
+class FU217(FUBase):
+    """
+    This ticket re-migrates the manga pages from the old database. It also
+    generates a new manga archive.
+    """
 
     def get_file(self, path):
         if not path: return None
@@ -83,7 +67,6 @@ class FU217(object):
 
     def remigrate_manga(self, manga_id):
         if MangaPage.objects.filter(manga_id=manga_id).exists():
-            # this manga has already been fixed
             return
 
         for old_manga_page in self.session.query(OldMangaPage).filter(OldMangaPage.manga_id==manga_id):
@@ -97,7 +80,13 @@ class FU217(object):
 
     def run(self):
         for manga_id in MANGA_ID_LIST:
+            print('Processing {}'.format(manga_id))
             self.remigrate_manga(manga_id)
+            try:
+                manga = Manga.published.get(id=manga_id)
+                MangaArchiveGenerator.generate(manga)
+            except Manga.DoesNotExist as e:
+                print('Error {}: {}'.format(manga_id, e))
 
 
 if __name__ == '__main__':

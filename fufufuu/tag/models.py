@@ -45,7 +45,7 @@ class Tag(BaseAuditableModel):
 
     @property
     def cover_url(self):
-        return image_resize(self.cover, ImageKeyType.MANGA_COVER, self.id)
+        return image_resize(self.cover, ImageKeyType.TAG_COVER, self.id)
 
 
 class TagAlias(models.Model):
