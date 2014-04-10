@@ -45,7 +45,7 @@ class MangaListFavoritesViewTests(BaseTestCase):
     def test_manga_list_favorites_view_get(self):
         response = self.client.get(reverse('manga.list.favorites'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'manga/manga-list.html')
+        self.assertTemplateUsed(response, 'manga/manga-list-favorites.html')
 
     def test_manga_list_favorites_view_get_anonymous(self):
         self.client.logout()

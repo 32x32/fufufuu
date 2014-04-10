@@ -66,7 +66,7 @@ class MangaListView(MangaListMixin, TemplateView):
 
 class MangaListFavoritesView(MangaListMixin, ProtectedTemplateView):
 
-    template_name = 'manga/manga-list.html'
+    template_name = 'manga/manga-list-favorites.html'
     page_size = 120
 
     def get(self, request):
