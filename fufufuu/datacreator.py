@@ -35,14 +35,17 @@ CONFIGURATION = {
         'MANGA': 3000,
         'REPORTS': 300,
         'TAGS': 600,
+        'TAGS_FK': 30,
         'USERS': 5,
     },
     'test': {
         'BLOG': 1,
+        'COLLECTIONS': 1,
         'COMMENTS': [1],
         'MANGA': 1,
         'REPORTS': 1,
         'TAGS': 1,
+        'TAGS_FK': 1,
         'USERS': 1,
     }
 }
@@ -90,7 +93,7 @@ class DataCreator:
     @timed
     def create_tags(self):
         tag_list = []
-        for tag_type in TagType.choices_dict:
+        for tag_type in TagType.manga_m2m:
             for i in range(1, self.config['TAGS']+1):
                 name = '{} {}'.format(TagType.choices_dict[tag_type], i)
                 tag = Tag(tag_type=tag_type, name=name, slug=slugify(name), created_by=self.user, updated_by=self.user)
@@ -126,12 +129,6 @@ class DataCreator:
 
     @timed
     def create_manga(self):
-        tank_list = Tag.objects.filter(tag_type=TagType.TANK)
-        collection_list = Tag.objects.filter(tag_type=TagType.COLLECTION)
-
-        tank_chapter = defaultdict(int)
-        collection_part = defaultdict(int)
-
         manga_category_keys = list(MangaCategory.choices_dict)
         manga_list = []
         for i in range(1, self.config['MANGA']+1):
@@ -146,19 +143,59 @@ class DataCreator:
                 published_on=timezone.now(),
                 created_by=self.user,
                 updated_by=self.user,
-                )
-            if random.random() < 0.1:
-                manga.tank = random.choice(tank_list)
-                manga.tank_chapter = tank_chapter[manga.tank.id] + 1
-            if random.random() < 0.1:
-                manga.collection = random.choice(collection_list)
-                manga.collection_part = collection_part[manga.collection.id] + 1
+            )
             manga_list.append(manga)
 
         Manga.objects.bulk_create(manga_list)
 
         two_days_ago = timezone.now() - timezone.timedelta(days=2)
         Manga.objects.update(created_on=two_days_ago, updated_on=two_days_ago, published_on=two_days_ago)
+
+    @timed
+    def assign_manga_tank(self):
+        manga_id_set = set(Manga.published.all().values_list('id', flat=True))
+        for i in range(1, self.config['TAGS_FK']+1):
+            tank_name = 'Tank {}'.format(i)
+            tank = Tag(tag_type=TagType.TANK, name=tank_name, slug=slugify(tank_name), created_by=self.user, updated_by=self.user)
+            tank.save(self.user)
+
+            tank_manga_count = random.randint(1, min(12, len(manga_id_set)))
+            tank_manga_id_set = random.sample(manga_id_set, tank_manga_count)
+
+            chapter_dict = defaultdict(int)
+
+            for manga_id in tank_manga_id_set:
+                manga = Manga.objects.get(id=manga_id)
+                chapter_dict[manga.language] += 1
+
+                manga.tank = tank
+                manga.tank_chapter = chapter_dict[manga.language]
+                manga.save(updated_by=manga.updated_by)
+
+                manga_id_set.remove(manga_id)
+
+    @timed
+    def assign_manga_collection(self):
+        manga_id_set = set(Manga.published.all().values_list('id', flat=True))
+        for i in range(1, self.config['TAGS_FK']+1):
+            collection_name = 'Collection {}'.format(i)
+            collection = Tag(tag_type=TagType.COLLECTION, name=collection_name, slug=slugify(collection_name), created_by=self.user, updated_by=self.user)
+            collection.save(self.user)
+
+            tank_manga_count = random.randint(1, min(12, len(manga_id_set)))
+            tank_manga_id_set = random.sample(manga_id_set, tank_manga_count)
+
+            part_dict = defaultdict(int)
+
+            for manga_id in tank_manga_id_set:
+                manga = Manga.objects.get(id=manga_id)
+                part_dict[manga.language] += 1
+
+                manga.collection = collection
+                manga.collection_part = part_dict[manga.language]
+                manga.save(updated_by=manga.updated_by)
+
+                manga_id_set.remove(manga_id)
 
     @timed
     def create_manga_tags(self):
@@ -264,6 +301,8 @@ class DataCreator:
         self.create_tag_aliases()
         self.create_tag_data()
         self.create_manga()
+        self.assign_manga_tank()
+        self.assign_manga_collection()
         self.create_manga_tags()
         self.create_manga_pages()
         self.create_comments()

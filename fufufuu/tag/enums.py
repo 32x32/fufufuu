@@ -13,6 +13,9 @@ class TagType:
     SCANLATOR   = 'SCANLATOR'
     TANK        = 'TANK'
 
+    manga_m2m = [AUTHOR, CIRCLE, CONTENT, EVENT, MAGAZINE, PARODY, SCANLATOR]
+    manga_fk = [COLLECTION, TANK]
+
     choices = (
         (AUTHOR,        _('Author')),
         (CIRCLE,        _('Circle')),
