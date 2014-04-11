@@ -33,11 +33,19 @@ class Tag(BaseAuditableModel):
         if self.tag_type not in [TagType.TANK, TagType.COLLECTION]:
             return
         if self.tag_type == TagType.TANK:
+            filter_dict = {
+                'tank_id': self.id,
+                'cover__isnull': False,
+            }
             order_attr = 'tank_chapter'
         elif self.tag_type == TagType.COLLECTION:
+            filter_dict = {
+                'collection_id': self.id,
+                'cover__isnull': False,
+            }
             order_attr = 'collection_part'
 
-        manga_list = Manga.published.order_by(order_attr).filter(cover__isnull=False).only('cover')
+        manga_list = Manga.published.filter(**filter_dict).order_by(order_attr).only('cover')
         cover_list = [manga.cover.path for manga in manga_list if manga.cover]
         if cover_list:
             self.cover = SimpleUploadedFile('cover', open(cover_list[0], 'rb').read())
