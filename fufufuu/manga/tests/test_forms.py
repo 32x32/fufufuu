@@ -340,7 +340,7 @@ class MangaPageFormsetTests(BaseTestCase):
         self.assertNotEqual(manga.cover.path, self.page2.image.path)
         self.assertTrue(os.path.exists(manga.cover.path))
 
-    def test_manga_page_formset_delete_non_selected(self):
+    def test_manga_page_formset_delete_none_selected(self):
         formset = MangaEditImagesView.get_formset_cls()(
             user=self.user,
             queryset=MangaPage.objects.filter(manga=self.manga),

@@ -279,6 +279,18 @@ class MangaPageFormSet(BaseModelFormSet):
         self._selected_forms = list(filter(_selected, self.ordered_forms))
         return self._selected_forms
 
+    def is_forms_all_selected(self):
+        for form in self.forms:
+            if not form.cleaned_data.get('select'):
+                return False
+        return True
+
+    def is_forms_none_selected(self):
+        for form in self.forms:
+            if form.cleaned_data.get('select'):
+                return False
+        return True
+
     def clean(self):
         action = self.data.get('action')
         if action not in ['reorder', 'set_cover', 'delete']:
@@ -288,9 +300,9 @@ class MangaPageFormSet(BaseModelFormSet):
             if len(self.selected_forms) != 1:
                 raise forms.ValidationError(_('Please select only a single image to set as the cover.'))
         elif action == 'delete':
-            if len(self.unselected_forms) == 0:
+            if self.is_forms_all_selected():
                 raise forms.ValidationError(_('Please leave at least one image in this upload undeleted.'))
-            elif len(self.selected_forms) == 0:
+            elif self.is_forms_none_selected():
                 raise forms.ValidationError(_('Please select at least one image to delete.'))
 
     def save(self, manga):
