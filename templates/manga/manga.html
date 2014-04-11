@@ -14,6 +14,10 @@
                 <div data-bind="html: image()" class="manga-image-container"></div>
             </div>
             <div class="manga-comments">
+                {% if manga.category in ['NON_H', 'ECCHI'] %}
+                {% else %}
+                    <div id="ad295298" class="manga-bottom-ad"></div>
+                {% endif %}
                 <hr>
                 {{ comments.comments_widget(manga) }}
             </div>
