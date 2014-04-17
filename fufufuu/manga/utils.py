@@ -6,6 +6,7 @@ from io import BytesIO
 from django.core.cache import cache
 from django.core.files.base import File
 from django.core.files.uploadedfile import UploadedFile
+from django.db.models.aggregates import Count
 from django.utils.translation import ugettext as _
 from PIL import Image
 
@@ -13,7 +14,7 @@ from fufufuu.core.models import DeletedFile
 from fufufuu.core.utils import get_image_extension
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
-from fufufuu.manga.models import MangaPage, MangaArchive
+from fufufuu.manga.models import MangaPage, MangaArchive, MangaFavorite
 from fufufuu.settings import MAX_IMAGE_FILE_SIZE, SUPPORTED_IMAGE_FORMATS, MAX_IMAGE_DIMENSION
 
 
@@ -159,3 +160,20 @@ class MangaArchiveGenerator:
         cls.release_lock(manga)
 
         return manga_archive
+
+
+def attach_manga_favorite_count(manga_list):
+    count_list = MangaFavorite.objects \
+        .filter(manga_id__in=[m.id for m in manga_list]) \
+        .values('manga') \
+        .annotate(count=Count('manga'))
+    count_dict = dict([(c['manga'], c['count']) for c in count_list])
+    for manga in manga_list:
+        manga.favorite_count = count_dict.get(manga.id, 0)
+
+
+def attach_manga_download_count(manga_list):
+    count_list = MangaArchive.objects.filter(manga_id__in=[m.id for m in manga_list]).only('manga', 'downloads')
+    count_dict = dict([(c.manga_id, c.downloads) for c in count_list])
+    for manga in manga_list:
+        manga.download_count = count_dict.get(manga.id, 0)

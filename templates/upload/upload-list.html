@@ -38,9 +38,9 @@
                         <td class="min-xs"><span class="manga-status manga-status-{{ manga.status.lower() }} space-right">{{ manga.status_display }}</span></td>
                         <td class="min-xs"><span class="manga-category manga-category-{{ manga.category.lower() }} space-right">{{ manga.category_display }}</span></td>
                         <td><a href="{{ url('manga.edit', args=[manga.id, manga.slug]) }}" target="_blank">{{ manga.title }}</a></td>
-                        <td class="min-xs"></td>
-                        <td class="min-xs"></td>
-                        <td class="min-xs"></td>
+                        <td class="min-xs">{{ manga.favorite_count }}</td>
+                        <td class="min-xs">{{ manga.comment_count }}</td>
+                        <td class="min-xs">{{ manga.download_count }}</td>
                         <td class="min-md">{{ manga.created_on|naturaltime }}</td>
                     </tr>
                 {% else %}
