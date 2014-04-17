@@ -1,6 +1,6 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import models
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 from fufufuu.account.models import User
 from fufufuu.core.languages import Language
@@ -9,6 +9,7 @@ from fufufuu.core.uploads import tag_cover_upload_to
 from fufufuu.core.utils import slugify
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
+from fufufuu.image.models import Image
 from fufufuu.tag.enums import TagType
 
 
@@ -89,6 +90,11 @@ class TagData(BaseAuditableModel):
 
 @receiver(post_delete, sender=Tag)
 def tag_post_delete(instance, **kwargs):
+    Image.objects.filter(key_type=ImageKeyType.TAG_COVER, key_id=instance.id).delete()
     for field in ['cover']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)
+
+@receiver(post_save, sender=Tag)
+def manga_post_save(instance, **kwargs):
+    Image.objects.filter(key_type=ImageKeyType.TAG_COVER, key_id=instance.id).delete()

@@ -1,4 +1,3 @@
-from django.core.cache import cache
 from django.db import models
 from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
@@ -9,7 +8,7 @@ from fufufuu.core.models import BaseAuditableModel
 from fufufuu.core.uploads import manga_cover_upload_to, manga_archive_upload_to, manga_page_upload_to
 from fufufuu.core.utils import slugify
 from fufufuu.image.enums import ImageKeyType
-from fufufuu.image.models import Image, get_cache_key
+from fufufuu.image.models import Image
 from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.mixins import MangaMixin
 from fufufuu.tag.models import Tag
@@ -129,6 +128,7 @@ class MangaFavorite(models.Model):
 
 @receiver(post_delete, sender=Manga)
 def manga_post_delete(instance, **kwargs):
+    Image.objects.filter(key_type=ImageKeyType.MANGA_COVER, key_id=instance.id).delete()
     for field in ['cover']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)
@@ -136,6 +136,8 @@ def manga_post_delete(instance, **kwargs):
 
 @receiver(post_delete, sender=MangaPage)
 def manga_page_post_delete(instance, **kwargs):
+    key_type = instance.double and ImageKeyType.MANGA_PAGE_DOUBLE or ImageKeyType.MANGA_PAGE
+    Image.objects.filter(key_type=key_type, key_id=instance.id).delete()
     for field in ['image']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)
@@ -151,4 +153,3 @@ def manga_archive_post_delete(instance, **kwargs):
 @receiver(post_save, sender=Manga)
 def manga_post_save(instance, **kwargs):
     Image.objects.filter(key_type=ImageKeyType.MANGA_COVER, key_id=instance.id).delete()
-    cache.delete(get_cache_key(ImageKeyType.MANGA_COVER, instance.id))

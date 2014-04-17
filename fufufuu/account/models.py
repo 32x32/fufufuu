@@ -1,12 +1,12 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.core.cache import cache
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
+
 from fufufuu.core.uploads import user_avatar_upload_to
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
-from fufufuu.image.models import Image, get_cache_key
+from fufufuu.image.models import Image
 
 
 class UserManager(BaseUserManager):
@@ -65,4 +65,3 @@ class User(AbstractBaseUser):
 @receiver(post_save, sender=User)
 def manga_post_save(instance, **kwargs):
     Image.objects.filter(key_type=ImageKeyType.ACCOUNT_AVATAR, key_id=instance.id).delete()
-    cache.delete(get_cache_key(ImageKeyType.ACCOUNT_AVATAR, instance.id))

@@ -28,14 +28,15 @@ def image_resize(file_path, key_type, key_id):
 
     try:
         image = Image.objects.only('file').get(key_type=key_type, key_id=key_id)
-        if not os.path.exists(image.file.path):
-            image.regenerate()
     except Image.DoesNotExist:
         image = Image(key_type=key_type, key_id=key_id)
         try:
             image.save(file_path)
         except IntegrityError:
             image = Image.objects.only('file').get(key_type=key_type, key_id=key_id)
+
+    if not os.path.exists(image.file.path):
+        image.regenerate()
 
     cache.set(cache_key, image.file.url, IMAGE_CACHE_TIMEOUT)
     return image.file.url

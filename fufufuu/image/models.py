@@ -1,6 +1,7 @@
 import logging
 import os
 
+from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import models
 from django.db.models.signals import post_delete
@@ -59,6 +60,7 @@ class Image(models.Model):
 
 @receiver(post_delete, sender=Image)
 def image_post_delete(instance, **kwargs):
+    cache.delete(get_cache_key(instance.key_type, instance.key_id))
     for field in ['file']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)
