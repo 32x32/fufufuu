@@ -2,59 +2,28 @@
     bottom ad styles
 ---------------------------------------------------*/
 
-#ad295298 {
+.ad295298 {
     background-color: @nav-bg;
-    border-top: @nav-border-alt;
-    border-bottom: @nav-border;
+    border: @nav-border;
+    margin-top: 10px;
     overflow: auto;
     padding: 10px 0px 0px;
     text-align: center;
 }
 
-@media screen and (min-width: @screen-lg) {
-    #ad295298.manga-bottom-ad {
-        border: @nav-border;
-        margin-top: 20px;
-    }
-}
-
-@media screen and (min-width: @screen-md) and (max-width: @screen-lg1) {
-    #ad295298.manga-bottom-ad {
-        border-top: @nav-border;
-        margin: 10px -10px 0;
-    }
-}
-
-@media screen and (min-width: @screen-sm) and (max-width: @screen-md1) {
-    #ad295298.manga-bottom-ad {
-        border-top: @nav-border;
-        margin: 10px -10px 0;
-    }
-    #ad295298 iframe {
-        width: @screen-sm;
-    }
-}
-
-@media screen and (min-width: @screen-xs) and (max-width: @screen-sm1) {
-    #ad295298.manga-bottom-ad {
-        border-top: @nav-border;
-        margin: 10px -10px 0;
-    }
-    #ad295298 > iframe {
-        .transform(scale(0.75));
-        width: 750px;
-        margin: -12px -75px;
-    }
+.ad295299-bottom {
+    background-color: @nav-bg;
+    border: @nav-border;
+    margin-top: 10px;
+    overflow: auto;
+    padding: 10px 0px 0px;
+    text-align: center;
 }
 
 @media screen and (max-width: @screen-xs1) {
-    #ad295298.manga-bottom-ad {
-        border-top: @nav-border;
+    .ad295299-bottom {
+        border-left: none;
+        border-right: none;
         margin: 10px -10px 0;
-    }
-    #ad295298 > iframe {
-        .transform(scale(0.4));
-        width: 750px;
-        margin: -40px -375px;
     }
 }
