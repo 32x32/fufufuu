@@ -1,7 +1,10 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
+from fufufuu.account.models import User
+
 from fufufuu.comment.forms import CommentForm
 from fufufuu.comment.models import Comment
+from fufufuu.comment.utils import attach_comment_count
 from fufufuu.core.tests import BaseTestCase
 
 
@@ -129,3 +132,33 @@ class CommentFormTests(BaseTestCase):
         })
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['markdown'], ['Sorry, you have reached your comment limit for the day.'])
+
+
+class CommentUtilTests(BaseTestCase):
+
+    def test_attach_comment_count_empty(self):
+        user1 = self.user
+        user2 = self.create_test_user('user2')
+        user3 = self.create_test_user('user3')
+
+        attach_comment_count([user1, user2, user3])
+
+        self.assertEqual(user1.comment_count, 0)
+        self.assertEqual(user2.comment_count, 0)
+        self.assertEqual(user3.comment_count, 0)
+
+    def test_attach_comment_count(self):
+        user1 = self.user
+        user2 = self.create_test_user('user2')
+        user3 = self.create_test_user('user3')
+
+        content_type = ContentType.objects.get_for_model(User)
+        Comment.objects.create(content_type=content_type, object_id=user1.id, markdown='test', html='test', created_by=self.user)
+        Comment.objects.create(content_type=content_type, object_id=user3.id, markdown='test', html='test', created_by=self.user)
+        Comment.objects.create(content_type=content_type, object_id=user3.id, markdown='test', html='test', created_by=self.user)
+
+        attach_comment_count([user1, user2, user3])
+
+        self.assertEqual(user1.comment_count, 1)
+        self.assertEqual(user2.comment_count, 0)
+        self.assertEqual(user3.comment_count, 2)
