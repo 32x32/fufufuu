@@ -435,6 +435,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_view(user, MangaStatus.PENDING, Http404)
         self.assert_get_manga_for_view(user, MangaStatus.REMOVED, Http404)
         self.assert_get_manga_for_view(user, MangaStatus.DELETED, Http404)
+        self.assert_get_manga_for_view(user, MangaStatus.DMCA)
 
     def test_get_manga_for_view_staff(self):
         self.user.is_staff = True
@@ -446,6 +447,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_view(self.user, MangaStatus.PENDING)
         self.assert_get_manga_for_view(self.user, MangaStatus.REMOVED)
         self.assert_get_manga_for_view(self.user, MangaStatus.DELETED)
+        self.assert_get_manga_for_view(self.user, MangaStatus.DMCA)
 
     def test_get_manga_for_view_moderator(self):
         self.user.is_staff = False
@@ -457,6 +459,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_view(self.user, MangaStatus.PENDING)
         self.assert_get_manga_for_view(self.user, MangaStatus.REMOVED)
         self.assert_get_manga_for_view(self.user, MangaStatus.DELETED, Http404)
+        self.assert_get_manga_for_view(self.user, MangaStatus.DMCA)
 
     def test_get_manga_for_view(self):
         self.user.is_staff = False
@@ -468,6 +471,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_view(self.user, MangaStatus.PENDING, Http404)
         self.assert_get_manga_for_view(self.user, MangaStatus.REMOVED, Http404)
         self.assert_get_manga_for_view(self.user, MangaStatus.DELETED, Http404)
+        self.assert_get_manga_for_view(self.user, MangaStatus.DMCA)
 
     def test_get_manga_for_edit_unauthenticated(self):
         user = AnonymousUser()
@@ -476,7 +480,8 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_edit(user, MangaStatus.PENDING, Http404)
         self.assert_get_manga_for_edit(user, MangaStatus.REMOVED, Http404)
         self.assert_get_manga_for_edit(user, MangaStatus.DELETED, Http404)
-    
+        self.assert_get_manga_for_edit(user, MangaStatus.DMCA, Http404)
+
     def test_get_manga_for_edit_staff(self):
         self.user.is_staff = True
         self.user.is_moderator = False
@@ -487,6 +492,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_edit(self.user, MangaStatus.PENDING)
         self.assert_get_manga_for_edit(self.user, MangaStatus.REMOVED)
         self.assert_get_manga_for_edit(self.user, MangaStatus.DELETED)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.DMCA)
 
     def test_get_manga_for_edit_moderator(self):
         self.user.is_staff = False
@@ -498,6 +504,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_edit(self.user, MangaStatus.PENDING)
         self.assert_get_manga_for_edit(self.user, MangaStatus.REMOVED)
         self.assert_get_manga_for_edit(self.user, MangaStatus.DELETED, Http404)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.DMCA)
 
     def test_get_manga_for_edit_owner(self):
         self.user.is_staff = False
@@ -509,6 +516,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_edit(self.user, MangaStatus.PENDING)
         self.assert_get_manga_for_edit(self.user, MangaStatus.REMOVED)
         self.assert_get_manga_for_edit(self.user, MangaStatus.DELETED, Http404)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.DMCA)
 
     def test_get_manga_for_edit_not_owner(self):
         user = self.create_test_user('testuser2')
@@ -521,3 +529,4 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_edit(user, MangaStatus.PENDING,  Http404)
         self.assert_get_manga_for_edit(user, MangaStatus.REMOVED, Http404)
         self.assert_get_manga_for_edit(user, MangaStatus.DELETED, Http404)
+        self.assert_get_manga_for_edit(user, MangaStatus.DMCA, Http404)

@@ -87,13 +87,13 @@ class MangaViewMixin:
     def get_manga_for_view(self, id):
         user = self.request.user
         if not user.is_authenticated():
-            manga = get_object_or_404(Manga.published, id=id)
+            manga = get_object_or_404(Manga.public, id=id)
         elif user.is_staff:
             manga = get_object_or_404(Manga.all, id=id)
         elif user.is_moderator:
             manga = get_object_or_404(Manga.objects, id=id)
         else:
-            manga = get_object_or_404(Manga.published, id=id)
+            manga = get_object_or_404(Manga.public, id=id)
         return manga
 
     def get_manga_for_edit(self, id):

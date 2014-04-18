@@ -31,6 +31,7 @@ class MangaStatus:
     PENDING             = 'PENDING'
     REMOVED             = 'REMOVED'
     DELETED             = 'DELETED'
+    DMCA                = 'DMCA'
 
     choices = (
         (DRAFT,         _('Draft')),
@@ -38,6 +39,7 @@ class MangaStatus:
         (PENDING,       _('Pending')),
         (REMOVED,       _('Removed')),
         (DELETED,       _('Deleted')),
+        (DMCA,          _('DMCA')),
     )
 
     choices_dict = dict(choices)

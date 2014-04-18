@@ -26,6 +26,12 @@ class MangaPublishedManager(models.Manager):
         return super().get_queryset().filter(status=MangaStatus.PUBLISHED).order_by('-published_on')
 
 
+class MangaPublicManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(status__in=[MangaStatus.PUBLISHED, MangaStatus.DMCA])
+
+
 class Manga(BaseAuditableModel, MangaMixin):
 
     title               = models.CharField(max_length=100, default='Untitled', db_index=True)
@@ -49,6 +55,7 @@ class Manga(BaseAuditableModel, MangaMixin):
 
     objects             = MangaManager()
     published           = MangaPublishedManager()
+    public              = MangaPublicManager()
     all                 = models.Manager()
 
     class Meta:
