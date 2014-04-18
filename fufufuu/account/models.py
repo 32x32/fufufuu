@@ -64,4 +64,4 @@ class User(AbstractBaseUser):
 
 @receiver(post_save, sender=User)
 def manga_post_save(instance, **kwargs):
-    Image.objects.filter(key_type=ImageKeyType.ACCOUNT_AVATAR, key_id=instance.id).delete()
+    Image.safe_delete(key_type=ImageKeyType.ACCOUNT_AVATAR, key_id=instance.id)

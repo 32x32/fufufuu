@@ -128,7 +128,7 @@ class MangaFavorite(models.Model):
 
 @receiver(post_delete, sender=Manga)
 def manga_post_delete(instance, **kwargs):
-    Image.objects.filter(key_type=ImageKeyType.MANGA_COVER, key_id=instance.id).delete()
+    Image.safe_delete(key_type=ImageKeyType.MANGA_COVER, key_id=instance.id)
     for field in ['cover']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)
@@ -137,7 +137,8 @@ def manga_post_delete(instance, **kwargs):
 @receiver(post_delete, sender=MangaPage)
 def manga_page_post_delete(instance, **kwargs):
     key_type = instance.double and ImageKeyType.MANGA_PAGE_DOUBLE or ImageKeyType.MANGA_PAGE
-    Image.objects.filter(key_type=key_type, key_id=instance.id).delete()
+    Image.safe_delete(key_type=key_type, key_id=instance.id)
+    Image.safe_delete(key_type=ImageKeyType.MANGA_THUMB, key_id=instance.id)
     for field in ['image']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)
@@ -152,4 +153,4 @@ def manga_archive_post_delete(instance, **kwargs):
 
 @receiver(post_save, sender=Manga)
 def manga_post_save(instance, **kwargs):
-    Image.objects.filter(key_type=ImageKeyType.MANGA_COVER, key_id=instance.id).delete()
+    Image.safe_delete(key_type=ImageKeyType.MANGA_COVER, key_id=instance.id)

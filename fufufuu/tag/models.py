@@ -90,11 +90,11 @@ class TagData(BaseAuditableModel):
 
 @receiver(post_delete, sender=Tag)
 def tag_post_delete(instance, **kwargs):
-    Image.objects.filter(key_type=ImageKeyType.TAG_COVER, key_id=instance.id).delete()
+    Image.safe_delete(key_type=ImageKeyType.TAG_COVER, key_id=instance.id)
     for field in ['cover']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)
 
 @receiver(post_save, sender=Tag)
 def manga_post_save(instance, **kwargs):
-    Image.objects.filter(key_type=ImageKeyType.TAG_COVER, key_id=instance.id).delete()
+    Image.safe_delete(key_type=ImageKeyType.TAG_COVER, key_id=instance.id)

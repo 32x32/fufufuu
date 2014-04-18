@@ -19,6 +19,21 @@ def get_cache_key(key_type, key_id):
     return IMAGE_CACHE_KEY.format(key_type=key_type.lower(), key_id=key_id)
 
 
+class ImageQuerySet(models.query.QuerySet):
+
+    def delete(self, *args, **kwargs):
+        raise Exception('Please use Image.safe_delete() to delete an image instead.')
+
+    def safe_delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+
+
+class ImageManager(models.Manager):
+
+    def get_queryset(self):
+        return ImageQuerySet(self.model, using=self._db)
+
+
 class Image(models.Model):
 
     key_type = models.CharField(max_length=20, choices=ImageKeyType.choices)
@@ -28,6 +43,8 @@ class Image(models.Model):
     file = models.FileField(upload_to=image_upload_to, max_length=255)
 
     created_on = models.DateTimeField(auto_now_add=True)
+
+    objects = ImageManager()
 
     class Meta:
         db_table = 'image'
@@ -52,6 +69,14 @@ class Image(models.Model):
     def regenerate(self):
         self.save(self.source)
 
+    def delete(self, *args, **kwargs):
+        raise Exception('Please use Image.safe_delete() to delete an image instead.')
+
+    @classmethod
+    def safe_delete(cls, key_type, key_id):
+        cls.objects.filter(key_type=key_type, key_id=key_id).safe_delete()
+        cache.delete(get_cache_key(key_type, key_id))
+
 
 #-------------------------------------------------------------------------------
 # model signals
@@ -60,7 +85,6 @@ class Image(models.Model):
 
 @receiver(post_delete, sender=Image)
 def image_post_delete(instance, **kwargs):
-    cache.delete(get_cache_key(instance.key_type, instance.key_id))
     for field in ['file']:
         field = getattr(instance, field)
         if field: field.storage.delete(field.path)

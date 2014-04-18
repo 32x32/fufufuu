@@ -34,7 +34,7 @@ class ImageModelTests(BaseTestCase):
         path = image.file.path
         self.assertTrue(os.path.exists(path))
 
-        image.delete()
+        Image.safe_delete(key_type=ImageKeyType.MANGA_THUMB, key_id=1)
         self.assertFalse(os.path.exists(path))
 
 
