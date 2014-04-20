@@ -32,6 +32,7 @@ INSTALLED_APPS = (
     'fufufuu.blog',
     'fufufuu.comment',
     'fufufuu.core',
+    'fufufuu.dmca',
     'fufufuu.download',
     'fufufuu.flat',
     'fufufuu.image',

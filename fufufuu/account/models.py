@@ -40,6 +40,9 @@ class User(AbstractBaseUser):
     # scores and weights
     report_weight       = models.DecimalField(default=10, max_digits=19, decimal_places=10)
 
+    # additional information
+    dmca_account        = models.OneToOneField('dmca.DmcaAccount', blank=True, null=True, on_delete=models.SET_NULL)
+
     created_on          = models.DateTimeField(auto_now_add=True)
     updated_on          = models.DateTimeField(auto_now=True)
 
