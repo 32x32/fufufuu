@@ -10,12 +10,16 @@ DEBUG_TOOLBAR = False
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 TEMPLATE_DEBUG = DEBUG
 
+RESOURCE_VERSION = 'fabric:resource-version'
+
 #-------------------------------------------------------------------------------
 # django settings
 #-------------------------------------------------------------------------------
 
 MEDIA_ROOT = '/var/www/fufufuu/media'
-STATIC_ROOT = '/var/www/fufufuu/static'
+
+STATIC_ROOT = '/var/www/fufufuu/static/{}'.format(RESOURCE_VERSION)
+STATIC_URL = '/static/{}/'.format(RESOURCE_VERSION)
 
 DATABASES = {
     'default': {
@@ -50,8 +54,6 @@ CACHES = {
 #-------------------------------------------------------------------------------
 # custom settings
 #-------------------------------------------------------------------------------
-
-RESOURCE_VERSION = 'fabric:resource-version'
 
 X_ACCEL = True
 

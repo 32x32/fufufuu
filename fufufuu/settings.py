@@ -10,6 +10,8 @@ DEBUG_TOOLBAR = False
 DEBUG_TOOLBAR_PATCH_SETTINGS = True
 TEMPLATE_DEBUG = DEBUG
 
+RESOURCE_VERSION = 'development'
+
 ADMINS = (
     ('Derek Kwok', 'derek.kai.chun.kwok@gmail.com'),
 )
@@ -76,7 +78,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 STATIC_ROOT = ''
-STATIC_URL = '/static/'
+STATIC_URL = '/static/{}/'.format(RESOURCE_VERSION)
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
@@ -102,7 +104,6 @@ DEFAULT_FILE_STORAGE = 'fufufuu.core.storage.FufufuuStorage'
 # miscellaneous settings
 #-------------------------------------------------------------------------------
 
-RESOURCE_VERSION = 'development'
 X_ACCEL = False
 
 MAX_TOTAL_SIZE          = 200 * 1024 * 1024

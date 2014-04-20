@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="{{ STATIC_URL }}images/touch.png">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Inconsolata:400">
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/app.css?version={{ RESOURCE_VERSION }}">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/app.css">
     <title>Fufufuu | {% block title %}{% endblock %}</title>
     {% include '_include/analytics.html' %}
 </head>
@@ -31,8 +31,8 @@
     {% endblock %}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/lib.js?version={{ RESOURCE_VERSION }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/app.js?version={{ RESOURCE_VERSION }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/lib.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/app.js"></script>
     {% block javascript %}{% endblock %}
 </body>
 </html>
