@@ -19,6 +19,7 @@ from fufufuu.core.languages import Language
 from fufufuu.core.enums import SiteSettingKey
 from fufufuu.core.models import SiteSetting
 from fufufuu.core.utils import slugify, convert_markdown
+from fufufuu.dmca.models import DmcaAccount
 from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.models import Manga, MangaTag, MangaPage
 from fufufuu.report.enums import ReportStatus, ReportMangaType
@@ -78,7 +79,7 @@ class DataCreator:
     @timed
     def create_users(self):
         def create_user_helper(username, **kwargs):
-            user_data = { 'username': username }
+            user_data = {'username': username}
             user_data.update(**kwargs)
             user = User(**user_data)
             user.set_password('password')
@@ -86,6 +87,11 @@ class DataCreator:
             return user
 
         self.user = create_user_helper('testuser', is_staff=True, is_moderator=True)
+        self.user.dmca_account = DmcaAccount.objects.create(
+            name='Sample DMCA Account',
+            email='dmca@example.com',
+            website='http://example.com/dmca',
+        )
 
         for i in range(self.config['USERS']):
             create_user_helper('testuser{}'.format(i))

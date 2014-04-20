@@ -78,8 +78,11 @@
         {% endif %}
     </table>
     {% if download_available %}
-        <form action="{{ url('manga.download', args=[manga.id, manga.slug]) }}" method="post">
+        <form action="{{ url('manga.download', args=[manga.id, manga.slug]) }}" method="post" class="well">
             {{ forms.csrf_input() }}
+            {% if 'captcha' in download_form.fields %}
+                {{ forms.field(download_form.captcha, show_label=False) }}
+            {% endif %}
             <button class="btn btn-warning btn-block manga-info-cover-action">
                 <span class="icon icon-down-circled space-right"></span>
                 <span>{% trans %}Download{% endtrans %} ({{ archive.file.size|filesizeformat }})</span>

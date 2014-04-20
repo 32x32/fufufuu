@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from captcha.fields import CaptchaField
 from django import forms
+from django.core.cache import cache
 from django.db.models.aggregates import Sum
 from django.forms.models import BaseModelFormSet
 from django.utils import timezone
@@ -442,3 +443,39 @@ class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
         )
 
         return report_manga
+
+
+class MangaDownloadForm(forms.Form):
+    """
+    Add a captcha to the form is user has exceeded download limit in the allotted time
+    """
+
+    CACHE_KEY = 'download-limit-{user_id}'
+    CACHE_KEY_ANON = 'download-limit-anonymous-{ip_address}'
+    CACHE_TIMEOUT = 10 * 60  # 10 minutes
+    DOWNLOAD_LIMIT = 10
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+        key = self.get_cache_key(request)
+        if cache.get(key, 0) >= self.DOWNLOAD_LIMIT:
+            self.fields['captcha'] = CaptchaField()
+
+    @classmethod
+    def get_cache_key(cls, request):
+        if request.user.is_authenticated():
+            key = cls.CACHE_KEY.format(user_id=request.user.id)
+        else:
+            key = cls.CACHE_KEY_ANON.format(ip_address=get_ip_address(request))
+        return key
+
+    def update_limit(self):
+        key = self.get_cache_key(self.request)
+        if cache.get(key) is None:
+            cache.set(key, 1, self.CACHE_TIMEOUT)
+        elif 'captcha' in self.fields:
+            cache.delete(key)
+        else:
+            cache.incr(key)

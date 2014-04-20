@@ -16,7 +16,7 @@ from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus
-from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet, MangaListFilterForm, MangaReportForm
+from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet, MangaListFilterForm, MangaReportForm, MangaDownloadForm
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images, MangaArchiveGenerator
 from fufufuu.report.models import ReportManga
@@ -162,6 +162,7 @@ class MangaView(MangaViewMixin, TemplateView):
         context.update({
             'archive': archive,
             'download_available': download_available,
+            'download_form': MangaDownloadForm(request=request),
             'manga': manga,
             'page_count': len(manga_page_list),
             'payload': payload,
@@ -191,6 +192,14 @@ class MangaDownloadView(MangaViewMixin, TemplateView):
 
     def post(self, request, id, slug):
         manga = self.get_manga_for_view(id)
+
+        form = MangaDownloadForm(request=request, data=request.POST)
+        if not form.is_valid():
+            messages.error(request, _('You have failed the CAPTCHA, please try again.'))
+            return redirect('manga', id=id, slug=slug)
+        else:
+            form.update_limit()
+
         try:
             manga_archive = MangaArchive.objects.get(manga=manga)
         except MangaArchive.DoesNotExist:
