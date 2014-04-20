@@ -1,4 +1,8 @@
 import os
+import datetime
+
+import pytz
+
 from fufufuu.core.logging import email_admin_limit
 
 DEBUG = False
@@ -84,11 +88,8 @@ LOGGING = {
         },
         'fufufuu': {
             'level': 'WARNING',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': '/var/www/fufufuu/logs/fufufuu.log',
-            'when': 'D',
-            'interval': 1,
-            'backupCount': 30,
+            'class': 'logging.FileHandler',
+            'filename': '/var/www/fufufuu/logs/fufufuu-{}.log'.format(datetime.datetime.now(tz=pytz.UTC).strftime('%Y%m%d')),
             'encoding': 'utf-8',
         },
     },
