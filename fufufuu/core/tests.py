@@ -17,8 +17,9 @@ from django.test.utils import override_settings
 from django.utils import timezone
 
 from fufufuu.account.models import User
+from fufufuu.core.enums import SiteSettingKey
 from fufufuu.core.filters import exclude_keys
-from fufufuu.core.models import DeletedFile
+from fufufuu.core.models import DeletedFile, SiteSetting
 from fufufuu.core.utils import slugify, convert_markdown, natural_sort
 from fufufuu.datacreator import DataCreator
 from fufufuu.manga.models import Manga
@@ -196,3 +197,30 @@ class CoreFilterTests(BaseTestCase):
     def test_exclude_keys_long_names(self):
         qd = QueryDict('abc=1&page=2')
         self.assertEqual(exclude_keys(qd, 'page'), QueryDict('abc=1'))
+
+
+class CoreModelTests(BaseTestCase):
+
+    def test_site_setting_as_dict(self):
+        SiteSetting.set_val(SiteSettingKey.DOWNLOAD_LIMIT, '1000', self.user)
+
+        d = SiteSetting.as_dict()
+        self.assertEqual(d.get(SiteSettingKey.ENABLE_COMMENTS),True)
+        self.assertEqual(d.get(SiteSettingKey.DOWNLOAD_LIMIT), 1000)
+
+    def test_site_setting_set_val(self):
+        SiteSetting.set_val(SiteSettingKey.DOWNLOAD_LIMIT, '1000', self.user)
+        self.assertEqual(SiteSetting.get_val(SiteSettingKey.DOWNLOAD_LIMIT), 1000)
+
+    def test_site_setting_get_val_default(self):
+        SiteSetting.objects.all().delete()
+        for key in SiteSettingKey.choices_dict.keys():
+            self.assertEqual(SiteSetting.get_val(key), SiteSettingKey.default[key], key)
+
+    def test_site_setting_keys(self):
+        self.assertTrue(
+            list(SiteSettingKey.choices_dict.keys()) ==
+            list(SiteSettingKey.key_type.keys()) ==
+            list(SiteSettingKey.form_field_type.keys()) ==
+            list(SiteSettingKey.default.keys())
+        )

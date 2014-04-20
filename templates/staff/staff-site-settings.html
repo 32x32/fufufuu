@@ -5,29 +5,17 @@
 {% block title %}{% trans %}Site Settings{% endtrans %}{% endblock %}
 
 {% block content %}
-    <div class="container width-800">
-        <form action="" method="post" class="panel">
-            <h4 class="panel-heading">{% trans %}Site Settings{% endtrans %}</h4>
-            <div class="panel-body">
-                {{ forms.csrf_input() }}
-                <table class="table-full-border space-bottom-10">
-                    <tr>
-                        <td width="200">{{ form.enable_comments.label_tag() }}</td>
-                        <td>{{ form.enable_comments }}</td>
-                    </tr>
-                    <tr>
-                        <td width="200">{{ form.enable_registration.label_tag() }}</td>
-                        <td>{{ form.enable_registration }}</td>
-                    </tr>
-                    <tr>
-                        <td width="200">{{ form.enable_uploads.label_tag() }}</td>
-                        <td>{{ form.enable_uploads }}</td>
-                    </tr>
-                </table>
-                {{ forms.field(form.announcement) }}
-                <div class="form-field form-buttons">
-                    <button class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
-                </div>
+    <div class="container">
+        <form action="" method="post">
+            {{ forms.csrf_input() }}
+            <div class="well space-bottom-10">
+                <h4>{% trans %}Site Settings{% endtrans %}</h4>
+            </div>
+            <table class="table-django-form space-bottom-10">
+                {{ form.as_table() }}
+            </table>
+            <div class="well">
+                <button class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
             </div>
         </form>
     </div>

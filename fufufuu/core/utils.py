@@ -165,3 +165,14 @@ def validate_image(f):
         raise forms.ValidationError(_('{} is larger than 8000x8000 pixels.').format(f.name))
 
     return f
+
+
+def defaultint(n, default=0):
+    """
+    try to force n into an integer, otherwise return 0
+    """
+
+    try:
+        return int(n)
+    except:
+        return default

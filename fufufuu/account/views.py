@@ -5,8 +5,7 @@ from django.http.response import HttpResponseNotAllowed
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 from django.views.generic.base import View
-from fufufuu.account.forms import AccountLoginForm, AccountRegisterForm, AccountSettingsForm, \
-    AccountSettingsPasswordForm
+from fufufuu.account.forms import AccountLoginForm, AccountRegisterForm, AccountSettingsForm, AccountSettingsPasswordForm
 from fufufuu.core.enums import SiteSettingKey
 from fufufuu.core.models import SiteSetting
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
@@ -42,13 +41,13 @@ class AccountRegisterView(AccountBaseView):
     template_name = 'account/account-register.html'
 
     def get(self, request):
-        if not SiteSetting.as_dict().get(SiteSettingKey.ENABLE_REGISTRATION):
+        if not SiteSetting.get_val(SiteSettingKey.ENABLE_REGISTRATION):
             messages.warning(request, _('Account registration at Fufufuu has been disabled.'))
 
         return self.render_to_response({'form': AccountRegisterForm()})
 
     def post(self, request):
-        if not SiteSetting.as_dict().get(SiteSettingKey.ENABLE_REGISTRATION):
+        if not SiteSetting.get_val(SiteSettingKey.ENABLE_REGISTRATION):
             return redirect('account.register')
 
         form = AccountRegisterForm(data=request.POST)

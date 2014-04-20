@@ -4,6 +4,7 @@ from django.core.cache import cache
 
 from fufufuu.account.models import User
 from fufufuu.core.enums import SiteSettingKey
+from fufufuu.core.utils import defaultint
 
 
 class BaseAuditableModel(models.Model):
@@ -74,7 +75,9 @@ class SiteSetting(models.Model):
         _site_settings = dict([(s.key, s.val) for s in SiteSetting.objects.all().only('key', 'val')])
         for k, v in _site_settings.items():
             if SiteSettingKey.key_type[k] == bool:
-                _site_settings[k] = v == 'True'
+                _site_settings[k] = (v == 'True')
+            elif SiteSettingKey.key_type[k] == int:
+                _site_settings[k] = defaultint(v)
 
         cache.set(cls.__SITE_SETTING_CACHE_KEY, _site_settings, cls.__SITE_SETTING_CACHE_TIMEOUT)
         return _site_settings
@@ -93,4 +96,4 @@ class SiteSetting(models.Model):
 
     @classmethod
     def get_val(cls, key):
-        return cls.as_dict().get(key)
+        return cls.as_dict().get(key, SiteSettingKey.default[key])

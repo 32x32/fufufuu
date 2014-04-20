@@ -55,3 +55,19 @@ td {
     th { padding: 2px 10px 2px 0; }
     td { padding: 2px 10px 2px 0; }
 }
+
+.table-django-form {
+    th {
+        border: @table-td-border;
+        padding: 5px 10px;
+        width: 200px;
+    }
+    td {
+        padding: 5px;
+        border: @table-td-border;
+
+        > input, textarea {
+            margin-bottom: 0;
+        }
+    }
+}

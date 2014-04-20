@@ -2,8 +2,10 @@ import os
 from django.contrib.auth.models import AnonymousUser
 
 from django.core.files.uploadedfile import SimpleUploadedFile
+from fufufuu.core.enums import SiteSettingKey
 
 from fufufuu.core.languages import Language
+from fufufuu.core.models import SiteSetting
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.manga.enums import MangaCategory, MangaStatus
 from fufufuu.manga.forms import MangaEditForm, MangaReportForm
@@ -455,7 +457,7 @@ class MangaReportFormTests(BaseTestCase):
         self.assertEqual(report_manga.type, ReportMangaType.REPOST)
 
     def test_manga_report_form_pending(self):
-        self.user.report_weight = 50
+        self.user.report_weight = SiteSetting.get_val(SiteSettingKey.REPORT_THRESHOLD)
         self.user.save()
 
         form = MangaReportForm(request=self.request, manga=self.manga, data={

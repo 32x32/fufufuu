@@ -13,27 +13,21 @@ class SiteSettingForm(BlankLabelSuffixMixin, forms.Form):
         required=False,
         widget=forms.Textarea(attrs={
             'rows': '2',
-            'class': 'space-bottom-0',
         })
-    )
-
-    enable_comments = forms.BooleanField(
-        label=_('Enable Comments'),
-        required=False,
-    )
-
-    enable_registration = forms.BooleanField(
-        label=_('Enable Registration'),
-        required=False
-    )
-
-    enable_uploads = forms.BooleanField(
-        label=_('Enable Uploads'),
-        required=False,
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        key_list = sorted(SiteSettingKey.form_field_type.keys())
+
+        for key in key_list:
+            field_cls = SiteSettingKey.form_field_type[key]
+            key = key.lower()
+            if key in self.fields:
+                continue
+            self.fields[key] = field_cls(label=SiteSettingKey.choices_dict.get(key), required=False)
+
         if 'data' not in kwargs:
             self.initialize_data()
 

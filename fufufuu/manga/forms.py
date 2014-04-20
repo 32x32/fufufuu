@@ -7,9 +7,11 @@ from django.db.models.aggregates import Sum
 from django.forms.models import BaseModelFormSet
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from fufufuu.core.enums import SiteSettingKey
 
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.languages import Language
+from fufufuu.core.models import SiteSetting
 from fufufuu.core.utils import convert_markdown, get_ip_address, send_email_alert, validate_image, yesterday
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
@@ -367,7 +369,6 @@ class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     ANONYMOUS_REPORT_LIMIT = 20
     ANONYMOUS_REPORT_WEIGHT = 5
-    PENDING_WEIGHT = 50
 
     type = forms.ChoiceField(
         label=_('Select the reason for reporting'),
@@ -433,7 +434,7 @@ class MangaReportForm(BlankLabelSuffixMixin, forms.ModelForm):
         report_manga.save()
 
         total_weight = ReportManga.open.filter(manga=self.manga).aggregate(total_weight=Sum('weight')).get('total_weight', 0)
-        if total_weight >= self.PENDING_WEIGHT:
+        if total_weight >= SiteSetting.get_val(SiteSettingKey.REPORT_THRESHOLD):
             self.manga.status = MangaStatus.PENDING
             self.manga.save(self.manga.updated_by)
 
@@ -452,15 +453,15 @@ class MangaDownloadForm(forms.Form):
 
     CACHE_KEY = 'download-limit-{user_id}'
     CACHE_KEY_ANON = 'download-limit-anonymous-{ip_address}'
-    CACHE_TIMEOUT = 10 * 60  # 10 minutes
-    DOWNLOAD_LIMIT = 10
 
     def __init__(self, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.request = request
 
         key = self.get_cache_key(request)
-        if cache.get(key, 0) >= self.DOWNLOAD_LIMIT:
+        download_limit = SiteSetting.get_val(SiteSettingKey.DOWNLOAD_LIMIT)
+
+        if cache.get(key, 0) >= download_limit:
             self.fields['captcha'] = CaptchaField()
 
     @classmethod
@@ -474,7 +475,8 @@ class MangaDownloadForm(forms.Form):
     def update_limit(self):
         key = self.get_cache_key(self.request)
         if cache.get(key) is None:
-            cache.set(key, 1, self.CACHE_TIMEOUT)
+            cache_timeout = SiteSetting.get_val(SiteSettingKey.DOWNLOAD_TIMEOUT)
+            cache.set(key, 1, cache_timeout)
         elif 'captcha' in self.fields:
             cache.delete(key)
         else:

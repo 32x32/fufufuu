@@ -22,7 +22,7 @@ class UploadListView(ProtectedTemplateView):
         return non_draft_uploads + draft_uploads
 
     def get(self, request):
-        if not SiteSetting.as_dict().get(SiteSettingKey.ENABLE_UPLOADS):
+        if not SiteSetting.get_val(SiteSettingKey.ENABLE_UPLOADS):
             messages.warning(request, _('Uploading at Fufufuu has been disabled.'))
 
         manga_list = Manga.objects.filter(created_by=request.user).order_by('-created_on')
@@ -39,7 +39,7 @@ class UploadListView(ProtectedTemplateView):
         })
 
     def post(self, request):
-        if not SiteSetting.as_dict().get(SiteSettingKey.ENABLE_UPLOADS):
+        if not SiteSetting.get_val(SiteSettingKey.ENABLE_UPLOADS):
             return redirect('upload.list')
 
         if self.get_upload_slots_used() >= request.user.upload_limit:
