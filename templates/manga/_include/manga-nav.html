@@ -70,7 +70,7 @@
             {% endif %}
             {{ manga_nav_item(request, url_manga_report, 'icon-attention', gettext('Report')) }}
             {% if user.is_authenticated and user.dmca_account_id %}
-                {{ manga_nav_item(request, url_manga_dmca_request, 'icon-attention', gettext('DMCA Request')) }}
+                {{ manga_nav_item(request, url_manga_dmca_request, 'icon-alert', gettext('DMCA Request')) }}
             {% endif %}
         </div>
     </div>

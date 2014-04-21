@@ -48,4 +48,13 @@
             </tbody>
         </table>
     </div>
+    {% if user_list and user_list.paginator.num_pages > 1 %}
+        <div class="filter-bar filter-bar-bottom">
+            <form class="right">
+                {{ widgets.pagination(user_list) }}
+            </form>
+            <span class="btn back-to-top"><span class="icon icon-up-circled space-right"></span>{% trans %}Back to Top{% endtrans %}</span>
+            <div class="clear"></div>
+        </div>
+    {% endif %}
 {% endblock %}

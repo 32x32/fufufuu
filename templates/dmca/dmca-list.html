@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% import '_macros/widgets.html' as widgets with context %}
+
+{% block title %}{% trans %}DMCA Requests{% endtrans %}{% endblock %}
+
+{% block content_upper %}
+    <div class="filter-bar">
+        <form class="right">
+            {{ widgets.pagination(dmca_list) }}
+        </form>
+        <h4 class="filter-bar-text space-bottom-0">{% trans count=dmca_list.paginator.count %}{{ count }} DMCA Requests{% endtrans %}</h4>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="well space-bottom-10">{% trans %}This page shows you all the DMCA requests you have made.{% endtrans %}</div>
+        <table class="table-hover">
+            <thead>
+                <tr>
+                    <th width="160">{% trans %}Uploader{% endtrans %}</th>
+                    <th>{% trans %}Title{% endtrans %}</th>
+                    <th width="200">{% trans %}DMCA Request Date{% endtrans %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dmca_request in dmca_list %}
+                    <tr>
+                        <td><a href="{{ url('user', args=[dmca_request.manga.created_by.username]) }}">{{ dmca_request.manga.created_by }}</a></td>
+                        <td><a href="{{ url('manga', args=[dmca_request.manga.id, dmca_request.manga.slug]) }}">{{ dmca_request.manga.title }}</a></td>
+                        <td>{{ dmca_request.created_on.strftime('%B %d, %Y') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
