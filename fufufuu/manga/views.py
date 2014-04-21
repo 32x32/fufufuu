@@ -12,6 +12,8 @@ from django.utils.translation import ugettext as _
 from fufufuu.core.response import HttpResponseXAccel
 from fufufuu.core.utils import paginate, get_ip_address, natural_sort, send_email_alert
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
+from fufufuu.dmca.forms import DmcaRequestForm
+from fufufuu.dmca.models import DmcaRequest
 from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
@@ -246,6 +248,59 @@ class MangaReportView(MangaViewMixin, TemplateView):
 
         return self.render_to_response({
             'form': form,
+            'manga': manga,
+        })
+
+
+class MangaDmcaRequestView(MangaViewMixin, ProtectedTemplateView):
+
+    template_name = 'manga/manga-dmca-request.html'
+
+    def get(self, request, id, slug):
+        if not request.user.dmca_account_id:
+            raise Http404
+
+        manga = self.get_manga_for_view(id)
+        if manga.status == MangaStatus.DMCA:
+            return redirect('manga.dmca', id=id, slug=slug)
+
+        return self.render_to_response({
+            'form': DmcaRequestForm(manga=manga, request=request),
+            'manga': manga,
+        })
+
+    def post(self, request, id, slug):
+        if not request.user.dmca_account_id:
+            raise Http404
+
+        manga = self.get_manga_for_view(id)
+        if manga.status == MangaStatus.DMCA:
+            return redirect('manga.dmca', id=id, slug=slug)
+
+        form = DmcaRequestForm(manga=manga, request=request, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _('Your DMCA request has been successfully issued.'))
+            return redirect('manga.dmca', id=id, slug=slug)
+
+        return self.render_to_response({
+            'form': form,
+            'manga': manga,
+        })
+
+
+class MangaDmcaView(MangaViewMixin, TemplateView):
+
+    template_name = 'manga/manga-dmca.html'
+
+    def get(self, request, id, slug):
+        manga = self.get_manga_for_view(id)
+        if manga.status != MangaStatus.DMCA:
+            raise Http404
+
+        dmca_list = DmcaRequest.objects.filter(manga=manga)
+        return self.render_to_response({
+            'dmca_list': dmca_list,
             'manga': manga,
         })
 

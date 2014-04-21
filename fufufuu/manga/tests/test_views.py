@@ -10,6 +10,7 @@ from django.http.response import Http404
 from fufufuu.core.languages import Language
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.core.utils import slugify
+from fufufuu.dmca.models import DmcaAccount
 from fufufuu.download.models import DownloadLink
 from fufufuu.manga.enums import MangaStatus, MangaCategory
 from fufufuu.manga.models import Manga, MangaFavorite
@@ -530,3 +531,74 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_edit(user, MangaStatus.REMOVED, Http404)
         self.assert_get_manga_for_edit(user, MangaStatus.DELETED, Http404)
         self.assert_get_manga_for_edit(user, MangaStatus.DMCA, Http404)
+
+
+class MangaDmcaRequestViewTests(BaseTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.user.dmca_account = DmcaAccount.objects.create(
+            name='Corporation Name',
+            email='example@corporation.com',
+            website='http://corporation.com'
+        )
+        self.user.save()
+
+    def test_manga_dmca_request_view_get_non_dmca_account(self):
+        self.user.dmca_account.delete()
+        response = self.client.get(reverse('manga.dmca.request', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_manga_dmca_request_view_get_already_dmca(self):
+        self.manga.status = MangaStatus.DMCA
+        self.manga.save(updated_by=self.user)
+
+        response = self.client.get(reverse('manga.dmca.request', args=[self.manga.id, self.manga.slug]))
+        self.assertRedirects(response, reverse('manga.dmca', args=[self.manga.id, self.manga.slug]))
+
+    def test_manga_dmca_request_view_get(self):
+        response = self.client.get(reverse('manga.dmca.request', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca-request.html')
+
+    def test_manga_dmca_request_view_post_non_dmca_account(self):
+        self.user.dmca_account.delete()
+        response = self.client.post(reverse('manga.dmca.request', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_manga_dmca_request_view_post_already_dmca(self):
+        self.manga.status = MangaStatus.DMCA
+        self.manga.save(updated_by=self.user)
+
+        response = self.client.post(reverse('manga.dmca.request', args=[self.manga.id, self.manga.slug]))
+        self.assertRedirects(response, reverse('manga.dmca', args=[self.manga.id, self.manga.slug]))
+
+    def test_manga_dmca_request_view_post_invalid(self):
+        response = self.client.post(reverse('manga.dmca.request', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca-request.html')
+
+    def test_manga_dmca_request_view_post(self):
+        response = self.client.post(reverse('manga.dmca.request', args=[self.manga.id, self.manga.slug]), {
+            'check1': 'on',
+            'check2': 'on',
+        })
+        self.assertRedirects(response, reverse('manga.dmca', args=[self.manga.id, self.manga.slug]))
+
+        manga = Manga.all.get(id=self.manga.id)
+        self.assertEqual(manga.status, MangaStatus.DMCA)
+
+
+class MangaDmcaViewTests(BaseTestCase):
+
+    def test_manga_dmca_view_get_not_dmca(self):
+        response = self.client.get(reverse('manga.dmca', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_manga_dmca_view_get(self):
+        self.manga.status = MangaStatus.DMCA
+        self.manga.save(self.user)
+
+        response = self.client.get(reverse('manga.dmca', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')

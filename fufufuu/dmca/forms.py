@@ -1,9 +1,10 @@
 from django import forms
-from django.utils.translation import ugettext as _, ugettext
+from django.utils.translation import ugettext_lazy as _
 from fufufuu.account.models import User
 from fufufuu.core.forms import BlankLabelSuffixMixin
 from fufufuu.core.utils import convert_markdown
-from fufufuu.dmca.models import DmcaAccount
+from fufufuu.dmca.models import DmcaAccount, DmcaRequest
+from fufufuu.manga.enums import MangaStatus
 
 
 class DmcaAccountForm(forms.ModelForm):
@@ -63,3 +64,36 @@ class DmcaAccountCreateForm(BlankLabelSuffixMixin, forms.Form):
         )
         self.target_user.save()
         return self.target_user
+
+
+class DmcaRequestForm(BlankLabelSuffixMixin, forms.ModelForm):
+
+    check1 = forms.BooleanField(
+        label=_('I have a good faith belief that use of the copyrighted materials described above as allegedly infringing is not authorized by the copyright owner, its agent, or the law.'),
+        initial=True,
+    )
+
+    check2 = forms.BooleanField(
+        label=_('The information in this notification is accurate, and I swear, under penalty of perjury, that I am the copyright owner or am authorized to act on behalf of the owner of an exclusive right that is allegedly infringed.'),
+        initial=True,
+    )
+
+    class Meta:
+        model = DmcaRequest
+        fields = []
+
+    def __init__(self, manga, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.manga = manga
+        self.request = request
+
+    def save(self):
+        dmca_request = super().save(commit=False)
+        dmca_request.dmca_account = self.request.user.dmca_account
+        dmca_request.manga = self.manga
+        dmca_request.save()
+
+        self.manga.status = MangaStatus.DMCA
+        self.manga.save(updated_by=self.request.user)
+
+        return dmca_request
