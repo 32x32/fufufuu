@@ -331,7 +331,7 @@ def nginx_update():
     sudo('rm -f /etc/nginx/sites-enabled/default')
     sudo('rm -f /etc/nginx/nginx.conf')
     put('config/{config}/nginx.conf'.format(**env), '/etc/nginx/nginx.conf', use_sudo=True)
-    sudo('/etc/init.d/nginx restart')
+    sudo('nginx -s reload')
 
 
 def memcached_update():

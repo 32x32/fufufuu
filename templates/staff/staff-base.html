@@ -4,6 +4,7 @@
     {% include '_include/header.html' %}
     {% include 'staff/_include/staff-nav.html' %}
     <div id="template-{{ TEMPLATE_NAME }}" class="content">
+        {% block content_upper %}{% endblock %}
         {% include '_include/messages.html' %}
         {% block content %}{% endblock %}
     </div>

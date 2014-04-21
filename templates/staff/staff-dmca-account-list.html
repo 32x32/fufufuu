@@ -1,0 +1,46 @@
+{% extends 'staff/staff-base.html' %}
+{% import '_macros/forms.html' as forms with context %}
+{% import '_macros/widgets.html' as widgets with context %}
+
+{% block title %}{% trans %}DMCA Account List{% endtrans %}{% endblock %}
+
+{% block content_upper %}
+    <div class="filter-bar">
+        <form class="right">
+            {{ widgets.pagination(user_list) }}
+        </form>
+        <form action="" method="post" target="_blank" class="min-md inline-block space-right-10">
+            {{ forms.csrf_input() }}
+        </form>
+        <div class="clear"></div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <table class="table-hover">
+            <thead>
+                <tr>
+                    <th>{% trans %}Name{% endtrans %}</th>
+                    <th>{% trans %}Email{% endtrans %}</th>
+                    <th>{% trans %}Website{% endtrans %}</th>
+                    <th>{% trans %}Takedowns{% endtrans %}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in user_list %}{% with account=u.dmca_account %}
+                    <tr>
+                        <td>{{ account.name }}</td>
+                        <td>{{ account.email }}</td>
+                        <td>{{ account.website }}</td>
+                    </tr>
+                {% endwith %}{% else %}
+                    <tr>
+                        <td>{% trans %}There are no DMCA accounts.{% endtrans %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

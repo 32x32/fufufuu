@@ -66,3 +66,19 @@ class SiteSettingFormTests(BaseTestCase):
         self.assertEqual(settings_dict.get(SiteSettingKey.ANNOUNCEMENT), 'This is a sample announcement')
         self.assertEqual(settings_dict.get(SiteSettingKey.ENABLE_COMMENTS), True)
         self.assertEqual(settings_dict.get(SiteSettingKey.ENABLE_UPLOADS), False)
+
+
+class StaffDmcaAccountListViewTests(BaseTestCase):
+
+    def test_staff_dmca_account_list_view_get(self):
+        response = self.client.get(reverse('staff.dmca.account.list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'staff/staff-dmca-account-list.html')
+
+
+class StaffDmcaAccountViewTests(BaseTestCase):
+
+    def test_staff_dmca_account_view_get(self):
+        response = self.client.get(reverse('staff.dmca.account', args=[self.user.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'staff/staff-dmca-account.html')
