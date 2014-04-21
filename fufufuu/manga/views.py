@@ -3,10 +3,12 @@ import json
 import os
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed, HttpResponsePermanentRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 
 from fufufuu.core.response import HttpResponseXAccel
@@ -18,6 +20,7 @@ from fufufuu.download.models import DownloadLink
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.filters import image_resize
 from fufufuu.manga.enums import MangaCategory, MangaAction, MangaStatus
+from fufufuu.manga.exceptions import MangaDmcaException
 from fufufuu.manga.forms import MangaEditForm, MangaPageForm, MangaPageFormSet, MangaListFilterForm, MangaReportForm, MangaDownloadForm
 from fufufuu.manga.models import Manga, MangaPage, MangaFavorite, MangaArchive
 from fufufuu.manga.utils import process_zipfile, process_images, MangaArchiveGenerator
@@ -84,7 +87,20 @@ class MangaListFavoritesView(MangaListMixin, ProtectedTemplateView):
 #-------------------------------------------------------------------------------
 
 
-class MangaViewMixin:
+class BaseMangaView(TemplateView):
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except MangaDmcaException as e:
+            self.template_name = 'manga/manga-dmca.html'
+            manga = e.manga
+            messages.error(request, _('This gallery has been removed due to a DMCA takedown request.'))
+            dmca_list = DmcaRequest.objects.filter(manga=manga)
+            return self.render_to_response({
+                'dmca_list': dmca_list,
+                'manga': manga,
+            })
 
     def get_manga_for_view(self, id):
         user = self.request.user
@@ -96,6 +112,10 @@ class MangaViewMixin:
             manga = get_object_or_404(Manga.objects, id=id)
         else:
             manga = get_object_or_404(Manga.public, id=id)
+
+        if manga.status == MangaStatus.DMCA and not user.is_staff:
+            raise MangaDmcaException(manga)
+
         return manga
 
     def get_manga_for_edit(self, id):
@@ -108,10 +128,21 @@ class MangaViewMixin:
             manga = get_object_or_404(Manga.objects, id=id)
         else:
             manga = get_object_or_404(Manga.objects, id=id, created_by=user)
+
+        if manga.status == MangaStatus.DMCA and not user.is_staff:
+            raise MangaDmcaException(manga)
+
         return manga
 
 
-class MangaView(MangaViewMixin, TemplateView):
+class BaseMangaProtectedView(BaseMangaView):
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class MangaView(BaseMangaView):
 
     template_name = 'manga/manga.html'
 
@@ -172,7 +203,7 @@ class MangaView(MangaViewMixin, TemplateView):
         return self.render_to_response(context)
 
 
-class MangaThumbnailsView(MangaViewMixin, TemplateView):
+class MangaThumbnailsView(BaseMangaView):
 
     template_name = 'manga/manga-thumbnails.html'
 
@@ -187,7 +218,7 @@ class MangaThumbnailsView(MangaViewMixin, TemplateView):
         })
 
 
-class MangaDownloadView(MangaViewMixin, TemplateView):
+class MangaDownloadView(BaseMangaView):
 
     def get(self, request, id, slug):
         return HttpResponseNotAllowed(permitted_methods=['post'])
@@ -224,7 +255,7 @@ class MangaDownloadView(MangaViewMixin, TemplateView):
         return redirect('download', key=link.key, filename=manga_archive.name)
 
 
-class MangaReportView(MangaViewMixin, TemplateView):
+class MangaReportView(BaseMangaView):
 
     template_name = 'manga/manga-report.html'
 
@@ -252,7 +283,7 @@ class MangaReportView(MangaViewMixin, TemplateView):
         })
 
 
-class MangaDmcaRequestView(MangaViewMixin, ProtectedTemplateView):
+class MangaDmcaRequestView(BaseMangaProtectedView):
 
     template_name = 'manga/manga-dmca-request.html'
 
@@ -262,7 +293,7 @@ class MangaDmcaRequestView(MangaViewMixin, ProtectedTemplateView):
 
         manga = self.get_manga_for_view(id)
         if manga.status == MangaStatus.DMCA:
-            return redirect('manga.dmca', id=id, slug=slug)
+            return redirect('manga', id=id, slug=slug)
 
         return self.render_to_response({
             'form': DmcaRequestForm(manga=manga, request=request),
@@ -275,13 +306,13 @@ class MangaDmcaRequestView(MangaViewMixin, ProtectedTemplateView):
 
         manga = self.get_manga_for_view(id)
         if manga.status == MangaStatus.DMCA:
-            return redirect('manga.dmca', id=id, slug=slug)
+            return redirect('manga', id=id, slug=slug)
 
         form = DmcaRequestForm(manga=manga, request=request, data=request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, _('Your DMCA request has been successfully issued.'))
-            return redirect('manga.dmca', id=id, slug=slug)
+            return redirect('manga', id=id, slug=slug)
 
         return self.render_to_response({
             'form': form,
@@ -289,24 +320,7 @@ class MangaDmcaRequestView(MangaViewMixin, ProtectedTemplateView):
         })
 
 
-class MangaDmcaView(MangaViewMixin, TemplateView):
-
-    template_name = 'manga/manga-dmca.html'
-
-    def get(self, request, id, slug):
-        manga = self.get_manga_for_view(id)
-        if manga.status != MangaStatus.DMCA:
-            raise Http404
-
-        messages.error(request, _('This gallery has been removed due to a DMCA takedown request.'))
-        dmca_list = DmcaRequest.objects.filter(manga=manga)
-        return self.render_to_response({
-            'dmca_list': dmca_list,
-            'manga': manga,
-        })
-
-
-class MangaFavoriteView(MangaViewMixin, ProtectedTemplateView):
+class MangaFavoriteView(BaseMangaProtectedView):
 
     def get(self, request, id, slug):
         return redirect(reverse('manga', args=[id, slug]))
@@ -325,7 +339,7 @@ class MangaFavoriteView(MangaViewMixin, ProtectedTemplateView):
 #-------------------------------------------------------------------------------
 
 
-class MangaEditView(MangaViewMixin, ProtectedTemplateView):
+class MangaEditView(BaseMangaProtectedView):
 
     template_name = 'manga/manga-edit.html'
 
@@ -368,7 +382,7 @@ class MangaEditView(MangaViewMixin, ProtectedTemplateView):
         })
 
 
-class MangaEditImagesView(MangaViewMixin, ProtectedTemplateView):
+class MangaEditImagesView(BaseMangaProtectedView):
 
     template_name = 'manga/manga-edit-images.html'
 
@@ -413,7 +427,7 @@ class MangaEditImagesView(MangaViewMixin, ProtectedTemplateView):
         })
 
 
-class MangaEditImagesPageView(MangaViewMixin, ProtectedTemplateView):
+class MangaEditImagesPageView(BaseMangaProtectedView):
 
     def get(self, request, id, slug, page):
         manga = self.get_manga_for_edit(id)
@@ -421,7 +435,7 @@ class MangaEditImagesPageView(MangaViewMixin, ProtectedTemplateView):
         return HttpResponseXAccel(manga_page.image.url, manga_page.image.name, attachment=False)
 
 
-class MangaEditUploadView(MangaViewMixin, ProtectedTemplateView):
+class MangaEditUploadView(BaseMangaProtectedView):
 
     def get(self, request, id, slug):
         return HttpResponseNotAllowed(permitted_methods=['post'])

@@ -13,8 +13,9 @@ from fufufuu.core.utils import slugify
 from fufufuu.dmca.models import DmcaAccount
 from fufufuu.download.models import DownloadLink
 from fufufuu.manga.enums import MangaStatus, MangaCategory
+from fufufuu.manga.exceptions import MangaDmcaException
 from fufufuu.manga.models import Manga, MangaFavorite
-from fufufuu.manga.views import MangaViewMixin
+from fufufuu.manga.views import BaseMangaView
 from fufufuu.report.enums import ReportMangaType
 from fufufuu.report.models import ReportManga
 from fufufuu.tag.enums import TagType
@@ -407,7 +408,7 @@ class MangaViewMixinTests(BaseTestCase):
     def _assert_get_manga(self, method_name, user, manga_status, error_cls):
         class TestRequest: pass
 
-        mixin = MangaViewMixin()
+        mixin = BaseMangaView()
         mixin.request = TestRequest()
         mixin.request.user = user
 
@@ -436,7 +437,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_view(user, MangaStatus.PENDING, Http404)
         self.assert_get_manga_for_view(user, MangaStatus.REMOVED, Http404)
         self.assert_get_manga_for_view(user, MangaStatus.DELETED, Http404)
-        self.assert_get_manga_for_view(user, MangaStatus.DMCA)
+        self.assert_get_manga_for_view(user, MangaStatus.DMCA, MangaDmcaException)
 
     def test_get_manga_for_view_staff(self):
         self.user.is_staff = True
@@ -460,7 +461,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_view(self.user, MangaStatus.PENDING)
         self.assert_get_manga_for_view(self.user, MangaStatus.REMOVED)
         self.assert_get_manga_for_view(self.user, MangaStatus.DELETED, Http404)
-        self.assert_get_manga_for_view(self.user, MangaStatus.DMCA)
+        self.assert_get_manga_for_view(self.user, MangaStatus.DMCA, MangaDmcaException)
 
     def test_get_manga_for_view(self):
         self.user.is_staff = False
@@ -472,7 +473,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_view(self.user, MangaStatus.PENDING, Http404)
         self.assert_get_manga_for_view(self.user, MangaStatus.REMOVED, Http404)
         self.assert_get_manga_for_view(self.user, MangaStatus.DELETED, Http404)
-        self.assert_get_manga_for_view(self.user, MangaStatus.DMCA)
+        self.assert_get_manga_for_view(self.user, MangaStatus.DMCA, MangaDmcaException)
 
     def test_get_manga_for_edit_unauthenticated(self):
         user = AnonymousUser()
@@ -505,7 +506,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_edit(self.user, MangaStatus.PENDING)
         self.assert_get_manga_for_edit(self.user, MangaStatus.REMOVED)
         self.assert_get_manga_for_edit(self.user, MangaStatus.DELETED, Http404)
-        self.assert_get_manga_for_edit(self.user, MangaStatus.DMCA)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.DMCA, MangaDmcaException)
 
     def test_get_manga_for_edit_owner(self):
         self.user.is_staff = False
@@ -517,7 +518,7 @@ class MangaViewMixinTests(BaseTestCase):
         self.assert_get_manga_for_edit(self.user, MangaStatus.PENDING)
         self.assert_get_manga_for_edit(self.user, MangaStatus.REMOVED)
         self.assert_get_manga_for_edit(self.user, MangaStatus.DELETED, Http404)
-        self.assert_get_manga_for_edit(self.user, MangaStatus.DMCA)
+        self.assert_get_manga_for_edit(self.user, MangaStatus.DMCA, MangaDmcaException)
 
     def test_get_manga_for_edit_not_owner(self):
         user = self.create_test_user('testuser2')
@@ -554,7 +555,7 @@ class MangaDmcaRequestViewTests(BaseTestCase):
         self.manga.save(updated_by=self.user)
 
         response = self.client.get(reverse('manga.dmca.request', args=[self.manga.id, self.manga.slug]))
-        self.assertRedirects(response, reverse('manga.dmca', args=[self.manga.id, self.manga.slug]))
+        self.assertRedirects(response, reverse('manga', args=[self.manga.id, self.manga.slug]))
 
     def test_manga_dmca_request_view_get(self):
         response = self.client.get(reverse('manga.dmca.request', args=[self.manga.id, self.manga.slug]))
@@ -571,7 +572,7 @@ class MangaDmcaRequestViewTests(BaseTestCase):
         self.manga.save(updated_by=self.user)
 
         response = self.client.post(reverse('manga.dmca.request', args=[self.manga.id, self.manga.slug]))
-        self.assertRedirects(response, reverse('manga.dmca', args=[self.manga.id, self.manga.slug]))
+        self.assertRedirects(response, reverse('manga', args=[self.manga.id, self.manga.slug]))
 
     def test_manga_dmca_request_view_post_invalid(self):
         response = self.client.post(reverse('manga.dmca.request', args=[self.manga.id, self.manga.slug]))
@@ -583,22 +584,79 @@ class MangaDmcaRequestViewTests(BaseTestCase):
             'check1': 'on',
             'check2': 'on',
         })
-        self.assertRedirects(response, reverse('manga.dmca', args=[self.manga.id, self.manga.slug]))
+        self.assertRedirects(response, reverse('manga', args=[self.manga.id, self.manga.slug]))
 
         manga = Manga.all.get(id=self.manga.id)
         self.assertEqual(manga.status, MangaStatus.DMCA)
 
 
-class MangaDmcaViewTests(BaseTestCase):
+class MangaDmcaTests(BaseTestCase):
 
-    def test_manga_dmca_view_get_not_dmca(self):
-        response = self.client.get(reverse('manga.dmca', args=[self.manga.id, self.manga.slug]))
-        self.assertEqual(response.status_code, 404)
-
-    def test_manga_dmca_view_get(self):
+    def setUp(self):
+        super().setUp()
         self.manga.status = MangaStatus.DMCA
         self.manga.save(self.user)
 
-        response = self.client.get(reverse('manga.dmca', args=[self.manga.id, self.manga.slug]))
+        self.user.is_staff = False
+        self.user.save()
+
+    def test_manga_view_get(self):
+        response = self.client.get(reverse('manga', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')
+
+    def test_manga_thumbnails_view_get(self):
+        response = self.client.get(reverse('manga.thumbnails', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')
+
+    def test_manga_download_view_post(self):
+        response = self.client.post(reverse('manga.download', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')
+
+    def test_manga_report_view_get(self):
+        response = self.client.get(reverse('manga.report', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')
+
+    def test_manga_report_view_post(self):
+        response = self.client.post(reverse('manga.report', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')
+
+    def test_manga_favorite_view_post(self):
+        response = self.client.post(reverse('manga.favorite', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')
+
+    def test_manga_edit_view_get(self):
+        response = self.client.get(reverse('manga.edit', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')
+
+    def test_manga_edit_view_post(self):
+        response = self.client.post(reverse('manga.edit', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')
+
+    def test_manga_edit_images_view_get(self):
+        response = self.client.get(reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')
+
+    def test_manga_edit_images_view_post(self):
+        response = self.client.post(reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')
+
+    def test_manga_edit_images_page_view_get(self):
+        manga_page = self.manga.mangapage_set.all()[0]
+        response = self.client.get(reverse('manga.edit.images.page', args=[self.manga.id, self.manga.slug, manga_page.page]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manga/manga-dmca.html')
+
+    def test_manga_edit_upload_view_post(self):
+        response = self.client.post(reverse('manga.edit.upload', args=[self.manga.id, self.manga.slug]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'manga/manga-dmca.html')
