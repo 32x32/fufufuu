@@ -1,0 +1,22 @@
+{% extends 'manga/manga-base.html' %}
+
+{% block title %}{{ manga.title }}{% endblock %}
+
+{% block content %}
+    <div class="width-800 container block-center">
+        {% for dmca_request in dmca_list %}
+            <div class="panel space-bottom-10">
+                <h4 class="panel-heading">{% trans %}DMCA (Copyright) Complaint to Fufufuu{% endtrans %}</h4>
+                <div class="panel-body">
+                    <p>This DMCA request has been filed by: </p>
+                    <h5 class="space-bottom-0">{{ dmca_request.dmca_account.name }}</h5>
+                    <p><a href="{{ dmca_request.dmca_account.website }}" target="_blank">{{ dmca_request.dmca_account.website }}</a></p>
+                    {% if dmca_request.comment %}
+                        <p>{{ dmca_request.comment }}</p>
+                    {% endif %}
+                    <p class="text-secondary">Filed on {{ dmca_request.created_on.strftime('%B %d, %Y') }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

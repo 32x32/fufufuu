@@ -7,12 +7,14 @@
     {% set url_manga_download = url('manga.download', args=[manga.id, manga.slug]) %}
     {% set url_manga_favorite = url('manga.favorite', args=[manga.id, manga.slug]) %}
     {% set url_manga_report = url('manga.report', args=[manga.id, manga.slug]) %}
+    {% set url_manga_dmca_request = url('manga.dmca.request', args=[manga.id, manga.slug]) %}
 {% else %}
     {% set url_manga = '#' %}
     {% set url_manga_thumbnails = '#' %}
     {% set url_manga_download = '#' %}
     {% set url_manga_favorite = '#' %}
     {% set url_manga_report = '#' %}
+    {% set url_manga_dmca_request = '#' %}
 {% endif %}
 
 {% set url_manga_edit = url('manga.edit', args=[manga.id, manga.slug]) %}
@@ -25,46 +27,51 @@
     </a>
 {% endmacro %}
 
-<div id="m-nav">
-    {% if manga.created_by == user or user.is_moderator %}
-        <div class="right min-md">
-            <a href="{{ url_manga_edit }}" class="{{ utils.link_active(url_manga_edit) }}">
-                <span class="icon icon-pencil"></span>
-                <span>{% trans %}Edit{% endtrans %}</span>
+{% if manga.status != 'DMCA' or user.is_staff %}
+    <div id="m-nav">
+        {% if manga.created_by == user or user.is_moderator %}
+            <div class="right min-md">
+                <a href="{{ url_manga_edit }}" class="{{ utils.link_active(url_manga_edit) }}">
+                    <span class="icon icon-pencil"></span>
+                    <span>{% trans %}Edit{% endtrans %}</span>
+                </a>
+                <a href="{{ url_manga_edit_images }}" class="{{ utils.link_active(url_manga_edit_images) }}">
+                    <span class="icon icon-pencil"></span>
+                    <span>{% trans %}Edit Images{% endtrans %}</span>
+                </a>
+            </div>
+        {% endif %}
+        <div class="m-nav-main">
+            <a class="max-lg{% if request.path != url_manga %} disabled{% endif %}" id="m-nav-info-toggle">
+                <span class="icon icon-info-circled"></span>
+                <span class="min-xs">{% trans %}Info{% endtrans %}</span>
             </a>
-            <a href="{{ url_manga_edit_images }}" class="{{ utils.link_active(url_manga_edit_images) }}">
-                <span class="icon icon-pencil"></span>
-                <span>{% trans %}Edit Images{% endtrans %}</span>
-            </a>
-        </div>
-    {% endif %}
-    <div class="m-nav-main">
-        <a class="max-lg{% if request.path != url_manga %} disabled{% endif %}" id="m-nav-info-toggle">
-            <span class="icon icon-info-circled"></span>
-            <span class="min-xs">{% trans %}Info{% endtrans %}</span>
-        </a>
-        {{ manga_nav_item(request, url_manga, 'icon-docs', gettext('Read')) }}
-        {{ manga_nav_item(request, url_manga_thumbnails, 'icon-sweden', gettext('Thumbs')) }}
-        {% if manga.status == 'PUBLISHED' %}
-            <form action="{{ url_manga_favorite }}" method="post" class="none" id="manga-favorite-form">
-                {{ forms.csrf_input() }}
-                <input type="hidden" name="next" value="{{ request.path }}" data-bind="value: next">
-            </form>
-            <a class="pointer" onclick="document.getElementById('manga-favorite-form').submit();">
-                {% if manga.is_favorited_by(user) %}
-                    <span class="icon icon-heart"></span>
-                    <span class="min-xs">{% trans %}Favorited!{% endtrans %}</span>
-                {% else %}
+            {{ manga_nav_item(request, url_manga, 'icon-docs', gettext('Read')) }}
+            {{ manga_nav_item(request, url_manga_thumbnails, 'icon-sweden', gettext('Thumbs')) }}
+            {% if manga.status == 'PUBLISHED' %}
+                <form action="{{ url_manga_favorite }}" method="post" class="none" id="manga-favorite-form">
+                    {{ forms.csrf_input() }}
+                    <input type="hidden" name="next" value="{{ request.path }}" data-bind="value: next">
+                </form>
+                <a class="pointer" onclick="document.getElementById('manga-favorite-form').submit();">
+                    {% if manga.is_favorited_by(user) %}
+                        <span class="icon icon-heart"></span>
+                        <span class="min-xs">{% trans %}Favorited!{% endtrans %}</span>
+                    {% else %}
+                        <span class="icon icon-heart-empty"></span>
+                        <span class="min-xs">{% trans %}Favorite{% endtrans %}</span>
+                    {% endif %}
+                </a>
+            {% else %}
+                <a href="#" class="disabled"{% if manga.status != 'PUBLISHED' %} title="{% trans %}This upload has not been published.{% endtrans %}"{% endif %}>
                     <span class="icon icon-heart-empty"></span>
                     <span class="min-xs">{% trans %}Favorite{% endtrans %}</span>
-                {% endif %}
-            </a>
-        {% else %}
-            <a href="#" class="disabled"{% if manga.status != 'PUBLISHED' %} title="{% trans %}This upload has not been published.{% endtrans %}"{% endif %}>
-                <span class="icon icon-heart-empty"></span>
-                <span class="min-xs">{% trans %}Favorite{% endtrans %}</span>
-            </a>
-        {% endif %}
-        {{ manga_nav_item(request, url_manga_report, 'icon-attention', gettext('Report')) }}
+                </a>
+            {% endif %}
+            {{ manga_nav_item(request, url_manga_report, 'icon-attention', gettext('Report')) }}
+            {% if user.is_authenticated and user.dmca_account_id %}
+                {{ manga_nav_item(request, url_manga_dmca_request, 'icon-attention', gettext('DMCA Request')) }}
+            {% endif %}
+        </div>
     </div>
-</div>
+{% endif %}

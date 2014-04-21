@@ -68,6 +68,14 @@ class DmcaAccountCreateForm(BlankLabelSuffixMixin, forms.Form):
 
 class DmcaRequestForm(BlankLabelSuffixMixin, forms.ModelForm):
 
+    comment = forms.CharField(
+        required=False,
+        label=_('(Optional) Provide any additional notes or comments'),
+        widget=forms.Textarea(attrs={
+            'rows': '5',
+        })
+    )
+
     check1 = forms.BooleanField(
         label=_('I have a good faith belief that use of the copyrighted materials described above as allegedly infringing is not authorized by the copyright owner, its agent, or the law.'),
         initial=True,
@@ -80,7 +88,7 @@ class DmcaRequestForm(BlankLabelSuffixMixin, forms.ModelForm):
 
     class Meta:
         model = DmcaRequest
-        fields = []
+        fields = ['comment']
 
     def __init__(self, manga, request, *args, **kwargs):
         super().__init__(*args, **kwargs)

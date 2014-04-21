@@ -298,6 +298,7 @@ class MangaDmcaView(MangaViewMixin, TemplateView):
         if manga.status != MangaStatus.DMCA:
             raise Http404
 
+        messages.error(request, _('This gallery has been removed due to a DMCA takedown request.'))
         dmca_list = DmcaRequest.objects.filter(manga=manga)
         return self.render_to_response({
             'dmca_list': dmca_list,

@@ -1,0 +1,22 @@
+{% extends 'manga/manga-base.html' %}
+{% import '_macros/forms.html' as forms with context %}
+
+{% block title %}{% trans title=manga.title %}{{ title }} - DMCA Request{% endtrans %}{% endblock %}
+
+{% block content %}
+    <div class="width-800 container block-center">
+        <h2 class="space-top-10 space-bottom-10">{% trans title=manga.title %}{{ title }}{% endtrans %}</h2>
+        <p>{% trans title=manga.title %}Please complete this form to issue a DMCA takedown request. The content in question will be removed immediately once this form has been submitted.{% endtrans %}</p>
+        <hr>
+        <form action="" method="post">
+            {{ forms.csrf_input() }}
+            {{ forms.field(form.comment) }}
+            <hr>
+            {{ forms.field_checkbox(form.check1) }}
+            <hr>
+            {{ forms.field_checkbox(form.check2) }}
+            <hr>
+            <button class="btn btn-primary">{% trans %}Submit Request{% endtrans %}</button>
+        </form>
+    </div>
+{% endblock %}
