@@ -5,7 +5,7 @@ from django.utils.translation import ugettext as _
 from fufufuu.account.models import User
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView
-from fufufuu.staff.forms import SiteSettingForm
+from fufufuu.staff.forms import SiteSettingForm, DmcaAccountCreateForm, DmcaAccountForm
 
 
 class StaffTemplateView(TemplateView):
@@ -61,6 +61,17 @@ class StaffDmcaAccountListView(StaffTemplateView):
             'user_list': user_list,
         })
 
+    def post(self, request):
+        form = DmcaAccountCreateForm(data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            return redirect('staff.dmca.account', id=user.id)
+
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(request, error)
+        return redirect('staff.dmca.account.list')
+
 
 class StaffDmcaAccountView(StaffTemplateView):
 
@@ -70,5 +81,23 @@ class StaffDmcaAccountView(StaffTemplateView):
     def get(self, request, id):
         target_user = get_object_or_404(User, id=id)
         return self.render_to_response({
+            'form': DmcaAccountForm(instance=target_user.dmca_account),
+            'target_user': target_user,
+        })
+
+    def post(self, request, id):
+        target_user = get_object_or_404(User, id=id)
+        if not target_user.dmca_account:
+            raise Http404
+
+        form = DmcaAccountForm(instance=target_user.dmca_account, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _('The account details have been updated successfully.'))
+            return redirect('staff.dmca.account', id=id)
+
+        messages.success(request, _('Failed to update account details, please check the form for errors.'))
+        return self.render_to_response({
+            'form': form,
             'target_user': target_user,
         })

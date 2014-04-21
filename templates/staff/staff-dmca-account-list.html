@@ -9,8 +9,10 @@
         <form class="right">
             {{ widgets.pagination(user_list) }}
         </form>
-        <form action="" method="post" target="_blank" class="min-md inline-block space-right-10">
+        <form action="" method="post" class="min-md inline-block space-right-10">
             {{ forms.csrf_input() }}
+            <input type="text" name="username" placeholder="{% trans %}Username{% endtrans %}" class="filter-bar-text-input space-right-10">
+            <button class="btn btn-primary">{% trans %}Add{% endtrans %}</button>
         </form>
         <div class="clear"></div>
     </div>
@@ -21,6 +23,7 @@
         <table class="table-hover">
             <thead>
                 <tr>
+                    <th>{% trans %}Username{% endtrans %}</th>
                     <th>{% trans %}Name{% endtrans %}</th>
                     <th>{% trans %}Email{% endtrans %}</th>
                     <th>{% trans %}Website{% endtrans %}</th>
@@ -31,13 +34,15 @@
             <tbody>
                 {% for u in user_list %}{% with account=u.dmca_account %}
                     <tr>
+                        <td><a href="{{ url('user', args=[u.username]) }}">{{ u.username }}</a></td>
                         <td>{{ account.name }}</td>
                         <td>{{ account.email }}</td>
                         <td>{{ account.website }}</td>
+                        <td></td>
                     </tr>
                 {% endwith %}{% else %}
                     <tr>
-                        <td>{% trans %}There are no DMCA accounts.{% endtrans %}</td>
+                        <td colspan="5">{% trans %}There are no DMCA accounts.{% endtrans %}</td>
                     </tr>
                 {% endfor %}
             </tbody>
