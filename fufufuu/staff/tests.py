@@ -93,7 +93,6 @@ class StaffDmcaAccountViewTests(BaseTestCase):
 
     def setUp(self):
         super().setUp()
-
         self.user.dmca_account = DmcaAccount.objects.create(
             name='Corporation Name',
             email='example@corporation.com',

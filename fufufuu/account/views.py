@@ -1,7 +1,7 @@
 from django.contrib.auth import logout, login
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.http.response import HttpResponseNotAllowed
+from django.http.response import HttpResponseNotAllowed, Http404
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 from django.views.generic.base import View
@@ -9,6 +9,7 @@ from fufufuu.account.forms import AccountLoginForm, AccountRegisterForm, Account
 from fufufuu.core.enums import SiteSettingKey
 from fufufuu.core.models import SiteSetting
 from fufufuu.core.views import TemplateView, ProtectedTemplateView
+from fufufuu.dmca.forms import DmcaAccountForm
 
 
 class AccountBaseView(TemplateView):
@@ -114,4 +115,31 @@ class AccountSettingsPasswordView(AccountSettingsBaseView):
 
         return self.render_to_response({
             'password_form': form,
+        })
+
+
+class AccountSettingsDmcaView(ProtectedTemplateView):
+
+    template_name = 'account/account-settings-dmca.html'
+
+    def get(self, request):
+        if not request.user.dmca_account_id:
+            raise Http404
+
+        return self.render_to_response({
+            'form': DmcaAccountForm(instance=request.user.dmca_account)
+        })
+
+    def post(self, request):
+        if not request.user.dmca_account_id:
+            raise Http404
+
+        form = DmcaAccountForm(instance=request.user.dmca_account, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _('Your account details have been updated successfully.'))
+            return redirect('account.settings.dmca')
+
+        return self.render_to_response({
+            'form': form,
         })

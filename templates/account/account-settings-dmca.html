@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% import '_macros/forms.html' as forms with context %}
+
+{% block title %}{% trans %}Account Settings - DMCA{% endtrans %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <form action="" method="post">
+            {{ forms.csrf_input() }}
+            <div class="well space-bottom-10">
+                <h4>DMCA Account Details</h4>
+            </div>
+            <table class="table-django-form space-bottom-10">
+                {{ form.as_table() }}
+            </table>
+            <div class="well">
+                <button class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

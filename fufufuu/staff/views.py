@@ -5,7 +5,8 @@ from django.utils.translation import ugettext as _
 from fufufuu.account.models import User
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView
-from fufufuu.staff.forms import SiteSettingForm, DmcaAccountCreateForm, DmcaAccountForm
+from fufufuu.dmca.forms import DmcaAccountForm, DmcaAccountCreateForm
+from fufufuu.staff.forms import SiteSettingForm
 
 
 class StaffTemplateView(TemplateView):

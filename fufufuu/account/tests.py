@@ -8,6 +8,7 @@ from fufufuu.account.models import User
 from fufufuu.core.enums import SiteSettingKey
 from fufufuu.core.models import SiteSetting
 from fufufuu.core.tests import BaseTestCase
+from fufufuu.dmca.models import DmcaAccount
 from fufufuu.settings import MAX_IMAGE_FILE_SIZE
 
 
@@ -191,6 +192,58 @@ class AccountSettingsPasswordViewTests(BaseTestCase):
 
         user = User.objects.get(id=self.user.id)
         self.assertTrue(user.check_password('1234'))
+
+
+class AccountSettingsDmcaViewTests(BaseTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.user.dmca_account = DmcaAccount.objects.create(
+            name='Corporation Name',
+            email='example@corporation.com',
+            website='http://corporation.com'
+        )
+        self.user.save()
+
+    def test_account_settings_dmca_view_get_no_account(self):
+        self.user.dmca_account.delete()
+
+        response = self.client.get(reverse('account.settings.dmca'))
+        self.assertEqual(response.status_code, 404)
+
+    def test_account_settings_dmca_view_get(self):
+        response = self.client.get(reverse('account.settings.dmca'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'account/account-settings-dmca.html')
+
+    def test_account_settings_dmca_view_post_no_account(self):
+        self.user.dmca_account.delete()
+
+        response = self.client.post(reverse('account.settings.dmca'))
+        self.assertEqual(response.status_code, 404)
+
+    def test_account_settings_dmca_view_post_invalid(self):
+        response = self.client.post(reverse('account.settings.dmca'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'account/account-settings-dmca.html')
+
+    def test_account_settings_dmca_view_post(self):
+        url = reverse('account.settings.dmca')
+        response = self.client.post(url, {
+            'name': 'Sample Corporation',
+            'email': 'sample@corporation.com',
+            'website': 'http://sample-corporation.com',
+            'markdown': 'Here is some markdown!',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, url)
+
+        dmca_account = User.objects.get(id=self.user.id).dmca_account
+        self.assertEqual(dmca_account.name, 'Sample Corporation')
+        self.assertEqual(dmca_account.email, 'sample@corporation.com')
+        self.assertEqual(dmca_account.website, 'http://sample-corporation.com')
+        self.assertEqual(dmca_account.markdown, 'Here is some markdown!')
+        self.assertEqual(dmca_account.html, '<p>Here is some markdown!</p>')
 
 
 class AccountSettingsFormTests(BaseTestCase):

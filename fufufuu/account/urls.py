@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from fufufuu.account.views import AccountLoginView, AccountLogoutView, AccountRegisterView, \
-    AccountSettingsView, AccountSettingsPasswordView
+    AccountSettingsView, AccountSettingsPasswordView, AccountSettingsDmcaView
 
 
 urlpatterns = patterns('',
@@ -11,5 +11,6 @@ urlpatterns = patterns('',
 
     url(r'^settings/$',             AccountSettingsView.as_view(), name='account.settings'),
     url(r'^settings/password/$',    AccountSettingsPasswordView.as_view(), name='account.settings.password'),
+    url(r'^settings/dmca/$',        AccountSettingsDmcaView.as_view(), name='account.settings.dmca'),
 
 )
