@@ -29,14 +29,25 @@ class MangaMixin:
     @property
     def archive_name(self):
         tag_dict = self.tag_dictionary
+        authors = ', '.join([t.name for t in tag_dict[TagType.AUTHOR]])
+        circles = ', '.join([t.name for t in tag_dict[TagType.CIRCLE]])
         scanlators  = ', '.join([t.name for t in tag_dict[TagType.SCANLATOR]])
 
-        filename = ['[{}]'.format(str(self.id))]
+        filename = []
         if scanlators:
             filename.append('[{}]'.format(scanlators))
-        filename.append(' {}'.format(self.title))
+        if circles and authors:
+            filename.append('[{} ({})]'.format(circles, authors))
+        elif circles:
+            filename.append('[{}]'.format(circles))
+        elif authors:
+            filename.append('({})'.format(authors))
 
-        return ''.join(filename)[:196] + '.zip'
+        filename.append('{}'.format(self.title))
+
+        name = ' '.join(filename)[:196] + '.zip'
+        name = name.replace('] [', '][').replace('] (', '](')
+        return name
 
     @property
     def cover_url(self):

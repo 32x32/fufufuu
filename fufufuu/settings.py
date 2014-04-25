@@ -193,6 +193,6 @@ if DEBUG_TOOLBAR:
     MIDDLEWARE_CLASSES += (
         'debug_toolbar.middleware.DebugToolbarMiddleware',
     )
-    DEBUG_TOOLBAR_CONFIG = {
+    DISABLE_PANELS = {
         'INTERCEPT_REDIRECTS': False,
     }

@@ -1,12 +1,15 @@
 import os
 from io import BytesIO
+
 from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
+
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.image.enums import ImageKeyType
 from fufufuu.image.models import Image
 from fufufuu.manga.enums import MangaStatus
 from fufufuu.manga.models import Manga, MangaPage, MangaArchive
+from fufufuu.tag.models import Tag
 
 
 class MangaModelTests(BaseTestCase):
@@ -90,3 +93,24 @@ class MangaModelTests(BaseTestCase):
 
         self.manga.save(updated_by=self.user)
         self.assertFalse(Image.objects.filter(id=image1.id).exists())
+
+    def test_manga_archive_name(self):
+        author = Tag.objects.get(name='Author 1')
+        circle = Tag.objects.get(name='Circle 1')
+        scanlator = Tag.objects.get(name='Scanlator 1')
+
+        manga = self.manga
+
+        def assert_manga_archive_name(name, tags=None):
+            manga.tags.clear()
+            if tags:
+                manga.tags.add(*tags)
+            manga.update_tag_dictionary()
+            self.assertEqual(manga.archive_name, name)
+
+        assert_manga_archive_name('Test Manga 1.zip')
+        assert_manga_archive_name('(Author 1) Test Manga 1.zip', [author])
+        assert_manga_archive_name('[Circle 1] Test Manga 1.zip', [circle])
+        assert_manga_archive_name('[Scanlator 1] Test Manga 1.zip', [scanlator])
+        assert_manga_archive_name('[Scanlator 1][Circle 1 (Author 1)] Test Manga 1.zip', [author, circle, scanlator])
+
