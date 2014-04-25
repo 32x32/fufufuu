@@ -10,6 +10,8 @@ from django.http.response import Http404, HttpResponseNotAllowed, HttpResponsePe
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
+from fufufuu.core.enums import SiteSettingKey
+from fufufuu.core.models import SiteSetting
 
 from fufufuu.core.response import HttpResponseXAccel
 from fufufuu.core.utils import paginate, get_ip_address, natural_sort, send_email_alert
@@ -188,10 +190,7 @@ class MangaView(BaseMangaView):
         except MangaArchive.DoesNotExist:
             archive = MangaArchiveGenerator.generate(manga)
 
-        download_available = (archive != None) and os.path.exists(archive.file.path)
-        if not download_available:
-            MangaArchiveGenerator.generate(manga)
-
+        download_available = (archive is not None) and os.path.exists(archive.file.path) and SiteSetting.get_val(SiteSettingKey.ENABLE_DOWNLOADS)
         context.update({
             'archive': archive,
             'download_available': download_available,
@@ -224,8 +223,10 @@ class MangaDownloadView(BaseMangaView):
         return HttpResponseNotAllowed(permitted_methods=['post'])
 
     def post(self, request, id, slug):
-        manga = self.get_manga_for_view(id)
+        if not SiteSetting.get_val(SiteSettingKey.ENABLE_DOWNLOADS):
+            raise Http404
 
+        manga = self.get_manga_for_view(id)
         form = MangaDownloadForm(request=request, data=request.POST)
         if not form.is_valid():
             messages.error(request, _('You have failed the CAPTCHA, please try again.'))

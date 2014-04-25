@@ -6,8 +6,10 @@ from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
 from django.http.response import Http404
+from fufufuu.core.enums import SiteSettingKey
 
 from fufufuu.core.languages import Language
+from fufufuu.core.models import SiteSetting
 from fufufuu.core.tests import BaseTestCase
 from fufufuu.core.utils import slugify
 from fufufuu.dmca.models import DmcaAccount
@@ -108,6 +110,11 @@ class MangaDownloadViewTests(BaseTestCase):
         self.manga.status = MangaStatus.DRAFT
         self.manga.save(updated_by=self.user)
 
+        response = self.client.post(reverse('manga.download', args=[self.manga.id, self.manga.slug]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_manga_download_view_post_disabled(self):
+        SiteSetting.set_val(SiteSettingKey.ENABLE_DOWNLOADS, False, self.user)
         response = self.client.post(reverse('manga.download', args=[self.manga.id, self.manga.slug]))
         self.assertEqual(response.status_code, 404)
 

@@ -292,6 +292,7 @@ class DataCreator:
     def create_settings(self):
         settings = (
             (SiteSettingKey.ENABLE_COMMENTS, 'True'),
+            (SiteSettingKey.ENABLE_DOWNLOADS, 'True'),
             (SiteSettingKey.ENABLE_REGISTRATION, 'True'),
             (SiteSettingKey.ENABLE_UPLOADS, 'True'),
         )

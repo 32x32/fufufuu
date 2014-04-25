@@ -8,6 +8,7 @@ class SiteSettingKey:
     DOWNLOAD_LIMIT              = 'DOWNLOAD_LIMIT'
     DOWNLOAD_TIMEOUT            = 'DOWNLOAD_TIMEOUT'
     ENABLE_COMMENTS             = 'ENABLE_COMMENTS'
+    ENABLE_DOWNLOADS            = 'ENABLE_DOWNLOADS'
     ENABLE_REGISTRATION         = 'ENABLE_REGISTRATION'
     ENABLE_UPLOADS              = 'ENABLE_UPLOADS'
     REPORT_THRESHOLD            = 'REPORT_THRESHOLD'
@@ -17,6 +18,7 @@ class SiteSettingKey:
         (DOWNLOAD_LIMIT,        _('Download Limit')),
         (DOWNLOAD_TIMEOUT,      _('Download Timeout (in seconds)')),
         (ENABLE_COMMENTS,       _('Enable Comments')),
+        (ENABLE_DOWNLOADS,      _('Enable Downloads')),
         (ENABLE_REGISTRATION,   _('Enable Registration')),
         (ENABLE_UPLOADS,        _('Enable Uploads')),
         (REPORT_THRESHOLD,      _('Report Threshold')),
@@ -29,6 +31,7 @@ class SiteSettingKey:
         DOWNLOAD_LIMIT:         int,
         DOWNLOAD_TIMEOUT:       int,
         ENABLE_COMMENTS:        bool,
+        ENABLE_DOWNLOADS:       bool,
         ENABLE_REGISTRATION:    bool,
         ENABLE_UPLOADS:         bool,
         REPORT_THRESHOLD:       int,
@@ -39,6 +42,7 @@ class SiteSettingKey:
         DOWNLOAD_LIMIT:         forms.IntegerField,
         DOWNLOAD_TIMEOUT:       forms.IntegerField,
         ENABLE_COMMENTS:        forms.BooleanField,
+        ENABLE_DOWNLOADS:       forms.BooleanField,
         ENABLE_REGISTRATION:    forms.BooleanField,
         ENABLE_UPLOADS:         forms.BooleanField,
         REPORT_THRESHOLD:       forms.IntegerField,
@@ -49,6 +53,7 @@ class SiteSettingKey:
         DOWNLOAD_LIMIT:         10,
         DOWNLOAD_TIMEOUT:       10 * 60, # 10 minutes
         ENABLE_COMMENTS:        False,
+        ENABLE_DOWNLOADS:       False,
         ENABLE_REGISTRATION:    False,
         ENABLE_UPLOADS:         False,
         REPORT_THRESHOLD:       50,
