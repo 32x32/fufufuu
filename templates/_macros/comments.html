@@ -8,8 +8,8 @@
     {% if user.is_authenticated() %}
         <form action="{{ url('comment.post') }}" method="post">
             {{ forms.csrf_input() }}
-            {{ comment_form.content_type }}
-            {{ comment_form.object_id }}
+            {{ forms.field(comment_form.content_type, False) }}
+            {{ forms.field(comment_form.object_id, False) }}
             <input type="hidden" name="next" value="{{ request.path }}">
             <div class="left">
                 {% if user and user.avatar %}
@@ -18,8 +18,7 @@
                     <img src="{{ STATIC_URL }}images/no-avatar.png" alt="{{ user.username }}" class="comment-form-account-avatar">
                 {% endif %}
             </div>
-            {{ comment_form.markdown }}
-            <span class="help-block right">{{ comment_form.markdown.help_text }}</span>
+            {{ forms.field(comment_form.markdown, False) }}
             <div class="form-field space-top-10">
                 <button class="btn btn-primary">{% trans %}Post Comment{% endtrans %}</button>
             </div>
@@ -45,7 +44,7 @@
                         </form>
                     {% endif %}
                 </div>
-                {{ comment.html }}
+                {{ comment.html|safe }}
             </div>
             <div class="clear"></div>
         </div>

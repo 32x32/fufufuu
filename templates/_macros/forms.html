@@ -4,33 +4,33 @@
 
 {% macro non_field_errors(form) %}
     {% for error in form.non_field_errors() %}
-        <div class="non-field-error">{{ error }}</div>
+        <div class="non-field-error">{{ error|safe }}</div>
     {% endfor %}
 {% endmacro %}
 
 {% macro field(field, show_label=True) %}
     <div class="form-field{% if field.errors %} error{% endif %}">
         {% if show_label %}
-            {{ field.label_tag() }}
+            {{ field.label_tag()|safe }}
         {% endif %}
-        {{ field }}
+        {{ field|safe }}
         {% for error in field.errors %}
-            <span class="error-block">{{ error }}</span>
+            <span class="error-block">{{ error|safe }}</span>
         {% endfor %}
         {% if field.help_text %}
-            <span class="help-block">{{ field.help_text }}</span>
+            <span class="help-block">{{ field.help_text|safe }}</span>
         {% endif %}
     </div>
 {% endmacro %}
 
 {% macro field_checkbox(field) %}
     <div class="form-field{% if field.errors %} error{% endif %}">
-        <label>{{ field }}{{ field.label }}</label>
+        <label>{{ field|safe }}{{ field.label|safe }}</label>
         {% for error in field.errors %}
-            <span class="error-block">{{ error }}</span>
+            <span class="error-block">{{ error|safe }}</span>
         {% endfor %}
         {% if field.help_text %}
-            <span class="help-block">{{ field.help_text }}</span>
+            <span class="help-block">{{ field.help_text|safe }}</span>
         {% endif %}
     </div>
 {% endmacro %}

@@ -37,7 +37,7 @@
         {% endif %}
     </div>
     {% if manga.markdown %}
-        <div class="manga-info-section markdown">{{ manga.html }}</div>
+        <div class="manga-info-section markdown">{{ manga.html|safe }}</div>
     {% endif %}
     {% if manga.category in ['NON_H', 'ECCHI'] %}
     {% else %}

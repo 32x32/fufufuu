@@ -42,5 +42,5 @@
             <a href="{{ url('blog.entry.edit', args=[blog_entry.id, blog_entry.slug]) }}">{% trans %}Edit{% endtrans %}</a>
         {% endif %}
     </div>
-    <div class="markdown">{{ blog_entry.html }}</div>
+    <div class="markdown">{{ blog_entry.html|safe }}</div>
 {% endmacro %}

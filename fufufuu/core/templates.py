@@ -53,6 +53,7 @@ class Spaceless(Extension):
 TEMPLATE_SETTINGS = {
     'loader': FileSystemLoader(TEMPLATE_DIRS),
     'auto_reload': DEBUG,
+    'autoescape': True,
     'extensions': [
         'jinja2.ext.i18n',
         'jinja2.ext.with_',

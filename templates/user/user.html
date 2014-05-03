@@ -18,7 +18,7 @@
             <hr class="space-top-0 space-bottom-0">
             <div class="panel-body">
                 {% if target_user.html %}
-                    {{ target_user.html }}
+                    {{ target_user.html|safe }}
                 {% else %}
                     <p>{% trans %}No Description{% endtrans %}</p>
                 {% endif %}
