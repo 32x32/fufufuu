@@ -26,8 +26,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td width="120"><label>{{ form.avatar.label_tag() }}</label></td>
-                        <td>{{ form.avatar }}</td>
+                        <td width="120"><label>{{ forms.simple_field_label(form.avatar) }}</label></td>
+                        <td>{{ forms.simple_field(form.avatar) }}</td>
                     </tr>
                     <tr>
                         <td width="120"><label for="id_avatar-clear">{% trans %}Delete{% endtrans %}</label></td>

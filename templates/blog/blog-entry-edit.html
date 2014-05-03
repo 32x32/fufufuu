@@ -22,7 +22,7 @@
             {{ forms.field(form.title, show_label=False) }}
             <div class="half-wrapper">
                 <div class="half half-md">
-                    {{ form.markdown }}
+                    {{ forms.simple_field(form.markdown) }}
                     <a href="/f/markdown/" class="text-xsmall" target="_blank">This field uses markdown for formatting.</a>
                 </div>
                 <div class="half half-md">

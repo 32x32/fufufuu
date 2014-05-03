@@ -11,7 +11,7 @@
                 <h4>DMCA Account Details</h4>
             </div>
             <table class="table-django-form space-bottom-10">
-                {{ form.as_table() }}
+                {{ form.as_table()|safe }}
             </table>
             <div class="well">
                 <button class="btn btn-primary">{% trans %}Save{% endtrans %}</button>

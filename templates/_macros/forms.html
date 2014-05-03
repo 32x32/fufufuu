@@ -8,6 +8,14 @@
     {% endfor %}
 {% endmacro %}
 
+{% macro simple_field_label(field) %}
+    {{ field.label_tag()|safe }}
+{% endmacro %}
+
+{% macro simple_field(field) %}
+    {{ field|safe }}
+{% endmacro %}
+
 {% macro field(field, show_label=True) %}
     <div class="form-field{% if field.errors %} error{% endif %}">
         {% if show_label %}
