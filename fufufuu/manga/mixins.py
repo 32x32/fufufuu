@@ -46,7 +46,8 @@ class MangaMixin:
         filename.append('{}'.format(self.title))
 
         name = ' '.join(filename)[:196] + '.zip'
-        name = name.replace('] [', '][').replace('] (', '](')
+        name = name.replace('] [', '][')
+        name = ''.join(filter(lambda c: c not in '<>:"/\\|?*', list(name)))
         return name
 
     @property

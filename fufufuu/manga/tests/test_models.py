@@ -114,3 +114,7 @@ class MangaModelTests(BaseTestCase):
         assert_manga_archive_name('[Scanlator 1] Test Manga 1.zip', [scanlator])
         assert_manga_archive_name('[Scanlator 1][Circle 1 (Author 1)] Test Manga 1.zip', [author, circle, scanlator])
 
+    def test_manga_archive_name_invalid_chars(self):
+        self.manga.title = 'This is a <>:"/\\|?*test manga'
+        self.manga.tags.clear()
+        self.assertEqual(self.manga.archive_name, 'This is a test manga.zip')
