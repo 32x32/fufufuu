@@ -41,7 +41,7 @@ def production():
     use fufufuu as host (note: this is production)
     """
 
-    env.hosts = ['fufufuu3']
+    env.hosts = ['fufufuu']
     env.config = 'production'
 
 #-------------------------------------------------------------------------------
@@ -331,7 +331,7 @@ def nginx_update():
     sudo('rm -f /etc/nginx/sites-enabled/default')
     sudo('rm -f /etc/nginx/nginx.conf')
     put('config/{config}/nginx.conf'.format(**env), '/etc/nginx/nginx.conf', use_sudo=True)
-    sudo('nginx -s reload')
+    sudo('/etc/init.d/nginx restart')
 
 
 def memcached_update():
