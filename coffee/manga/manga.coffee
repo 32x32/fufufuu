@@ -33,8 +33,8 @@ $ ->
                 return pageList.length
             return pageNum
 
-        nextChapter = $('#m-chapter-jump option:selected').next().val()
-        prevChapter = $('#m-chapter-jump option:selected').prev().val()
+        nextChapter = $('.m-chapter-jump option:selected').next().val()
+        prevChapter = $('.m-chapter-jump option:selected').prev().val()
 
         #-----------------------------------------------------------------------
         # knockout
