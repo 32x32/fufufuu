@@ -25,10 +25,10 @@ class AccountLoginView(AccountBaseView):
     template_name = 'account/account-login.html'
 
     def get(self, request):
-        return self.render_to_response({'form': AccountLoginForm()})
+        return self.render_to_response({'form': AccountLoginForm(request=request)})
 
     def post(self, request):
-        form = AccountLoginForm(data=request.POST)
+        form = AccountLoginForm(request=request, data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
             next = request.POST.get('next', reverse('manga.list'))

@@ -19,6 +19,9 @@
                                 {{ forms.non_field_errors(form) }}
                                 {{ forms.field(form.username) }}
                                 {{ forms.field(form.password) }}
+                                {% if form.captcha %}
+                                    {{ forms.field(form.captcha) }}
+                                {% endif %}
                                 <div class="form-field form-buttons">
                                     <button type="submit" class="btn btn-primary">{% trans %}Login{% endtrans %}</button>
                                 </div>

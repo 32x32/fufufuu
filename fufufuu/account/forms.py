@@ -1,11 +1,12 @@
 from captcha.fields import CaptchaField
 from django import forms
+from django.core.cache import cache
 from django.contrib.auth import authenticate
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from fufufuu.account.models import User
 from fufufuu.core.forms import BlankLabelSuffixMixin
-from fufufuu.core.utils import convert_markdown, validate_image
+from fufufuu.core.utils import convert_markdown, validate_image, get_ip_address
 
 
 USERNAME_REGEX = r'^\w{4,20}$'
@@ -83,6 +84,10 @@ class AccountRegisterForm(BlankLabelSuffixMixin, forms.ModelForm):
 
 class AccountLoginForm(BlankLabelSuffixMixin, forms.Form):
 
+    LOGIN_KEY = 'login-limit-{ip_address}'
+    LOGIN_TIMEOUT = 3 * 60 # 3 minute
+    LOGIN_ATTEMPT_LIMIT = 5
+
     username = forms.CharField(
         label=_('Username'),
         widget=forms.TextInput(attrs={
@@ -102,9 +107,24 @@ class AccountLoginForm(BlankLabelSuffixMixin, forms.Form):
         'invalid_login': _('Please enter a correct username and password. Note that both fields are case-sensitive.'),
     }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.request = request
         self.user_cache = None
+
+        key = self.get_cache_key()
+        if cache.get(key, 0) >= self.LOGIN_ATTEMPT_LIMIT:
+            self.fields['captcha'] = CaptchaField()
+
+    def get_cache_key(self):
+        return self.LOGIN_KEY.format(ip_address=get_ip_address(self.request))
+
+    def update_attempt(self):
+        key = self.get_cache_key()
+        if cache.get(key) is None:
+            cache.set(key, 1, self.LOGIN_TIMEOUT)
+        else:
+            cache.incr(key)
 
     def clean(self):
         username = self.cleaned_data.get('username')
@@ -113,6 +133,7 @@ class AccountLoginForm(BlankLabelSuffixMixin, forms.Form):
         if username and password:
             self.user_cache = authenticate(username=username, password=password)
             if self.user_cache is None:
+                self.update_attempt()
                 raise forms.ValidationError(self.error_messages['invalid_login'])
 
         return self.cleaned_data
