@@ -320,7 +320,7 @@ def postgres_update():
 
     sudo('rm -f /etc/postgresql/9.3/main/postgresql.conf')
     put('config/{config}/postgresql.conf'.format(**env), '/etc/postgresql/9.3/main/postgresql.conf', use_sudo=True)
-    sudo('/etc/init.d/postgresql restart')
+    sudo('nginx -s reload')
 
 
 def nginx_update():
