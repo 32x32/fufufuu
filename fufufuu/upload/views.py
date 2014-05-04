@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from fufufuu.comment.utils import attach_comment_count
 from fufufuu.core.enums import SiteSettingKey
 from fufufuu.core.models import SiteSetting

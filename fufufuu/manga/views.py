@@ -9,7 +9,7 @@ from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed, HttpResponsePermanentRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from fufufuu.core.enums import SiteSettingKey
 from fufufuu.core.models import SiteSetting
 

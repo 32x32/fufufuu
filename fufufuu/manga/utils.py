@@ -7,7 +7,7 @@ from django.core.cache import cache
 from django.core.files.base import File
 from django.core.files.uploadedfile import UploadedFile
 from django.db.models.aggregates import Count
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from PIL import Image
 
 from fufufuu.core.models import DeletedFile

@@ -218,9 +218,11 @@ class CoreModelTests(BaseTestCase):
             self.assertEqual(SiteSetting.get_val(key), SiteSettingKey.default[key], key)
 
     def test_site_setting_keys(self):
-        self.assertTrue(
-            list(SiteSettingKey.choices_dict.keys()) ==
-            list(SiteSettingKey.key_type.keys()) ==
-            list(SiteSettingKey.form_field_type.keys()) ==
-            list(SiteSettingKey.default.keys())
-        )
+        choices_keys = set(SiteSettingKey.choices_dict.keys())
+        key_type_keys = set(SiteSettingKey.key_type.keys())
+        form_field_type_keys = set(SiteSettingKey.form_field_type.keys())
+        default_keys = set(SiteSettingKey.default.keys())
+
+        self.assertEqual(choices_keys, key_type_keys)
+        self.assertEqual(key_type_keys, form_field_type_keys)
+        self.assertEqual(form_field_type_keys, default_keys)

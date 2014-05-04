@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseNotAllowed, Http404
 from django.shortcuts import redirect
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View
 from fufufuu.account.forms import AccountLoginForm, AccountRegisterForm, AccountSettingsForm, AccountSettingsPasswordForm
 from fufufuu.core.enums import SiteSettingKey

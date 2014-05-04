@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from fufufuu.account.models import User
 from fufufuu.core.utils import paginate
 from fufufuu.core.views import TemplateView
