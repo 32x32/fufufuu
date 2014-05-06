@@ -1,4 +1,5 @@
 import re
+from math import sqrt
 
 from PIL import Image
 from django import forms
@@ -176,3 +177,17 @@ def defaultint(n, default=0):
         return int(n)
     except:
         return default
+
+
+def confidence(ups, downs):
+    """
+    code copied from http://amix.dk/blog/post/19588
+    """
+
+    if ups + downs == 0:
+        return 0
+
+    n = ups + downs
+    z = 1.0
+    phat = float(ups) / n
+    return sqrt(phat+z*z/(2*n)-z*((phat*(1-phat)+z*z/(4*n))/n))/(1+z*z/n)

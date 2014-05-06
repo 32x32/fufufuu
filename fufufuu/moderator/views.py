@@ -3,9 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.db.models.aggregates import Count, Sum
 from django.forms.models import modelformset_factory
 from django.http import Http404
-from django.shortcuts import get_object_or_404, get_list_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
+
 from fufufuu.core.views import TemplateView
 from fufufuu.manga.models import Manga
 from fufufuu.moderator.forms import ModeratorReportMangaFormSet, ModeratorReportMangaForm
