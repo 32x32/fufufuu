@@ -356,6 +356,12 @@ class MangaEditUploadViewTests(BaseTestCase):
         response = self.client.post(reverse('manga.edit.upload', args=[self.manga.id, self.manga.slug]))
         self.assertEqual(response.status_code, 404)
 
+    def test_manga_edit_upload_view_post_zipfile_invalid(self):
+        response = self.client.post(reverse('manga.edit.upload', args=[self.manga.id, self.manga.slug]), {
+            'zipfile': SimpleUploadedFile('test.zip', bytes('0', 'utf-8')),
+        })
+        self.assertRedirects(response, reverse('manga.edit.images', args=[self.manga.id, self.manga.slug]))
+
     def test_manga_edit_upload_view_post_zipfile(self):
         content = self.create_test_image_file().getvalue()
 

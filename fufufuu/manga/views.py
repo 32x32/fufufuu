@@ -9,6 +9,7 @@ from django.forms.models import modelformset_factory
 from django.http.response import Http404, HttpResponseNotAllowed, HttpResponsePermanentRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from fufufuu.core.enums import SiteSettingKey
 from fufufuu.core.models import SiteSetting
@@ -451,6 +452,6 @@ class MangaEditUploadView(BaseMangaProtectedView):
             raise Http404
 
         if errors:
-            messages.error(request, '\n'.join(errors))
+            messages.error(request, '\n'.join([force_text(s) for s in errors]))
 
         return redirect('manga.edit.images', id=manga.id, slug=manga.slug)
