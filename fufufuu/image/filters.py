@@ -13,6 +13,13 @@ def image_resize(file_path, key_type, key_id):
     key_type should be one of ImageKeyType.choices
     """
 
+    key_type = key_type.upper()
+
+    cache_key = get_cache_key(key_type, key_id)
+    url = cache.get(cache_key)
+    if url:
+        return url
+
     if not file_path:
         return ''
     elif isinstance(file_path, FieldFile):
@@ -20,11 +27,8 @@ def image_resize(file_path, key_type, key_id):
     elif not isinstance(file_path, str):
         return ''
 
-    key_type = key_type.upper()
-
-    cache_key = get_cache_key(key_type, key_id)
-    url = cache.get(cache_key)
-    if url: return url
+    if not os.path.exists(file_path):
+        return ''
 
     try:
         image = Image.objects.only('file').get(key_type=key_type, key_id=key_id)
