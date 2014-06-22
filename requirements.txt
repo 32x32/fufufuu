@@ -2,35 +2,35 @@
 # Django
 #-------------------------------------------------------------------------------
 
-Django==1.6.4
+Django==1.6.5
 
 #-------------------------------------------------------------------------------
 # other packages
 #-------------------------------------------------------------------------------
 
-django-debug-toolbar==1.2
+django-debug-toolbar==1.2.1
 django-haystack==2.1.0
 django-simple-captcha==0.4.2
-Jinja2==2.7.2
-MarkupSafe==0.21
-Markdown==2.4
+Jinja2==2.7.3
+MarkupSafe==0.23
+Markdown==2.4.1
 Pillow==2.4.0
-pip==1.5.5
-psycopg2==2.5.2
+pip==1.5.6
+psycopg2==2.5.3
 py-bcrypt==0.4
 pyelasticsearch==0.6.1
 python3-memcached==1.51
-pytz==2014.2
+pytz==2014.4
 PyYAML==3.11
-setuptools==3.4.4
-simplejson==3.4.1
+setuptools==5.1
+simplejson==3.5.2
 SQLAlchemy==0.9.4
 South==0.8.4
-Unidecode==0.04.14
+Unidecode==0.04.16
 watchdog==0.7.1
 
 #-------------------------------------------------------------------------------
 # deployment
 #-------------------------------------------------------------------------------
 
-uWSGI==2.0.4
+uWSGI==2.0.5.1
